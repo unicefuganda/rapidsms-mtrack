@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from logistics import loader as logi_loader
 from mtrack import loader as mtrack_loader
+#rom mtrack import utils as mtrack_utils
 
 class Command(BaseCommand):
     help = "Initialize static data for ghana"
@@ -13,5 +14,5 @@ class Command(BaseCommand):
         logi_loader.init_test_location_and_supplypoints()
         logi_loader.init_test_product_and_stock()
         mtrack_loader.init_test_facilities(True)
-        mtrack_loader.load_cvs_xforms()    
- 
+        mtrack_loader.load_cvs_xforms()  
+        mtrack_loader.init_xforms()  

@@ -29,8 +29,11 @@ def init_test_facilities(log_to_console=False):
     _init_facility_types()
     loc = Location.objects.all()[0]
     sp_type = SupplyPointType.objects.get(code=config.SupplyPointCodes.CLINIC)
-    sp, created = SupplyPoint.objects.get_or_create(code='tf', type=sp_type, 
-                                                    location=loc)
+    try:
+        sp = SupplyPoint.objects.get(code='tf')
+    except SupplyPoint.DoesNotExist:
+        sp, created = SupplyPoint.objects.get_or_create(code='tf', type=sp_type, 
+                                                        location=loc)
     sp.name = 'test supply point'
     sp.active = True
     sp.save()
@@ -40,8 +43,26 @@ def init_test_facilities(log_to_console=False):
         hf_type = HealthFacilityType.objects.all()[0]
         hf = HealthFacility.objects.create(name='test facility', 
                                            code='tf', 
-                                           type=hf_type, 
-                                           location=loc,  
+                                           type=hf_type,   
                                            supply_point=sp)
         if log_to_console:
             print "  Supply point %s created" % hf.name
+
+def init_xforms():
+    from rapidsms_xforms.models import *
+    from cvs.utils import *
+    XFORMS = (
+        ('act','ACT stock report','Report levels of ACT stocks',),
+    )
+
+    XFORM_FIELDS = {
+        'act':[
+             ('yellow', 'int', 'Yellow ACT', True),
+             ('blue', 'int', 'Blue ACT', True),
+             ('brown', 'int', 'Brown ACT', True),
+             ('green', 'int', 'Green ACT', True),
+             ('other', 'int', 'Other ACT', True),
+         ],
+    }
+    
+    init_xforms_from_tuples(XFORMS, XFORM_FIELDS)
