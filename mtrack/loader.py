@@ -60,9 +60,10 @@ def add_supply_points_to_facilities(log_to_console=False):
                              type=SupplyPointType.objects.get(code=f.type.slug), 
                              active=True)
             if f.location is None:
-                l = Location()
+                l = Location(name=f.name)
                 l.save()
                 sp.location = l 
+                f.location = l
             else:
                 sp.location = f.location
             sp.save()
@@ -75,7 +76,7 @@ def init_xforms():
     from rapidsms_xforms.models import *
     from cvs.utils import *
     XFORMS = (
-        ('act','ACT stock report','Report levels of ACT stocks',),
+        ('', 'act', ' ', 'ACT stock report','Report levels of ACT stocks',),
     )
 
     XFORM_FIELDS = {
