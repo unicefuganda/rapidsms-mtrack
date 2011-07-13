@@ -15,5 +15,6 @@ class Command(BaseCommand):
         logi_loader.init_test_product_and_stock()
         mtrack_loader.init_test_facilities(True)
         mtrack_loader.load_cvs_xforms()  
-        mtrack_loader.init_xforms()  
+        # act xform initiailization is already handled in cvs
+        # mtrack_loader.init_xforms()  
         mtrack_loader.add_supply_points_to_facilities()
