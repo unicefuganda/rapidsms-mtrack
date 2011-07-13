@@ -15,7 +15,7 @@ def load_cvs_xforms():
 def  _init_facility_types():
     from healthmodels.models import HealthFacilityType
     from logistics.util import config
-    for code, name in config.SupplyPointTypes.ALL.items():
+    for code, name in config.SupplyPointCodes.ALL.items():
         type_ = HealthFacilityType.objects.get_or_create(slug=code)[0]
         if type_.name != name:
             type_.name = name
@@ -28,7 +28,7 @@ def init_test_facilities(log_to_console=False):
     from logistics.models import SupplyPoint, SupplyPointType
     _init_facility_types()
     loc = Location.objects.all()[0]
-    sp_type = SupplyPointType.objects.get(code=config.SupplyPointTypes.CLINIC)
+    sp_type = SupplyPointType.objects.get(code=config.SupplyPointCodes.CLINIC)
     sp, created = SupplyPoint.objects.get_or_create(code='tf', type=sp_type, 
                                                     location=loc)
     sp.name = 'test supply point'
