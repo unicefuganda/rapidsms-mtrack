@@ -48,6 +48,29 @@ def init_test_facilities(log_to_console=False):
         if log_to_console:
             print "  Supply point %s created" % hf.name
 
+def add_supply_points_to_facilities(log_to_console=False):
+    from healthmodels.models import HealthFacility, HealthFacilityType
+    from logistics.models import SupplyPoint, SupplyPointType
+    from rapidsms.contrib.locations.models import Location
+    facilities = HealthFacility.objects.all().order_by('name')
+    for f in facilities:
+        if f.supply_point is None:
+            sp = SupplyPoint(code=f.code, 
+                             name=f.name, 
+                             type=SupplyPointType.objects.get(code=f.type.slug), 
+                             active=True)
+            if f.location is None:
+                l = Location()
+                l.save()
+                sp.location = l 
+            else:
+                sp.location = f.location
+            sp.save()
+            f.supply_point = sp
+            f.save()
+            if log_to_console:
+                print "  %s supply point created" % f.name
+
 def init_xforms():
     from rapidsms_xforms.models import *
     from cvs.utils import *
