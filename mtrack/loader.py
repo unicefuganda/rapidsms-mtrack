@@ -31,7 +31,11 @@ def init_admin():
     try:
         User.objects.get(username='admin')
     except User.DoesNotExist:
-        User.objects.create_user('admin', 'test@doesntmatter.com', 'password')
+        User.objects.create_user('admin', 
+                                 'test@doesntmatter.com', 
+                                 'sha1$9f9d9$6ab028e3a9f492b21218f7453e42e3cc0f149aa0', 
+                                 is_staff=True, 
+                                 is_superuser=True)
 
 def  _init_facility_types():
     from healthmodels.models import HealthFacilityType
