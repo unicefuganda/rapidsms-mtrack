@@ -1,3 +1,8 @@
+"""
+Load utils: good for setting up a demo environment, 
+first setup of production environment, and automated testing
+"""
+
 import os
 import sys
 from django.conf import settings
@@ -8,10 +13,26 @@ from logistics.models import SupplyPoint, SupplyPointType,\
     ProductReportType, ContactRole, Product, ProductType
 from logistics.util import config
 
-def load_cvs_xforms():
-    from cvs.utils import init_xforms
-    init_xforms()
-    
+def mtrack_init():
+    from logistics import loader as logi_loader
+    from cvs.utils import init_xforms as cvs_init_xforms
+    logi_loader.load_products()
+    logi_loader.init_reports(True)
+    logi_loader.init_roles_and_responsibilities(True)
+    logi_loader.init_supply_point_types()
+    logi_loader.generate_codes_for_locations()
+    cvs_init_xforms()  
+    # act xform initiailization is already handled in cvs
+    # mtrack_loader.init_xforms()  
+    add_supply_points_to_facilities()
+
+def init_admin():
+    from django.contrib.auth.models import User
+    try:
+        User.objects.get(username='admin')
+    except User.DoesNotExist:
+        User.objects.create_user('admin', 'test@doesntmatter.com', 'password')
+
 def  _init_facility_types():
     from healthmodels.models import HealthFacilityType
     from logistics.util import config
@@ -73,8 +94,7 @@ def add_supply_points_to_facilities(log_to_console=False):
                 print "  %s supply point created" % f.name
 
 def init_xforms():
-    from rapidsms_xforms.models import *
-    from cvs.utils import *
+    from cvs.utils import init_xforms_from_tuples
     XFORMS = (
         ('', 'act', ' ', 'ACT stock report','Report levels of ACT stocks',),
     )
