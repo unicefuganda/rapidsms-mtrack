@@ -8,3 +8,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         mtrack_loader.mtrack_init()
+        logi_loader.load_products_into_facilities()
