@@ -8,7 +8,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         mtrack_loader.mtrack_init()
-        mtrack_loader.init_admin()
         logi_loader.init_test_location_and_supplypoints()
         logi_loader.init_test_product_and_stock()
         mtrack_loader.init_test_facilities(True)

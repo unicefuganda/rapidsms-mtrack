@@ -21,6 +21,7 @@ def mtrack_init():
     logi_loader.init_roles_and_responsibilities(True)
     logi_loader.init_supply_point_types()
     logi_loader.generate_codes_for_locations()
+    init_admin()
     cvs_init_xforms()  
     # act xform initiailization is already handled in cvs
     # mtrack_loader.init_xforms()  
@@ -31,11 +32,12 @@ def init_admin():
     try:
         User.objects.get(username='admin')
     except User.DoesNotExist:
-        User.objects.create_user('admin', 
-                                 'test@doesntmatter.com', 
-                                 'sha1$9f9d9$6ab028e3a9f492b21218f7453e42e3cc0f149aa0', 
-                                 is_staff=True, 
-                                 is_superuser=True)
+        admin = User.objects.create_user(username='admin', 
+                                 email='test@doesntmatter.com', 
+                                 password='password')
+        admin.is_staff=True
+        admin.is_superuser=True
+        admin.save()
 
 def  _init_facility_types():
     from healthmodels.models import HealthFacilityType
