@@ -7,7 +7,6 @@ import os
 import sys
 from django.conf import settings
 from rapidsms.contrib.locations.models import LocationType, Location, Point
-from dimagi.utils.couch.database import get_db
 from logistics.const import Reports
 from logistics.models import SupplyPoint, SupplyPointType,\
     ProductReportType, ContactRole, Product, ProductType
