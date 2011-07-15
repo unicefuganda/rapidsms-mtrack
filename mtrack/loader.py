@@ -27,6 +27,14 @@ def mtrack_init():
     # mtrack_loader.init_xforms()  
     add_supply_points_to_facilities()
 
+def mtrack_init_demo():
+    from logistics import loader as logi_loader
+    mtrack_init()
+    logi_loader.init_test_location_and_supplypoints()
+    logi_loader.init_test_product_and_stock()
+    init_test_facilities(True)
+    logi_loader.load_products_into_facilities(demo=True)
+
 def init_admin():
     from django.contrib.auth.models import User
     try:
