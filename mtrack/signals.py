@@ -27,13 +27,13 @@ def xform_received_handler(sender, **kwargs):
         submission.has_errors = True
         submission.save()
         return
-    if health_provider.facility is None:
-        submission.response = "You are not associated with a facility. Please contact an administrator."
-        submission.has_errors = True
-        submission.save()
-        return
     
     if xform.keyword == 'act':
+        if health_provider.facility is None:
+            submission.response = "You are not associated with a facility. Please contact an administrator."
+            submission.has_errors = True
+            submission.save()
+            return
         stock_report = ProductReportsHelper(health_provider.facility.supply_point, 
                                             const.Reports.SOH,  
                                             message)
