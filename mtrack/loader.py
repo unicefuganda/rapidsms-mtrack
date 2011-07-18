@@ -24,7 +24,7 @@ def mtrack_init():
     cvs_init_xforms()  
     # act xform initiailization is already handled in cvs
     # mtrack_loader.init_xforms()  
-    add_supply_points_to_facilities()
+    add_supply_points_to_facilities(True)
 
 def mtrack_init_demo():
     from logistics import loader as logi_loader
@@ -33,7 +33,17 @@ def mtrack_init_demo():
     logi_loader.init_test_product_and_stock()
     init_test_facilities(True)
     logi_loader.load_products_into_facilities(demo=True)
+    init_test_user()
 
+def init_test_user():
+    from rapidsms.models import Backend, Connection
+    from healthmodels.models import HealthProvider
+    hp = HealthProvider.objects.create(name='David McCann')
+    b = Backend.objects.create(name='test')
+    c = Connection.objects.create(identity='8675309', backend=b)
+    c.contact = hp
+    c.save()
+    
 def init_admin():
     from django.contrib.auth.models import User
     try:
@@ -82,30 +92,6 @@ def init_test_facilities(log_to_console=False):
         if log_to_console:
             print "  Supply point %s created" % hf.name
 
-def add_supply_points_to_facilities(log_to_console=False):
-    from healthmodels.models import HealthFacility, HealthFacilityType
-    from logistics.models import SupplyPoint, SupplyPointType
-    from rapidsms.contrib.locations.models import Location
-    facilities = HealthFacility.objects.all().order_by('name')
-    for f in facilities:
-        if f.supply_point is None:
-            sp = SupplyPoint(code=f.code, 
-                             name=f.name, 
-                             type=SupplyPointType.objects.get(code=f.type.slug), 
-                             active=True)
-            if f.location is None:
-                l = Location(name=f.name)
-                l.save()
-                sp.location = l 
-                f.location = l
-            else:
-                sp.location = f.location
-            sp.save()
-            f.supply_point = sp
-            f.save()
-            if log_to_console:
-                print "  %s supply point created" % f.name
-
 def init_xforms():
     from cvs.utils import init_xforms_from_tuples
     XFORMS = (
@@ -123,3 +109,37 @@ def init_xforms():
     }
     
     init_xforms_from_tuples(XFORMS, XFORM_FIELDS)
+
+def add_supply_points_to_facilities(log_to_console=False):
+    from healthmodels.models import HealthFacility, HealthFacilityType
+    from logistics.models import SupplyPoint, SupplyPointType
+    from rapidsms.contrib.locations.models import Location
+    facilities = HealthFacility.objects.all().order_by('name')
+    for f in facilities:
+        if f.supply_point is None:
+            type_, created = SupplyPointType.objects.get_or_create(code=f.type.slug)
+            sp = SupplyPoint(code=f.code, 
+                             name=f.name, 
+                             type=type_, 
+                             active=True)
+            try:
+                sp.location = get_location_from_facility(f)
+            except ValueError:
+                continue
+            sp.save()
+            f.supply_point = sp
+            f.save()
+            if log_to_console:
+                print "  %s supply point created" % f.name
+
+def get_location_from_facility(facility):
+    """ determine lowest common ancestor of all catchment areas 
+    CAUTION: this location hierarchy is intended to match the reporting structure
+    used in rapidsms-cvs. Don't modify this without ensuring consistency with those reports. 
+    """
+    from django.db.models import Max,Min
+    if facility.catchment_areas.count()==0:
+        raise ValueError("%s does not have any catchment areas defined!" % facility.name)
+    bounds = facility.catchment_areas.aggregate(Max('rght'),Min('lft'))
+    location = Location.objects.filter(lft__lte=bounds['lft__min'],rght__gte=bounds['rght__max']).order_by('-lft')
+    return location[0]
