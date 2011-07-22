@@ -117,20 +117,24 @@ def add_supply_points_to_facilities(log_to_console=False):
     facilities = HealthFacility.objects.all().order_by('name')
     for f in facilities:
         if f.supply_point is None:
-            type_, created = SupplyPointType.objects.get_or_create(code=f.type.slug)
-            sp = SupplyPoint(code=f.code, 
-                             name=f.name, 
-                             type=type_, 
-                             active=True)
-            try:
-                sp.location = get_location_from_facility(f)
-            except ValueError:
-                continue
-            sp.save()
-            f.supply_point = sp
+            f.supply_point = create_supply_point_from_facility(f)
             f.save()
             if log_to_console:
                 print "  %s supply point created" % f.name
+
+def create_supply_point_from_facility(f):
+    type_, created = SupplyPointType.objects.get_or_create(code=f.type.slug)
+    sp = SupplyPoint(code=f.code, 
+                     name=f.name, 
+                     type=type_, 
+                     active=True)
+    try:
+        sp.location = get_location_from_facility(f)
+    except ValueError:
+        # supply points require a location
+        return None
+    sp.save()
+    return sp
 
 def get_location_from_facility(facility):
     """ determine lowest common ancestor of all catchment areas 

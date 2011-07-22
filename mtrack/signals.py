@@ -1,4 +1,8 @@
+from django.db.models.signals import pre_save
 from rapidsms_xforms.models import xform_received
+from healthmodels.models import HealthFacility
+from logistics.models import SupplyPoint, SupplyPointType
+from mtrack.loader import create_supply_point_from_facility, get_location_from_facility
 
 def xform_received_handler(sender, **kwargs):
     from logistics.models import ProductReportsHelper
@@ -53,3 +57,24 @@ def xform_received_handler(sender, **kwargs):
         return
 
 xform_received.connect(xform_received_handler, weak=True)
+
+def update_supply_point_from_facility(sender, instance, **kwargs): 
+    """ 
+    whenever a facility is updated, automatically update the supply point
+    """
+    supply_point = instance.supply_point
+    if supply_point is None:
+        # create
+        instance.supply_point = create_supply_point_from_facility(instance)
+        return
+    # else update
+    type_, created = SupplyPointType.objects.get_or_create(code=instance.type.slug)
+    supply_point.type = type_
+    try:
+        supply_point.location = get_location_from_facility(instance)
+    except ValueError:
+        pass
+    supply_point.save()
+    return
+    
+pre_save.connect(update_supply_point_from_facility, HealthFacility)
