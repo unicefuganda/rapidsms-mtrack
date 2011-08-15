@@ -69,5 +69,5 @@ class MTrackTests(TestCase):
         self.assertEquals(hf.supply_point.location.name,'Dangme East')
         hf.catchment_areas.add(Location.objects.all()[2])
         hf.save()
-        self.assertEquals(hf.supply_point.location.name,'uganda')
+        self.assertEquals(hf.supply_point.location.name,'UG')
         

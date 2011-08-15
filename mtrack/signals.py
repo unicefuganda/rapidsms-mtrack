@@ -1,4 +1,4 @@
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from rapidsms_xforms.models import xform_received
 from healthmodels.models import HealthFacility
 from healthmodels.models.HealthFacility import HealthFacilityBase
@@ -83,4 +83,4 @@ def update_supply_point_from_facility(sender, instance, **kwargs):
     supply_point.save()
     return
 
-pre_save.connect(update_supply_point_from_facility, HealthFacility)
+post_save.connect(update_supply_point_from_facility, HealthFacility)
