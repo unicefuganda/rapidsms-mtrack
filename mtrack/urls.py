@@ -29,4 +29,6 @@ urlpatterns = patterns('',
     url(r'^dashboard/stockmap/$', direct_to_template, {'template':'mtrack/partials/demo_map_stock.html'}, name='dashboard-stock-map'),
     # FIXME: dashboard disease map
     url(r'^dashboard/epimap/$', direct_to_template, {'template':'mtrack/partials/demo_map_epi.html'}, name='dashboard-epi-map'),
+
+    (r'^alerts/', include('alerts.urls')),
 )
