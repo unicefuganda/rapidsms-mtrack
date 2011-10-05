@@ -15,14 +15,12 @@ from healthmodels.models import HealthFacility
 
 def mtrack_init():
     from logistics import loader as logi_loader
-    from cvs.utils import init_xforms as cvs_init_xforms
     logi_loader.load_products()
     logi_loader.init_reports(True)
     logi_loader.init_roles_and_responsibilities(True)
     logi_loader.init_supply_point_types()
     logi_loader.generate_codes_for_locations()
     init_admin()
-    cvs_init_xforms()
     # act xform initiailization is already handled in cvs
     # mtrack_loader.init_xforms()  
     add_supply_points_to_facilities(True)
