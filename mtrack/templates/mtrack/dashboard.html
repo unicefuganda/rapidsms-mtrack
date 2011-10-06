@@ -34,15 +34,11 @@
 
 {% block right %}
 <div class="module">
-    <h2>Stock</h2>
-	<div id="stock-map" class="map init"></div>
-	<br clear="both"/>
-	<br/>
 	<h2>Disease/Nutrition</h2>
 	<div id="epi-map" class="map init"></div>
     <br clear="both"/>
     <br/>
-	<h2>Cool choropleth test</h2>
+	<h2>Stock</h2>
 	<div id='map_canvas' class="init"></div>
 </div>
 <script language=JavaScript" type="text/javascript">
@@ -54,13 +50,12 @@ $(document).ready(function() {
     init_map('stock-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
     init_map('epi-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
     // FIXME: need some dummy data for this to look nice
-    // plot_layer('epi-map', 'Malnutrition', '/cvs/stats/<start_ts>/<end_ts>/muac/', '/cvs/stats/<start_ts>/<end_ts>/muac/');
-
+    plot_layer('epi-map', 'Health Facilities', '/cvs/stats/healthfacility', '/cvs/stats/healthfacility');
 
     var data = new google.visualization.DataTable();
     data.addRows(4);
     data.addColumn('string', 'Country');
-    data.addColumn('number', 'Number of Zombies');
+    data.addColumn('number', 'ACT Stock');
     // http://en.wikipedia.org/wiki/ISO_3166-2:UG
     data.setValue(0, 0, 'UG-C');
     data.setValue(0, 1, 500);
