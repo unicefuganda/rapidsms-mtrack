@@ -3,7 +3,7 @@ from django.conf.urls.defaults import *
 from generic.views import generic
 from django.views.generic.simple import direct_to_template
 from rapidsms_httprouter.models import Message
-from .utils import get_dashboard_messages
+from uganda_common.utils import get_messages as get_dashboard_messages
 
 urlpatterns = patterns('',
     url(r'^facility/(?P<code>\w+)/config/?$',
@@ -14,6 +14,8 @@ urlpatterns = patterns('',
         'queryset':get_dashboard_messages,
         'objects_per_page':5,
         'base_template':'mtrack/partials/dashboard.html',
+        'partial_base':'mtrack/partials/messages_base.html',
+        'partial_header':'mtrack/partials/messages_header.html',
         'selectable':False,
         'results_title':'',
     }, name='dashboard-messagelog'),
