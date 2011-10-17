@@ -88,3 +88,4 @@ class Command(BaseCommand):
             except Exception, e:
                 import pdb;pdb.set_trace()
                 print "Bummer"
+        transaction.commit()
