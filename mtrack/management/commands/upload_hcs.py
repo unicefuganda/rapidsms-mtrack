@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from rapidsms.contrib.locations.models import Location, LocationType, Point
         from healthmodels.models import HealthFacility, HealthFacilityType
-        c = csv.reader(open('/home/david/Desktop/mtrac_hc.csv'), delimiter="\t")
+        c = csv.reader(open('/home/david/mtrac_hc.csv'), delimiter="\t")
         rows = []
         for row in c:
             rows.append(row)
