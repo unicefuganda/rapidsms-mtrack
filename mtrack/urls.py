@@ -4,11 +4,12 @@ from generic.views import generic
 from django.views.generic.simple import direct_to_template
 from rapidsms_httprouter.models import Message
 from uganda_common.utils import get_messages as get_dashboard_messages
+from mtrack.views.dashboard import admin
 
 urlpatterns = patterns('',
-    url(r'^facility/(?P<code>\w+)/config/?$',
-       'mtrack.views.facility_detail',
-       name='facility_detail'),
+#    url(r'^facility/(?P<code>\w+)/config/?$',
+#       'mtrack.views.facility_detail',
+#       name='facility_detail'),
     url(r'^dashboard/messagelog/$', generic, {
         'model':Message,
         'queryset':get_dashboard_messages,
@@ -20,7 +21,7 @@ urlpatterns = patterns('',
         'results_title':'',
     }, name='dashboard-messagelog'),
     # FIXME: dashboard admin summary
-    url(r'^dashboard/admin/$', direct_to_template, {'template':'mtrack/partials/demo_admin.html'}, name='dashboard-admin'),
+    url(r'^dashboard/admin/$', admin, name='dashboard-admin'),
     # FIXME: dashboard alerts list
     url(r'^dashboard/alerts/$', direct_to_template, {'template':'mtrack/partials/demo_alerts.html'}, name='dashboard-alerts'),
     # FIXME: dashboard approve module
