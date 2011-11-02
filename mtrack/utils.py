@@ -62,14 +62,25 @@ def get_staff_for_facility(facilities):
     hc_role = Group.objects.get(name='HC')
     return HealthProvider.objects.filter(groups=hc_role, facility__in=facilities)
 
-def get_last_reporting_date(facility):
+def get_latest_report(facility, keyword=None):
     facilities = HealthFacility.objects.filter(pk=facility.pk)
     staff = get_staff_for_facility(facilities)
     try:
-        return XFormSubmission.objects.filter(message__connection__contact__in=staff)\
-            .latest('created').created
+        if keyword:
+            return XFormSubmission.objects.filter(xform__keyword=keyword, message__connection__contact__in=staff)\
+                .latest('created')
+        else:
+            return XFormSubmission.objects.filter(message__connection__contact__in=staff)\
+                .latest('created')
     except XFormSubmission.DoesNotExist:
         return None
+
+def get_last_reporting_date(facility):
+    report = get_latest_report(facility)
+    if report:
+        return report.created
+
+    return None
 
 def get_facility_reports(facility):
     facilities = HealthFacility.objects.filter(pk=facility.pk)
