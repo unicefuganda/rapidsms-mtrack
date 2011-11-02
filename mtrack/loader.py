@@ -4,14 +4,17 @@ first setup of production environment, and automated testing
 """
 
 import os
+import random
 import sys
 from django.conf import settings
+from django.contrib.auth.models import User
 from rapidsms.contrib.locations.models import LocationType, Location, Point
 from logistics.const import Reports
 from logistics.models import SupplyPoint, SupplyPointType, \
     ProductReportType, ContactRole, Product, ProductType
 from logistics.util import config
 from healthmodels.models import HealthFacility
+from rapidsms.models import Contact
 
 def mtrack_init():
     from logistics import loader as logi_loader
@@ -21,8 +24,7 @@ def mtrack_init():
     logi_loader.init_supply_point_types()
     logi_loader.generate_codes_for_locations()
     init_admin()
-    # act xform initiailization is already handled in cvs
-    # mtrack_loader.init_xforms()  
+    init_dho_users()
     add_supply_points_to_facilities(True)
 
 def mtrack_init_demo():
@@ -91,24 +93,6 @@ def init_test_facilities(log_to_console=False):
         if log_to_console:
             print "  Supply point %s created" % hf.name
 
-def init_xforms():
-    from cvs.utils import init_xforms_from_tuples
-    XFORMS = (
-        ('', 'act', ' ', 'ACT stock report', 'Report levels of ACT stocks',),
-    )
-
-    XFORM_FIELDS = {
-        'act':[
-             ('yellow', 'int', 'Yellow ACT', True),
-             ('blue', 'int', 'Blue ACT', True),
-             ('brown', 'int', 'Brown ACT', True),
-             ('green', 'int', 'Green ACT', True),
-             ('other', 'int', 'Other ACT', True),
-         ],
-    }
-
-    init_xforms_from_tuples(XFORMS, XFORM_FIELDS)
-
 def add_supply_points_to_facilities(log_to_console=False):
     from healthmodels.models import HealthFacility, HealthFacilityType
     from logistics.models import SupplyPoint, SupplyPointType
@@ -123,10 +107,11 @@ def add_supply_points_to_facilities(log_to_console=False):
 
 def create_supply_point_from_facility(f):
     type_, created = SupplyPointType.objects.get_or_create(code=f.type.slug)
-    sp = SupplyPoint(code=f.code,
+    default_loc = Location.tree.root_nodes()[0]
+    sp, created = SupplyPoint.objects.get_or_create(code=f.code,
                      name=f.name,
                      type=type_,
-                     active=True)
+                     active=True, defaults={'location':default_loc})
     try:
         sp.location = get_location_from_facility(f)
     except ValueError:
@@ -146,3 +131,223 @@ def get_location_from_facility(facility):
     bounds = facility.catchment_areas.aggregate(Max('rght'), Min('lft'))
     location = Location.objects.filter(lft__lte=bounds['lft__min'], rght__gte=bounds['rght__max']).order_by('-lft')
     return location[0]
+
+def init_dho_users():
+
+    pass_word_list = [
+        'Adult',
+        'Air',
+        'Aircraft',
+        'Airport',
+        'Album',
+        'Alphabet',
+        'Apple',
+        'Arm',
+        'Baby',
+        'Backpack',
+        'Balloon',
+        'Banana',
+        'Bank',
+        'Barbecue',
+        'Bathroom',
+        'Bathtub',
+        'Bed',
+        'Bee',
+        'Bible',
+        'Bird',
+        'Book',
+        'Boss',
+        'Bottle',
+        'Bowl',
+        'Box',
+        'Boy',
+        'Brain',
+        'Bridge',
+        'Butterfly',
+        'Button',
+        'Cappuccino',
+        'Car',
+        'Carpet',
+        'Carrot',
+        'Cave',
+        'Chair',
+        'Chess',
+        'Chief',
+        'Child',
+        'Chisel',
+        'Chocolates',
+        'Church',
+        'Circle',
+        'Circus',
+        'Clock',
+        'Clown',
+        'Coffee',
+        'Comet',
+        'Compact',
+        'Compass',
+        'Computer',
+        'Crystal',
+        'Cup',
+        'Cycle',
+        'Data',
+        'Desk',
+        'Diamond',
+        'Dress',
+        'Drill',
+        'Drink',
+        'Drum',
+        'Ears',
+        'Earth',
+        'Egg',
+        'Electricity',
+        'Elephant',
+        'Eraser',
+        'Explosive',
+        'Eyes',
+        'Family',
+        'Fan',
+        'Feather',
+        'Festival',
+        'Film',
+        'Finger',
+        'Fire',
+        'Floodlight',
+        'Flower',
+        'Foot',
+        'Fork',
+        'Freeway',
+        'Fruit',
+        'Fungus',
+        'Game',
+        'Garden',
+        'Gas',
+        'Gate',
+        'Gemstone',
+        'Girl',
+        'Gloves',
+        'God',
+        'Grapes',
+        'Guitar',
+        'Hammer',
+        'Hat',
+        'Highway',
+        'Horse',
+        'Hose',
+        'Ice',
+        'Insect',
+        'Jet',
+        'Junk',
+        'Kitchen',
+        'Knife',
+        'Leather',
+        'Leg',
+        'Library',
+        'Liquid',
+        'Magnet',
+        'Man',
+        'Map',
+        'Maze',
+        'Meat',
+        'Meteor',
+        'Milk',
+        'Mist',
+        'Money',
+        'Monster',
+        'Mosquito',
+        'Mouth',
+        'Nail',
+        'Navy',
+        'Necklace',
+        'Needle',
+        'Onion',
+        'Paint',
+        'Parachute',
+        'Passport',
+        'Pebble',
+        'Pendulum',
+        'Pepper',
+        'Perfume',
+        'Pillow',
+        'Plane',
+        'Planet',
+        'Pocket',
+        'Post',
+        'Potato',
+        'Printer',
+        'Prison',
+        'Radar',
+        'Rainbow',
+        'Record',
+        'Ring',
+        'Robot',
+        'Rock',
+        'Rocket',
+        'Roof',
+        'Room',
+        'Rope',
+        'Saddle',
+        'Salt',
+        'Sand',
+        'Satellite',
+        'School',
+        'Ship',
+        'Shoes',
+        'Shop',
+        'Shower',
+        'Signature',
+        'Skeleton',
+        'Snail',
+        'Software',
+        'Solid',
+        'Space',
+        'Sphere',
+        'Spice',
+        'Spiral',
+        'Spoon',
+        'Square',
+        'Staircase',
+        'Star',
+        'Stomach',
+        'Sun',
+        'Sunglasses',
+        'Surveyor',
+        'Swimming',
+        'Sword',
+        'Table',
+        'Teeth',
+        'Telescope',
+        'Television',
+        'Tennis',
+        'Thermometer',
+        'Tiger',
+        'Toilet',
+        'Tongue',
+        'Torch',
+        'Train',
+        'Treadmill',
+        'Triangle',
+        'Tunnel',
+        'Typewriter',
+        'Umbrella',
+        'Vacuum',
+        'Videotape',
+        'Vulture',
+        'Water',
+        'Weapon',
+        'Web',
+        'Window',
+        'Woman',
+        'Worm',
+    ]
+    print "Adding Users:"
+    for l in Location.objects.filter(type__name='district'):
+        if not User.objects.filter(username__iexact=l.name).count():
+            password = ''
+            while len(password) < 8:
+                new_word = pass_word_list[random.randint(0, len(pass_word_list) - 1)].lower()
+                if not new_word in password:
+                    password = "%s%s" % (new_word.lower(), password)
+
+            u = User.objects.create_user(l.name.upper(), 'mtrac@gmail.com', password)
+            print "%s\t%s" % (l.name.upper(), password)
+            Contact.objects.create(user=u, reporting_location=l, name='%s DHO User' % l.name)
