@@ -1,4 +1,5 @@
 import datetime
+from alerts.models import Notification
 from django.contrib.auth.models import Group
 from django.db.models import Count, Max, Min
 from healthmodels.models import HealthFacility, HealthProvider
@@ -6,16 +7,18 @@ from rapidsms.contrib.locations.models import Location
 from rapidsms_xforms.models import XFormSubmission
 from uganda_common.utils import get_location_for_user
 
-def last_reporting_period():
+def last_reporting_period(period=1):
     """
     Find a date range that spans from the most recent Wednesday (exactly a week ago if
     today is Wednesday) to the beginning of Thursday, one week prior
+    
+    if period is specified, this wednesday can be exactly <period> weeks prior
     """
     d = datetime.datetime.now()
     d = datetime.datetime(d.year, d.month, d.day)
     # find the past day with weekday() of 2, or if we're on a wednesday, go
     # to the last one.
-    last_wednesday = d - datetime.timedelta((((5 + d.weekday()) % 7) or 7))
+    last_wednesday = d - datetime.timedelta((((5 + d.weekday()) % 7) or 7)) - datetime.timedelta((period - 1) * 7)
     return (last_wednesday - datetime.timedelta(7), d,)
 
 def total_facilities(location, count=True):
@@ -35,9 +38,7 @@ def total_facilities(location, count=True):
     return facilities
 
 def get_facilites_for_view(request=None):
-    location = Location.tree.root_nodes()[0]
-    if request.user:
-        location = get_location_for_user(request.user) or location
+    location = get_location_for_user(request.user)
     return total_facilities(location, count=False)
 
 def total_vhts(location, count=True):
@@ -82,12 +83,28 @@ def get_last_reporting_date(facility):
 
     return None
 
-def get_facility_reports(facility):
-    facilities = HealthFacility.objects.filter(pk=facility.pk)
+def get_facility_reports(location, count=False, date_range=last_reporting_period()):
+    facilities = total_facilities(location, count=False)
     staff = get_staff_for_facility(facilities)
-    return XFormSubmission.objects.filter(message__connection__contact__in=staff)\
-        .filter(has_errors=False)\
-        .count()
+    date_range = last_reporting_period()
+    toret = XFormSubmission.objects.filter(\
+        message__connection__contact__in=staff, \
+        has_errors=False)
+    if date_range:
+        toret = toret.filter(created__range=date_range)
+
+    if count:
+        return toret.count()
+
+    return toret
+
+def get_all_facility_reports_for_view(request=None):
+    location = get_location_for_user(request.user)
+    return get_facility_reports(location, count=False, date_range=None)
+
+def get_facility_reports_for_view(request=None):
+    location = get_location_for_user(request.user)
+    return get_facility_reports(location, count=False)
 
 def reporting_facilities(location, facilities=None, count=True, date_range=None):
     facilities = facilities or total_facilities(location, count=False)
@@ -127,4 +144,38 @@ def get_district_for_facility(hc):
 
     return None
 
+
+ALERTS_TOTAL = 0
+ALERTS_ACTIONED = 1
+ALERTS_CREATED = 2
+
+def alerts_report(location, date_range, type=ALERTS_TOTAL):
+    tnum = 3
+    count_val = 'id'
+
+    select = {
+        'location_name':'T%d.name' % tnum,
+        'location_id':'T%d.id' % tnum,
+        'rght':'T%d.rght' % tnum,
+        'lft':'T%d.lft' % tnum,
+    }
+
+    if type == ALERTS_ACTIONED:
+        notifications = Notification.objects.filter(modified_on__range=date_range, escalated_on=None)
+    elif type == ALERTS_CREATED:
+        notifications = Notification.objects.filter(created_on__range=date_range, escalated_on=None)
+    else:
+        notifications = Notification.objects.filter(is_open=True, escalated_on=None)
+
+    values = ['location_name', 'location_id', 'rght', 'lft']
+    if location.get_children().count() > 1:
+        location_children_where = 'T%d.id in %s' % (tnum, (str(tuple(location.get_children().values_list(\
+                       'pk', flat=True)))))
+    else:
+        location_children_where = 'T%d.id = %d' % (tnum, location.get_children()[0].pk)
+    return  notifications.values('originating_location__name').extra(
+            tables=['locations_location'], where=[\
+                   'T%d.lft <= locations_location.lft' % tnum, \
+                   'T%d.rght >= locations_location.rght' % tnum, \
+                   location_children_where]).extra(select=select).values(*values).annotate(value=Count(count_val))
 
