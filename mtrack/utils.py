@@ -19,7 +19,7 @@ def last_reporting_period(period=1):
     # find the past day with weekday() of 2, or if we're on a wednesday, go
     # to the last one.
     last_wednesday = d - datetime.timedelta((((5 + d.weekday()) % 7) or 7)) - datetime.timedelta((period - 1) * 7)
-    return (last_wednesday - datetime.timedelta(7), d,)
+    return (last_wednesday - datetime.timedelta(7), last_wednesday,)
 
 def total_facilities(location, count=True):
     """

@@ -43,8 +43,8 @@ class ManagementReport(XFormReport):
     order=2, title='% Change (prev week)')
     total_outstanding = AlertReportsColumn(type=ALERTS_TOTAL, period=1, title='Total Outstanding', order=3)
 
-    registered_vhts = RegisteredReportersColumn(order=4, title="Active", chart_title='Active VHTs')
-    active_vhts = ActiveReportersColumn(order=5, title="Active", chart_title='Active VHTs')
+    registered_vhts = RegisteredReportersColumn(order=4, title="Registered", chart_title='Active VHTs')
+    active_vhts = ActiveReportersColumn(order=5, title="Active (this week)", chart_title='Active VHTs')
     percent_change_vhts = DifferenceColumn(\
         QuotientColumn(\
             ActiveReportersColumn(), \
@@ -54,17 +54,17 @@ class ManagementReport(XFormReport):
             ActiveReportersColumn(period=2), \
             RegisteredReportersColumn() \
         ), \
-    order=6, title='% Change (prev week)')
+    order=6, title='% Change (from prev week)')
 
-    registered_hcs = RegisteredReportersColumn(order=7, title="Active", roles=['HC'], chart_title='Active HCs')
-    active_hcs = ActiveReportersColumn(order=8, title="Active", roles=['HC'], chart_title='Active HCs')
+    registered_hcs = RegisteredReportersColumn(order=7, title="Registered", roles=['HC'], chart_title='Active HCs')
+    active_hcs = ActiveReportersColumn(order=8, title="Active (this week)", roles=['HC'], chart_title='Active HCs')
     percent_change_hcs = DifferenceColumn(\
         QuotientColumn(\
             ActiveReportersColumn(roles=['HC']), \
-            RegisteredReportersColumn() \
+            RegisteredReportersColumn(roles=['HC']) \
         ), \
         QuotientColumn(\
             ActiveReportersColumn(roles=['HC'], period=2), \
-            RegisteredReportersColumn() \
+            RegisteredReportersColumn(roles=['HC']) \
         ), \
-    order=9, title='% Change (prev week)')
+    order=9, title='% Change (from prev week)')
