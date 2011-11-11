@@ -1,0 +1,2028 @@
+[
+    {
+        "pk": "death_af", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 35, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_af", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 36, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_ae", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 37, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_ae", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 38, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_ab", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 39, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_ab", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 40, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_mg", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 41, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_mg", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 42, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_ch", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 43, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_ch", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 44, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_gw", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 45, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_gw", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 46, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_me", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 47, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_me", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 48, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_sa", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 2, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_sa", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 3, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_dy", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 4, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_dy", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 5, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_ma", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 6, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_nt", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 49, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_nt", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 50, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_id", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 51, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_id", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 52, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_vf", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 53, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_vf", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 54, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_pl", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 55, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "opd_pd", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 7, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "opd_md", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 8, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "opd_nat", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 9, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_pl", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 56, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_rb", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 57, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_rb", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 58, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_tf", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 59, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_tf", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 60, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "test_pcy", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 10, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "test_pcc", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 11, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "test_mtp", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 12, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "test_mtc", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 13, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "test_rdp", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 14, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "test_rdt", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 15, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "death_yf", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 61, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "cases_yf", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 62, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "endpoint", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 63, 
+            "order": 0
+        }
+    }, 
+    {
+        "pk": "treat_tia", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 16, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "treat_tiy", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 17, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "treat_tic", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 18, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "treat_tin", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 19, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "treat_mtp", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 20, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "treat_mtn", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 21, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "treat_rdp", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 22, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "act_fps", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 23, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "act_fpd", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 24, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "act_eps", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 25, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "act_epd", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 26, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "act_tps", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 27, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "act_tpd", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 28, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "act_sps", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 29, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "act_spd", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 30, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "rdt_rds", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 31, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "qun_qus", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 32, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "qun_qud", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 33, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "qun_oas", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 2, 
+            "parent": null, 
+            "level": 0, 
+            "label": "", 
+            "lft": 1, 
+            "tree_id": 34, 
+            "order": -1
+        }
+    }, 
+    {
+        "pk": "reg", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 6, 
+            "parent": "edituser", 
+            "level": 2, 
+            "label": "Register Information", 
+            "lft": 5, 
+            "tree_id": 1, 
+            "order": 1
+        }
+    }, 
+    {
+        "pk": "qun_oad", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 10, 
+            "parent": "drugs", 
+            "level": 2, 
+            "label": "Other", 
+            "lft": 9, 
+            "tree_id": 1, 
+            "order": 2
+        }
+    }, 
+    {
+        "pk": "drugs", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 13, 
+            "parent": "ussd_root", 
+            "level": 1, 
+            "label": "Drug Stock", 
+            "lft": 8, 
+            "tree_id": 1, 
+            "order": 2
+        }
+    }, 
+    {
+        "pk": "test_sm", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 18, 
+            "parent": "hmis", 
+            "level": 2, 
+            "label": "Malaria Test", 
+            "lft": 17, 
+            "tree_id": 1, 
+            "order": 4
+        }
+    }, 
+    {
+        "pk": "additional", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 24, 
+            "parent": "hmis", 
+            "level": 2, 
+            "label": "Additional", 
+            "lft": 23, 
+            "tree_id": 1, 
+            "order": 2
+        }
+    }, 
+    {
+        "pk": "opd_att", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 20, 
+            "parent": "hmis", 
+            "level": 2, 
+            "label": "OPD", 
+            "lft": 19, 
+            "tree_id": 1, 
+            "order": 3
+        }
+    }, 
+    {
+        "pk": "treat_rdn", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 16, 
+            "parent": "hmis", 
+            "level": 2, 
+            "label": "Malaria", 
+            "lft": 15, 
+            "tree_id": 1, 
+            "order": 5
+        }
+    }, 
+    {
+        "pk": "rdt_rdd", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 12, 
+            "parent": "drugs", 
+            "level": 2, 
+            "label": "RDTs / ACTs", 
+            "lft": 11, 
+            "tree_id": 1, 
+            "order": 1
+        }
+    }, 
+    {
+        "pk": "edituser", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 7, 
+            "parent": "ussd_root", 
+            "level": 1, 
+            "label": "Edit User", 
+            "lft": 2, 
+            "tree_id": 1, 
+            "order": 3
+        }
+    }, 
+    {
+        "pk": "quit", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 4, 
+            "parent": "edituser", 
+            "level": 2, 
+            "label": "Permanently Quit MTrac", 
+            "lft": 3, 
+            "tree_id": 1, 
+            "order": 2
+        }
+    }, 
+    {
+        "pk": "cases_ma", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 22, 
+            "parent": "hmis", 
+            "level": 2, 
+            "label": "Diseases", 
+            "lft": 21, 
+            "tree_id": 1, 
+            "order": 1
+        }
+    }, 
+    {
+        "pk": "hmis", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 25, 
+            "parent": "ussd_root", 
+            "level": 1, 
+            "label": "HMIS 033B", 
+            "lft": 14, 
+            "tree_id": 1, 
+            "order": 1
+        }
+    }, 
+    {
+        "pk": "ussd_root", 
+        "model": "ussd.screen", 
+        "fields": {
+            "rght": 26, 
+            "parent": null, 
+            "level": 0, 
+            "label": "Ignored", 
+            "lft": 1, 
+            "tree_id": 1, 
+            "order": 1
+        }
+    }, 
+    {
+        "pk": "ussd_root", 
+        "model": "ussd.menu", 
+        "fields": {}
+    }, 
+    {
+        "pk": "hmis", 
+        "model": "ussd.menu", 
+        "fields": {}
+    }, 
+    {
+        "pk": "drugs", 
+        "model": "ussd.menu", 
+        "fields": {}
+    }, 
+    {
+        "pk": "edituser", 
+        "model": "ussd.menu", 
+        "fields": {}
+    }, 
+    {
+        "pk": "reg", 
+        "model": "ussd.menu", 
+        "fields": {}
+    }, 
+    {
+        "pk": "quit", 
+        "model": "ussd.menu", 
+        "fields": {}
+    }, 
+    {
+        "pk": "cases_sa", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Severe Acute Respiratory Infection (#)", 
+            "next": "death_sa"
+        }
+    }, 
+    {
+        "pk": "death_dy", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Dysentery (#)", 
+            "next": "cases_sa"
+        }
+    }, 
+    {
+        "pk": "cases_dy", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Dysentery (#)", 
+            "next": "death_dy"
+        }
+    }, 
+    {
+        "pk": "death_ma", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Malaria (#)", 
+            "next": "cases_dy"
+        }
+    }, 
+    {
+        "pk": "cases_ma", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Malaria (#)", 
+            "next": "death_ma"
+        }
+    }, 
+    {
+        "pk": "opd_md", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Maternal Deaths (#)", 
+            "next": "opd_pd"
+        }
+    }, 
+    {
+        "pk": "opd_nat", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "OPD Total Attendance (#)", 
+            "next": "opd_md"
+        }
+    }, 
+    {
+        "pk": "opd_att", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "OPD New Attendees (#)", 
+            "next": "opd_nat"
+        }
+    }, 
+    {
+        "pk": "test_pcc", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Positive cases under 5 years (#)", 
+            "next": "test_pcy"
+        }
+    }, 
+    {
+        "pk": "test_mtp", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Microscopy positive cases (#)", 
+            "next": "test_pcc"
+        }
+    }, 
+    {
+        "pk": "test_mtc", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Microscopy tested cases (#)", 
+            "next": "test_mtp"
+        }
+    }, 
+    {
+        "pk": "test_rdp", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "RDT positive cases (#)", 
+            "next": "test_mtc"
+        }
+    }, 
+    {
+        "pk": "test_rdt", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "RDT tested cases (#)", 
+            "next": "test_rdp"
+        }
+    }, 
+    {
+        "pk": "test_sm", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Suspected Malaria Cases (#)", 
+            "next": "test_rdt"
+        }
+    }, 
+    {
+        "pk": "treat_tiy", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "7+ to 11 years (#)", 
+            "next": "treat_tia"
+        }
+    }, 
+    {
+        "pk": "treat_tic", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "3+ to 6 years (#)", 
+            "next": "treat_tiy"
+        }
+    }, 
+    {
+        "pk": "treat_tin", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "4+ months to 2 years (#)", 
+            "next": "treat_tic"
+        }
+    }, 
+    {
+        "pk": "treat_mtp", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Microscopy positive cases treated (#)", 
+            "next": "treat_tin"
+        }
+    }, 
+    {
+        "pk": "treat_mtn", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Microscopy negative cases treated (#)", 
+            "next": "treat_mtp"
+        }
+    }, 
+    {
+        "pk": "treat_rdp", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "RDT positive cases treated (#)", 
+            "next": "treat_mtn"
+        }
+    }, 
+    {
+        "pk": "treat_rdn", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "RDT negative cases treated (#)", 
+            "next": "treat_rdp"
+        }
+    }, 
+    {
+        "pk": "act_fpd", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "24 tablet pack dispensed (#)", 
+            "next": "act_fps"
+        }
+    }, 
+    {
+        "pk": "act_eps", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "18 pack on hand (#)", 
+            "next": "act_fpd"
+        }
+    }, 
+    {
+        "pk": "act_epd", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "18 tabled pack dispensed (#)", 
+            "next": "act_eps"
+        }
+    }, 
+    {
+        "pk": "act_tps", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "12 pack on hand (#)", 
+            "next": "act_epd"
+        }
+    }, 
+    {
+        "pk": "act_tpd", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "12 tabled pack dispensed (#)", 
+            "next": "act_tps"
+        }
+    }, 
+    {
+        "pk": "act_sps", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "6 pack balance on hand (#)", 
+            "next": "act_tpd"
+        }
+    }, 
+    {
+        "pk": "act_spd", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "6 tablet pack dispensed (#)", 
+            "next": "act_sps"
+        }
+    }, 
+    {
+        "pk": "rdt_rds", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "RDTs on hand (#)", 
+            "next": "act_spd"
+        }
+    }, 
+    {
+        "pk": "rdt_rdd", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "RDTs dispensed (#)", 
+            "next": "rdt_rds"
+        }
+    }, 
+    {
+        "pk": "qun_qud", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Quinine dispensed (#)", 
+            "next": "qun_qus"
+        }
+    }, 
+    {
+        "pk": "qun_oas", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Other balance on hand (#)", 
+            "next": "qun_qud"
+        }
+    }, 
+    {
+        "pk": "qun_oad", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Other ACT dispensed (#)", 
+            "next": "qun_oas"
+        }
+    }, 
+    {
+        "pk": "cases_af", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Acute Flacid Paralysis this Week? (#)", 
+            "next": "death_af"
+        }
+    }, 
+    {
+        "pk": "cases_ae", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Adverse Events Following Immunization this Week? (#)", 
+            "next": "death_ae"
+        }
+    }, 
+    {
+        "pk": "additional", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Please enter the two letter code for the disease: (LL)", 
+            "next": "cases_ae"
+        }
+    }, 
+    {
+        "pk": "cases_ab", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Animal Bites this Week? (#)", 
+            "next": "death_ab"
+        }
+    }, 
+    {
+        "pk": "cases_mg", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Bacterial Meningitis this Week? (#)", 
+            "next": "death_mg"
+        }
+    }, 
+    {
+        "pk": "cases_ch", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Cholera this Week? (#)", 
+            "next": "death_ch"
+        }
+    }, 
+    {
+        "pk": "cases_gw", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Guinea Worm this Week? (#)", 
+            "next": "death_gw"
+        }
+    }, 
+    {
+        "pk": "cases_me", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Measles this Week? (#)", 
+            "next": "death_me"
+        }
+    }, 
+    {
+        "pk": "cases_nt", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Neonatal Tetanus this Week? (#)", 
+            "next": "death_nt"
+        }
+    }, 
+    {
+        "pk": "cases_id", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Other Emerging Infectious Diseases this Week? (#)", 
+            "next": "death_id"
+        }
+    }, 
+    {
+        "pk": "cases_vf", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Other Viral Hemorrhagic Fevers this Week? (#)", 
+            "next": "death_vf"
+        }
+    }, 
+    {
+        "pk": "cases_pl", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Plague this Week? (#)", 
+            "next": "death_pl"
+        }
+    }, 
+    {
+        "pk": "cases_rb", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Rabies this Week? (#)", 
+            "next": "death_rb"
+        }
+    }, 
+    {
+        "pk": "cases_tf", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Typhoid Fever this Week? (#)", 
+            "next": "death_tf"
+        }
+    }, 
+    {
+        "pk": "cases_yf", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Cases of Yellow Fever this Week? (#)", 
+            "next": "death_yf"
+        }
+    }, 
+    {
+        "pk": "death_sa", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Severe Acute Respiratory Infection (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "opd_pd", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Perinatal Deaths (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "test_pcy", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Positive cases 5+ years (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "treat_tia", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "12+ years (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "act_fps", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "24 pack on hand (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "qun_qus", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Quinine on hand (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_af", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Acute Flacid Paralysis this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_ae", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Adverse Events Following Immunization this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_ab", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Animal Bites this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_mg", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Bacterial Meningitis this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_ch", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Cholera this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_gw", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Guinea Worm this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_me", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Measles this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_nt", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Neonatal Tetanus this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_id", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Other Emerging Infectious Diseases this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_vf", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Other Viral Hemorrhagic Fevers this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_pl", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Plague this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_rb", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Rabies this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_tf", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Typhoid Fever this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "death_yf", 
+        "model": "ussd.question", 
+        "fields": {
+            "question_text": "Deaths from Yellow Fever this Week? (#)", 
+            "next": "endpoint"
+        }
+    }, 
+    {
+        "pk": "cases_sa", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 356
+        }
+    }, 
+    {
+        "pk": "death_dy", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 355
+        }
+    }, 
+    {
+        "pk": "cases_dy", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 354
+        }
+    }, 
+    {
+        "pk": "death_ma", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 353
+        }
+    }, 
+    {
+        "pk": "cases_ma", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 352
+        }
+    }, 
+    {
+        "pk": "opd_md", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 321
+        }
+    }, 
+    {
+        "pk": "opd_nat", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 320
+        }
+    }, 
+    {
+        "pk": "opd_att", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 319
+        }
+    }, 
+    {
+        "pk": "test_pcc", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 328
+        }
+    }, 
+    {
+        "pk": "test_mtp", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 327
+        }
+    }, 
+    {
+        "pk": "test_mtc", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 326
+        }
+    }, 
+    {
+        "pk": "test_rdp", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 325
+        }
+    }, 
+    {
+        "pk": "test_rdt", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 324
+        }
+    }, 
+    {
+        "pk": "test_sm", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 323
+        }
+    }, 
+    {
+        "pk": "treat_tiy", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 336
+        }
+    }, 
+    {
+        "pk": "treat_tic", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 335
+        }
+    }, 
+    {
+        "pk": "treat_tin", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 334
+        }
+    }, 
+    {
+        "pk": "treat_mtp", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 333
+        }
+    }, 
+    {
+        "pk": "treat_mtn", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 332
+        }
+    }, 
+    {
+        "pk": "treat_rdp", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 331
+        }
+    }, 
+    {
+        "pk": "treat_rdn", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 330
+        }
+    }, 
+    {
+        "pk": "act_fpd", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 346
+        }
+    }, 
+    {
+        "pk": "act_eps", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 345
+        }
+    }, 
+    {
+        "pk": "act_epd", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 344
+        }
+    }, 
+    {
+        "pk": "act_tps", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 343
+        }
+    }, 
+    {
+        "pk": "act_tpd", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 342
+        }
+    }, 
+    {
+        "pk": "act_sps", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 341
+        }
+    }, 
+    {
+        "pk": "act_spd", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 340
+        }
+    }, 
+    {
+        "pk": "rdt_rds", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 339
+        }
+    }, 
+    {
+        "pk": "rdt_rdd", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 338
+        }
+    }, 
+    {
+        "pk": "qun_qud", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 350
+        }
+    }, 
+    {
+        "pk": "qun_oas", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 349
+        }
+    }, 
+    {
+        "pk": "qun_oad", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 348
+        }
+    }, 
+    {
+        "pk": "cases_af", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 358
+        }
+    }, 
+    {
+        "pk": "cases_ae", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 360
+        }
+    }, 
+    {
+        "pk": "cases_ab", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 362
+        }
+    }, 
+    {
+        "pk": "cases_mg", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 364
+        }
+    }, 
+    {
+        "pk": "cases_ch", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 366
+        }
+    }, 
+    {
+        "pk": "cases_gw", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 368
+        }
+    }, 
+    {
+        "pk": "cases_me", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 370
+        }
+    }, 
+    {
+        "pk": "cases_nt", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 372
+        }
+    }, 
+    {
+        "pk": "cases_id", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 374
+        }
+    }, 
+    {
+        "pk": "cases_vf", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 376
+        }
+    }, 
+    {
+        "pk": "cases_pl", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 378
+        }
+    }, 
+    {
+        "pk": "cases_rb", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 380
+        }
+    }, 
+    {
+        "pk": "cases_tf", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 382
+        }
+    }, 
+    {
+        "pk": "cases_yf", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 384
+        }
+    }, 
+    {
+        "pk": "death_sa", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 357
+        }
+    }, 
+    {
+        "pk": "opd_pd", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 322
+        }
+    }, 
+    {
+        "pk": "test_pcy", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 329
+        }
+    }, 
+    {
+        "pk": "treat_tia", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 337
+        }
+    }, 
+    {
+        "pk": "act_fps", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 347
+        }
+    }, 
+    {
+        "pk": "qun_qus", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 351
+        }
+    }, 
+    {
+        "pk": "death_af", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 359
+        }
+    }, 
+    {
+        "pk": "death_ae", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 361
+        }
+    }, 
+    {
+        "pk": "death_ab", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 363
+        }
+    }, 
+    {
+        "pk": "death_mg", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 365
+        }
+    }, 
+    {
+        "pk": "death_ch", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 367
+        }
+    }, 
+    {
+        "pk": "death_gw", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 369
+        }
+    }, 
+    {
+        "pk": "death_me", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 371
+        }
+    }, 
+    {
+        "pk": "death_nt", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 373
+        }
+    }, 
+    {
+        "pk": "death_id", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 375
+        }
+    }, 
+    {
+        "pk": "death_vf", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 377
+        }
+    }, 
+    {
+        "pk": "death_pl", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 379
+        }
+    }, 
+    {
+        "pk": "death_rb", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 381
+        }
+    }, 
+    {
+        "pk": "death_tf", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 383
+        }
+    }, 
+    {
+        "pk": "death_yf", 
+        "model": "ussd.field", 
+        "fields": {
+            "field": 385
+        }
+    }, 
+    {
+        "pk": "endpoint", 
+        "model": "ussd.stubscreen", 
+        "fields": {
+            "terminal": true, 
+            "text": "Your session has ended, thank you."
+        }
+    }
+]
