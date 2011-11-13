@@ -5,7 +5,7 @@ from generic.sorters import SimpleSorter
 from django.views.generic.simple import direct_to_template
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
-from uganda_common.utils import get_messages as get_dashboard_messages
+from mtrack.utils import get_dashboard_messages
 from mtrack.views.dashboard import admin, approve
 from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view
 from mtrack.reports import ManagementReport

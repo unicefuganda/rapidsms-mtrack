@@ -15,9 +15,9 @@
 {% endblock %}
 
 {% block content %}
-<img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/>
+<!-- <img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/>
 This dashboard is under development and is for DEMO purposes ONLY.  You will notified when your content is available!
-<img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/>
+<img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/> -->
 <div class="module">
     <h2>Alerts</h2>
     <div id="alerts">
@@ -38,8 +38,8 @@ This dashboard is under development and is for DEMO purposes ONLY.  You will not
 		<h2>Incoming Messages</h2>
 		<div id="message"></div>
 		<br/>
-		<h2>Contacts</h2>
-		<div id="contacts"></div>
+		<!--  <h2>Contacts</h2>
+		<div id="contacts"></div> -->
 		<br/>
 	</div>
 	<div class="col-2">
@@ -47,9 +47,10 @@ This dashboard is under development and is for DEMO purposes ONLY.  You will not
 			<h2>Disease/Nutrition</h2>
 			<div id="epi-map" class="map init"></div>
 		    <br clear="both"/>
+		    <a href="{% url cvs-map %}">go to map &raquo;</a>
 		    <br/>
-			<h2>Stock</h2>
-			<div id='map_canvas' class="init"></div>
+			<!--  <h2>Stock</h2>
+			<div id='map_canvas' class="init"></div> -->
 		</div>
 	</div>
 	<script language=JavaScript" type="text/javascript">
@@ -58,13 +59,13 @@ This dashboard is under development and is for DEMO purposes ONLY.  You will not
 	    $('#approve').load('{% url dashboard-approve %}');
 	    $('#admin').load('{% url dashboard-admin %}');
 	    $('#message').load('{% url dashboard-messagelog %}');
-	    $('#contacts').load('{% url dashboard-contacts %}');
-	    init_map('stock-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
+	    //$('#contacts').load('{% url dashboard-contacts %}');
+	    //init_map('stock-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
 	    init_map('epi-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
 	    // FIXME: need some dummy data for this to look nice
 	    plot_layer('epi-map', 'Health Facilities', '/cvs/stats/healthfacility', '/cvs/stats/healthfacility');
 	
-	    var data = new google.visualization.DataTable();
+	    /*var data = new google.visualization.DataTable();
 	    data.addRows(4);
 	    data.addColumn('string', 'Country');
 	    data.addColumn('number', 'ACT Stock');
@@ -81,7 +82,7 @@ This dashboard is under development and is for DEMO purposes ONLY.  You will not
 	    var options = {region:'UG',  resolution:'provinces', colors:['#99ff77', '#ffff77','#ff9977']};
 	    var container = document.getElementById('map_canvas');
 	    var geochart = new google.visualization.GeoChart(container);
-	    geochart.draw(data, options);
+	    geochart.draw(data, options);*/
 	});
 	</script>
     <div class="clear-hack"></div>
