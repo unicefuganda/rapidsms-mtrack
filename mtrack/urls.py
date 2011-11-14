@@ -24,6 +24,19 @@ urlpatterns = patterns('',
         'selectable':False,
         'results_title':'',
     }, name='dashboard-messagelog'),
+
+    #annonymous messages
+    url(r'^dashboard/annonymous/$', generic, {
+        'model':Message,
+        'queryset':get_dashboard_messages,
+        'objects_per_page':5,
+        'base_template':'mtrack/partials/dashboard.html',
+        'partial_base':'mtrack/partials/messages_base.html',
+        'partial_header':'mtrack/partials/messages_header.html',
+        'selectable':False,
+        'results_title':'',
+    }, name='dashboard-annonymous-messagelog'),
+
     # FIXME: dashboard admin summary
     url(r'^dashboard/admin/$', admin, name='dashboard-admin'),
 
