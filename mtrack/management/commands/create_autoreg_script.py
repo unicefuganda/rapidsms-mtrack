@@ -5,8 +5,8 @@ from poll.models import *
 class Command(BaseCommand):
     def handle(self,**options):
         script = Script.objects.create(
-            slug="mtrack_anonymous_autoreg",
-            name="mtrack autoreg script"
+            slug="mtrac_anonymous_autoreg",
+            name="mtrac autoreg script"
         )
         user = User.objects.get(username="admin")
         script.sites.add(Site.objects.get_current())
