@@ -10,7 +10,7 @@ class Command(BaseCommand):
         )
         user = User.objects.get(username="admin")
         script.sites.add(Site.objects.get_current())
-        poll = Poll.create_location_based("contactdistrict","Thanks for reporting. What is the name of your District and Health Center? Webaale kututegeezako, tusaaba kumanya Linya lya District gyolimu ne linya lya health center yo","",[],user)
+        poll = Poll.create_location_based("contactdistrict","Thanks for reporting. What is the name of your District and Health Center? Webaale kututegeezako, tusaaba kumanya linya lya District gyolimu ne linya lya health center yo","",[],user)
         script.steps.add(
             Script.objects.create(
                 script=script,
