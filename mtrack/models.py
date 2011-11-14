@@ -1,12 +1,26 @@
-from django.db import models
 from mtrack import signals
+from rapidsms_xforms.models import XFormField, XForm, XFormSubmission, dl_distance, xform_received
+import re
+import datetime
+from healthmodels.models import *
+from healthmodels.models.HealthProvider import HealthProviderBase
+from rapidsms.contrib.locations.models import Location
+from rapidsms.models import Contact
+from poll.models import Poll
+from eav.models import Attribute
+from mtrack.utils import XFORMS
+from script.signals import *
+from script.models import *
+from uganda_common.utils import parse_district_value
+from script.utils.handling import find_closest_match, find_best_response
+import itertools
 
-# Create your models here.
+from django.db import models
 from rapidsms.models import Connection
 from rapidsms_httprouter.models import Message
 from rapidsms.contrib.locations.models import Location
 from healthmodels.models.HealthFacility import HealthFacility
-from script.signals import script_progress_was_completed
+from mtrack import signals
 
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
@@ -29,7 +43,7 @@ def anonymous_autoreg(**kwargs):
     '''
     connection = kwargs['connection']
     progress = kwargs['sender']
-    if not progress.script.slug == 'anonymous_autoreg':
+    if not progress.script.slug == 'anonymous_mtrack_autoreg':
         return
     session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
     script = progress.script

@@ -7,6 +7,11 @@ from rapidsms.contrib.locations.models import Location
 from rapidsms_xforms.models import XFormSubmission
 from uganda_common.utils import get_location_for_user
 
+
+XFORMS = [
+    'anonymous' #anonymous report collecting
+]
+
 def last_reporting_period(period=1):
     """
     Find a date range that spans from the most recent Wednesday (exactly a week ago if

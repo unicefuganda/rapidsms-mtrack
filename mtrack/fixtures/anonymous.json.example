@@ -1,0 +1,85 @@
+
+[
+    {
+        "pk":123,"models":"poll.poll",
+        "fields":{
+            "default_response":"",
+            "name":"anonymous_district",
+            "end_date":null,
+            "contacts":[],
+            "messages":[],
+            "question":"What is the name of the District you are reporting on? Tusaaba kumanya linya lya District gyolimu?",
+            "sites":[1],
+            "user":1,
+            "type":"district",
+            "start_date":null
+        }
+    },
+        // change pk on db sync
+    {
+        "pk":124,"models":"poll.poll",
+        "fields":{
+            "default_response":"",
+            "name":"anonymous_healthfacility",
+            "end_date":null,
+            "contacts":[],
+            "messages":[],
+            "question":"What is the name of the Health Facility you are reporting on? Tusaaba kumanya linya lya Health Centre gyolimu?",
+            "sites":[1],
+            "user":1,
+            "type":"healthfacility",
+            "start_date":null
+        }
+    },
+
+    {
+        "pk": 90,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "anonymous_mtrack_autoreg",
+            "retry_offset": 600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 3,
+            "start_offset": 0,
+            "message": "",
+            "poll": 123,
+            "order": 1,
+            "giveup_offset": 600
+        }
+    },
+    {
+        "pk": 91,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "anonymous_mtrack_autoreg",
+            "retry_offset": 600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 3,
+            "start_offset": 0,
+            "message": "",
+            "poll": 124,
+            "order": 2,
+            "giveup_offset": 600
+        }
+    },
+    {
+        "pk": 90,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "cvs_autoreg",
+            "retry_offset": 600,
+            "rule": "R",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 0,
+            "message": "This report will be sent to your District. If this is an emergency, contact your nearest Health Facility.",
+            "poll": null,
+            "order": 3,
+            "giveup_offset": 0
+        }
+    },
+
+
+]
