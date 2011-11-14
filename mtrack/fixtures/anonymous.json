@@ -1,7 +1,7 @@
 
 [
     {
-        "pk":123,"models":"poll.poll",
+        "pk" : 41,"models":"poll.poll",
         "fields":{
             "default_response":"",
             "name":"anonymous_district",
@@ -15,9 +15,8 @@
             "start_date":null
         }
     },
-        // change pk on db sync
     {
-        "pk":124,"models":"poll.poll",
+        "pk" : 42,"models":"poll.poll",
         "fields":{
             "default_response":"",
             "name":"anonymous_healthfacility",
@@ -31,9 +30,20 @@
             "start_date":null
         }
     },
+        {
+        "pk": "anonymous_mtrack_autoreg",
+        "model": "script.script",
+        "fields": {
+            "enabled": true,
+            "name": "Mtrac hotline script",
+            "sites": [
+                1
+            ]
+        }
+    },
 
     {
-        "pk": 90,
+        "pk": 95,
         "model": "script.scriptstep",
         "fields": {
             "script": "anonymous_mtrack_autoreg",
@@ -49,7 +59,7 @@
         }
     },
     {
-        "pk": 91,
+        "pk": 96,
         "model": "script.scriptstep",
         "fields": {
             "script": "anonymous_mtrack_autoreg",
@@ -65,10 +75,10 @@
         }
     },
     {
-        "pk": 90,
+        "pk": 97,
         "model": "script.scriptstep",
         "fields": {
-            "script": "cvs_autoreg",
+            "script": "anonymous_mtrack_autoreg",
             "retry_offset": 600,
             "rule": "R",
             "email": null,
@@ -79,7 +89,5 @@
             "order": 3,
             "giveup_offset": 0
         }
-    },
-
-
+    }
 ]
