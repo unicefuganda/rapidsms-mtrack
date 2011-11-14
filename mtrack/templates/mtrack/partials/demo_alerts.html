@@ -2,45 +2,65 @@
 <tr class="row_reg">
 	<td><a href="#">67% of Health Facilities</a> did not submit a report the prior week in your district</td>
 	<td>
-	   <select>
+	   <select onchange="$('#comments_1').show()">
 	       <option selected="true">open</option>
 	       <option>claim</option>
 	       <option>resolve</option>
 	       <option>escalate</option>
 	   </select>
+	   <div id="comments_1" style="display:none">
+	   comments:
+	   <textarea></textarea>
+	   <input type="button" onclick="$('#comments_1').hide()"value="save" />
+	   </div>
 	</td>
 </tr>
 <tr class="row_alt">
 	<td><a href="#">1 unconfirmed case of Ebola</a> reported in your district</td>
 	<td>
-       <select>
-           <option selected="true">open</option>
-           <option>claim</option>
-           <option>resolve</option>
-           <option>escalate</option>
-       </select>	
-	</td>
-</tr>
-<tr class="row_reg">
-	<td><a href="#">6 Facilities</a> in your district are below min-levels for ACTs</td>
-	<td>
-      <select>
+       <select onchange="$('#comments_2').show()">
            <option selected="true">open</option>
            <option>claim</option>
            <option>resolve</option>
            <option>escalate</option>
        </select>
+       <div id="comments_2" style="display:none">
+       comments:
+       <textarea></textarea>
+       <input type="button" onclick="$('#comments_2').hide()"value="save" />
+       </div>
+	</td>
+</tr>
+<tr class="row_reg">
+	<td><a href="#">6 Facilities</a> in your district are below min-levels for ACTs</td>
+	<td>
+      <select onchange="$('#comments_3').show()">
+           <option selected="true">open</option>
+           <option>claim</option>
+           <option>resolve</option>
+           <option>escalate</option>
+       </select>
+       <div id="comments_3" style="display:none">
+       comments:
+       <textarea></textarea>
+       <input type="button" onclick="$('#comments_3').hide()"value="save" />
+       </div>
 	</td>
 </tr>
 <tr class="row_alt">
 	<td><a href="#">1 Facility</a> in your district reported a stock-out for ACTs</td>
 	<td>
-       <select>
+       <select onchange="$('#comments_4').show()">
            <option selected="true">open</option>
            <option>claim</option>
            <option>resolve</option>
            <option>escalate</option>
-       </select>	
+       </select>
+       <div id="comments_4" style="display:none">
+       comments:
+       <textarea></textarea>
+       <input type="button" onclick="$('#comments_4').hide()"value="save" />
+       </div>
 	</td>
 </tr>
 </table>

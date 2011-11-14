@@ -5,7 +5,7 @@ from generic.sorters import SimpleSorter
 from django.views.generic.simple import direct_to_template
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
-from uganda_common.utils import get_messages as get_dashboard_messages
+from mtrack.utils import get_dashboard_messages
 from mtrack.views.dashboard import admin, approve
 from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view
 from mtrack.reports import ManagementReport
@@ -44,6 +44,9 @@ urlpatterns = patterns('',
         'model':XFormSubmission, \
         'queryset':get_facility_reports_for_view, \
         'objects_per_page':25, \
+        'base_template':'mtrack/mtrack_generic_base.html', \
+        'partial_base':'mtrack/partials/reports_base.html', \
+        'partial_row':'mtrack/partials/report_row.html', \
         'results_title':'Last Reporting Period Results', \
         'columns':[('Facility', True, 'message__connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()), \
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),), \
@@ -56,6 +59,8 @@ urlpatterns = patterns('',
         'model':XFormSubmission, \
         'queryset':get_all_facility_reports_for_view, \
         'objects_per_page':25, \
+        'base_template':'mtrack/mtrack_generic_base.html', \
+        'partial_row':'mtrack/partials/report_row.html', \
         'results_title':'Reports', \
         'columns':[('Facility', True, 'message__connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()),
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),),

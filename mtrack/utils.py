@@ -144,6 +144,13 @@ def get_district_for_facility(hc):
 
     return None
 
+def get_dashboard_messages(request=None):
+    from cvs.utils import get_unsolicited_messages
+    toret = get_unsolicited_messages(request=request)
+    # dashboard messages don't have columns, so can't 
+    # be sorted the regular way in generic
+    return toret.order_by('-date')
+
 
 ALERTS_TOTAL = 0
 ALERTS_ACTIONED = 1
