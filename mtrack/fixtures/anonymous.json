@@ -1,7 +1,70 @@
-
 [
     {
-        "pk" : 41,"models":"poll.poll",
+        "pk": 32,
+        "model":"rapidsms_xforms.xform",
+        "fields":{
+            "name":"Annonymous Report",
+            "keyword":"anonymousreport",
+            "sites":[1],
+            "owner":1,
+            "active":true,
+            "command_prefix":"",
+            "response" : "",
+            "keyword_prefix" : "",
+            "description": "Anonymous report"
+        }
+    },
+    {
+        "pk": 33,
+        "model":"rapidsms_xforms.xform",
+        "fields":{
+            "name" : "Annonymous Reporter's District",
+            "keyword" : "anonymousreportdistrict",
+            "sites" : [1],
+            "owner" : 1,
+            "active" : true,
+            "command_prefix" : "",
+            "response" : "",
+            "keyword_prefix" : "",
+            "description" : "Annoymous reporter's district"
+        }
+    },
+    {
+        "pk":34,
+        "model" : "rapidsms_xforms.xform",
+        "fields" : {
+            "name" : "Health facility being reported about",
+            "keyword" : "anonymousreporthealthfacility",
+            "sites" : [1],
+            "owner" : 1,
+            "acive" : true,
+            "command_prefix" : "",
+            "response" : "",
+            "keyword_prefix" : "",
+            "description" : "Anonymous reporter's Health Facility"
+        }
+    },
+    {
+        "pk" : 386,
+        "fields" : {
+            "field_type" : "text",
+            "command" : "d",
+            "order" : 0,
+            "xform" : 33
+        }
+    },
+    {
+        "pk" : 387,
+        "fields" : {
+            "field_type" : "text",
+            "command" : "h",
+            "order" : 0,
+            "xform" : 34
+        }
+    },
+    {
+        "pk" : 41,
+        "model":"poll.poll",
         "fields":{
             "default_response":"",
             "name":"anonymous_district",
@@ -11,12 +74,13 @@
             "question":"What is the name of the District you are reporting on? Tusaaba kumanya linya lya District gyolimu?",
             "sites":[1],
             "user":1,
-            "type":"district",
+            "type":"t",
             "start_date":null
         }
     },
     {
-        "pk" : 42,"models":"poll.poll",
+        "pk" : 42,
+        "model":"poll.poll",
         "fields":{
             "default_response":"",
             "name":"anonymous_healthfacility",
@@ -26,13 +90,13 @@
             "question":"What is the name of the Health Facility you are reporting on? Tusaaba kumanya linya lya Health Centre gyolimu?",
             "sites":[1],
             "user":1,
-            "type":"healthfacility",
+            "type":"t",
             "start_date":null
         }
     },
         {
         "pk": "anonymous_mtrack_autoreg",
-        "models": "script.script",
+        "model": "script.script",
         "fields": {
             "enabled": true,
             "name": "Mtrac hotline script",
@@ -44,7 +108,7 @@
 
     {
         "pk": 95,
-        "models": "script.scriptstep",
+        "model": "script.scriptstep",
         "fields": {
             "script": "anonymous_mtrack_autoreg",
             "retry_offset": 600,
@@ -76,11 +140,11 @@
     },
     {
         "pk": 97,
-        "models": "script.scriptstep",
+        "model": "script.scriptstep",
         "fields": {
             "script": "anonymous_mtrack_autoreg",
             "retry_offset": 600,
-            "rule": "R",
+            "rule": "w",
             "email": null,
             "num_tries": null,
             "start_offset": 0,
