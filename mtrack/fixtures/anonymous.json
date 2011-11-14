@@ -5,7 +5,7 @@
         "fields":{
             "name":"Annonymous Report",
             "keyword":"anonymousreport",
-            "sites":[1],
+            "site": 1,
             "owner":1,
             "active":true,
             "command_prefix":"",
@@ -20,7 +20,7 @@
         "fields":{
             "name" : "Annonymous Reporter's District",
             "keyword" : "anonymousreportdistrict",
-            "sites" : [1],
+            "site" : 1,
             "owner" : 1,
             "active" : true,
             "command_prefix" : "",
@@ -35,9 +35,9 @@
         "fields" : {
             "name" : "Health facility being reported about",
             "keyword" : "anonymousreporthealthfacility",
-            "sites" : [1],
+            "site" : 1,
             "owner" : 1,
-            "acive" : true,
+            "active" : true,
             "command_prefix" : "",
             "response" : "",
             "keyword_prefix" : "",
@@ -89,8 +89,8 @@
             "messages":[],
             "question":"What is the name of the Health Facility you are reporting on? Tusaaba kumanya linya lya Health Centre gyolimu?",
             "sites":[1],
-            "user":1,
-            "type":"t",
+            "user": 1,
+            "type": "t",
             "start_date":null
         }
     },
