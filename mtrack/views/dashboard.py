@@ -4,15 +4,15 @@
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from uganda_common.utils import get_location_for_user
-from mtrack.utils import non_reporting_facilities, non_reporting_vhts, total_facilities, total_vhts, get_facility_reports
+from mtrack.utils import reporting_facilities, reporting_vhts, last_reporting_period, total_registered_facilities, total_vhts, get_facility_reports
 
 def admin(request):
     location = get_location_for_user(request.user)
 
     return render_to_response('mtrack/partials/dashboard_admin.html', {
-            'bad_facilities':non_reporting_facilities(location),
-            'bad_vhts':non_reporting_vhts(location),
-            'total_facilities':total_facilities(location),
+            'good_facilities':reporting_facilities(location, date_range=last_reporting_period()),
+            'good_vhts':reporting_vhts(location),
+            'total_facilities':total_registered_facilities(location),
             'total_vhts':total_vhts(location),
         },
         context_instance=RequestContext(request))

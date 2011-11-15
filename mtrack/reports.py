@@ -20,6 +20,7 @@ class AlertReportsColumn(Column):
 
 
 class ManagementReport(XFormReport):
+
     def get_top_columns(self):
         return [
             ('Alerts', '#', 4),

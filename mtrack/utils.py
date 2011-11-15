@@ -16,10 +16,9 @@ def last_reporting_period(period=1):
     """
     d = datetime.datetime.now()
     d = datetime.datetime(d.year, d.month, d.day)
-    # find the past day with weekday() of 2, or if we're on a wednesday, go
-    # to the last one.
-    last_wednesday = d - datetime.timedelta((((5 + d.weekday()) % 7) or 7)) - datetime.timedelta((period - 1) * 7)
-    return (last_wednesday - datetime.timedelta(7), last_wednesday,)
+    # find the past day with weekday() of 3
+    last_thursday = d - datetime.timedelta(((4 + d.weekday()) % 7)) - datetime.timedelta((period - 1) * 7)
+    return (last_thursday - datetime.timedelta(7), last_thursday,)
 
 def total_facilities(location, count=True):
     """
@@ -125,10 +124,12 @@ def reporting_facilities(location, facilities=None, count=True, date_range=None)
 
     return reporting
 
-def non_reporting_facilities(location):
-    return total_facilities(location) - reporting_facilities(location, date_range=last_reporting_period())
+def total_registered_facilities(location):
+    all_facilities = total_facilities(location, count=False)
+    all_staff = get_staff_for_facility(all_facilities)
+    return len(all_staff.values_list('facility', flat=True).distinct())
 
-def non_reporting_vhts(location):
+def reporting_vhts(location):
     vhts = total_vhts(location, count=False)
     return XFormSubmission.objects.filter(message__connection__contact__in=vhts)\
         .filter(created__range=last_reporting_period())\
