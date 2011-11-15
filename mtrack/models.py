@@ -24,7 +24,7 @@ from mtrack import signals
 
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
-    messages = models.ManyToManyField(Message)
+    message = models.ForeignKey(Message)
     date = models.DateTimeField(auto_now_add=True)
     district = models.ForeignKey(Location)
     comments = models.TextField(null=True)
@@ -33,8 +33,64 @@ class AnonymousReport(models.Model):
     def __unicode__(self):
         return self.messages
 
-def create_anonymous_report():
-    pass
+
+def parse_facility_value(value):
+    #TODO full refactor to uganda_commons
+    #TODO thought: should health facility be a free-form name or is it strictly code-based
+    try:
+        if HealthFacility.objects.get(name=value):
+            return HealthFacility.objects.get(name=value)
+        else:
+            return HealthFacility.objects.get(code=value)
+    except:
+        raise ValidationError("Expected an HMIS facility code (got: %s)." % value)
+
+def parse_facility(command,value):
+    return parse_facility_value(value)
+
+def parse_district(command,value):
+    cap_value = value.strip().capitalize()
+    # cost of this operation is nasty!
+    for district_name in [district.name for district in Location.objects.all()]:
+        if dl_distance(cap_value, district_name) <= 1:
+            return district_name
+    else:
+        #TODO provide better Luganda translations
+        raise ValidationError("Did not understand your location: %s. Tetutegedde ekiffyo kkyo: %s"%(value,value))
+    
+
+XFormField.register_field_type('district', 'District', parse_district,
+                               db_type=XFormField.TYPE_TEXT, xforms_type='string')
+
+
+#TODO --> facility codes?
+XFormField.register_field_type('facility', 'Health Facility', parse_facility,
+                               db_type=XFormField.TYPE_TEXT, xforms_type='string')
+
+
+def xform_received_handler(sender, **kwargs):
+    xform = kwargs['xform']
+    submission = kwargs['submission']
+
+    if submission.has_errors:
+        return
+
+    # TODO: check validity
+    kwargs.setdefault('message', None)
+    message = kwargs['message']
+    try:
+        message = message.db_message
+        if not message:
+            return
+    except AttributeError:
+        return
+"""
+    if xform.keyword == "anonymousreport" and submission.connection.contact:
+        anonymous_report = AnonymousReport(connection=submission.connection,
+            messages
+        )
+"""
+    
 
 def anonymous_autoreg(**kwargs):
     '''
@@ -43,15 +99,15 @@ def anonymous_autoreg(**kwargs):
     '''
     connection = kwargs['connection']
     progress = kwargs['sender']
-    if not progress.script.slug == 'anonymous_mtrack_autoreg':
+    if not progress.script.slug == 'anonymous_autoreg':
         return
     session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
     script = progress.script
 
     #TODO how do we represent that first message that gets sent to the helpline
     #report = script.steps.get(poll__name="anonymous_report").poll
-    districtpoll = script.steps.get(poll__name='anonymous_district').poll
-    healthfacilitypoll = script.steps.get(poll__name='anonymous_healthfacility').poll
+    districtpoll = script.steps.get(poll__name='district_name_anonymous').poll
+    healthfacilitypoll = script.steps.get(poll__name='health_facility_anonymous').poll
 
 
     district = find_best_response(session, districtpoll)
