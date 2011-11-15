@@ -37,6 +37,7 @@ class AnonymousReport(models.Model):
 def parse_facility_value(value):
     #TODO full refactor to uganda_commons
     #TODO thought: should health facility be a free-form name or is it strictly code-based
+    #TODO use dl to get the right "name" of the health facility just in case it is left out.
     try:
         if HealthFacility.objects.get(name=value):
             return HealthFacility.objects.get(name=value)
