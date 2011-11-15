@@ -33,34 +33,12 @@ class AnonymousReport(models.Model):
     def __unicode__(self):
         return self.messages
 
-
-def parse_facility_value(value):
-    #TODO full refactor to uganda_commons
-    #TODO thought: should health facility be a free-form name or is it strictly code-based
-    #TODO use dl to get the right "name" of the health facility just in case it is left out.
-    # get the levenstein distance in the spellings for the name
-    try:
-        #when the Health Facility name has been provided in text message
-        name_of_health_facility = value.capitalize()
-        for health_facility_name in [health_facility.name for health_facility in HealthFacility.objects.all()]:
-            if dl_distance(name_of_health_facility,health_facility_name) <= 1:
-                return health_facility_name
-    except:
-        raise ValidationError("We do not recognize this value: %s" % value)
-
 def parse_facility(command,value):
-    return parse_facility_value(value)
+    find_closest_match(value, HealthFacility, match_exact=True)
 
 def parse_district(command,value):
-    cap_value = value.strip().capitalize()
-    # cost of this operation is nasty!
-    for district_name in [district.name for district in Location.objects.all()]:
-        if dl_distance(cap_value, district_name) <= 1:
-            return district_name
-    else:
-        #TODO provide better Luganda translations
-        raise ValidationError("Did not understand your location: %s. Tetutegedde ekiffyo kkyo: %s"%(value,value))
-    
+    find_closest_match(value,Location,match_exact=True) #be a little strict
+
 
 XFormField.register_field_type('district', 'District', parse_district, db_type=XFormField.TYPE_TEXT, xforms_type='string')
 
