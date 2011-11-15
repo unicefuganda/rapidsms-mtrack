@@ -1,0 +1,61 @@
+[
+  {
+    "pk": "anonymous_autoreg", 
+    "model": "script.script", 
+    "fields": {
+      "enabled": true, 
+      "name": "Anonymous Hotline Script", 
+      "sites": [
+        4
+      ]
+    }
+  }, 
+  {
+    "pk": 97, 
+    "model": "script.scriptstep", 
+    "fields": {
+      "script": "anonymous_autoreg", 
+      "retry_offset": null, 
+      "rule": "w", 
+      "email": null, 
+      "num_tries": null, 
+      "start_offset": null, 
+      "message": "This report will be sent to your District. If this is an emergency, contact your nearest facility", 
+      "poll": null, 
+      "order": 3, 
+      "giveup_offset": 0
+    }
+  }, 
+  {
+    "pk": 96, 
+    "model": "script.scriptstep", 
+    "fields": {
+      "script": "anonymous_autoreg", 
+      "retry_offset": 600, 
+      "rule": "R", 
+      "email": null, 
+      "num_tries": null, 
+      "start_offset": null, 
+      "message": "What is the name of the Health Facility you are reporting on?", 
+      "poll": 139, 
+      "order": 2, 
+      "giveup_offset": 36000
+    }
+  }, 
+  {
+    "pk": 95, 
+    "model": "script.scriptstep", 
+    "fields": {
+      "script": "anonymous_autoreg", 
+      "retry_offset": 600, 
+      "rule": "R", 
+      "email": null, 
+      "num_tries": 3, 
+      "start_offset": null, 
+      "message": "Thank you. What is the name of the District you are reporting on?", 
+      "poll": 138, 
+      "order": 1, 
+      "giveup_offset": 600
+    }
+  }
+]
