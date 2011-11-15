@@ -24,7 +24,7 @@ from mtrack import signals
 
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
-    message = models.ForeignKey(Message)
+    message = models.ManyToManyField(Message) #TODO; implications of not using FK here, view will just pick all anonymous reports
     date = models.DateTimeField(auto_now_add=True)
     district = models.ForeignKey(Location)
     comments = models.TextField(null=True)
