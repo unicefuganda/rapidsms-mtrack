@@ -5,6 +5,7 @@ from generic.sorters import SimpleSorter
 from django.views.generic.simple import direct_to_template
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
+from mtrack.models import AnonymousReport
 from mtrack.utils import get_dashboard_messages
 from mtrack.views.dashboard import admin, approve
 from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view
@@ -26,8 +27,8 @@ urlpatterns = patterns('',
     }, name='dashboard-messagelog'),
 
     #annonymous messages
-    url(r'^dashboard/annonymous/$', generic, {
-        'model':Message,
+    url(r'^dashboard/anonymousreport/$', generic, {
+        'model':AnonymousReport,
         'queryset':get_dashboard_messages,
         'objects_per_page':5,
         'base_template':'mtrack/partials/dashboard.html',
@@ -35,7 +36,7 @@ urlpatterns = patterns('',
         'partial_header':'mtrack/partials/messages_header.html',
         'selectable':False,
         'results_title':'',
-    }, name='dashboard-annonymous-messagelog'),
+    }, name='dashboard-anonymous-messagelog'),
 
     # FIXME: dashboard admin summary
     url(r'^dashboard/admin/$', admin, name='dashboard-admin'),
