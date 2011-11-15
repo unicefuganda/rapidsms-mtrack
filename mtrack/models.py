@@ -38,13 +38,15 @@ def parse_facility_value(value):
     #TODO full refactor to uganda_commons
     #TODO thought: should health facility be a free-form name or is it strictly code-based
     #TODO use dl to get the right "name" of the health facility just in case it is left out.
+    # get the levenstein distance in the spellings for the name
     try:
-        if HealthFacility.objects.get(name=value):
-            return HealthFacility.objects.get(name=value)
-        else:
-            return HealthFacility.objects.get(code=value)
+        #when the Health Facility name has been provided in text message
+        name_of_health_facility = value.capitalize()
+        for health_facility_name in [health_facility.name for health_facility in HealthFacility.objects.all()]:
+            if dl_distance(name_of_health_facility,health_facility_name) <= 1:
+                return health_facility_name
     except:
-        raise ValidationError("Expected an HMIS facility code (got: %s)." % value)
+        raise ValidationError("We do not recognize this value: %s" % value)
 
 def parse_facility(command,value):
     return parse_facility_value(value)
@@ -60,13 +62,10 @@ def parse_district(command,value):
         raise ValidationError("Did not understand your location: %s. Tetutegedde ekiffyo kkyo: %s"%(value,value))
     
 
-XFormField.register_field_type('district', 'District', parse_district,
-                               db_type=XFormField.TYPE_TEXT, xforms_type='string')
-
+XFormField.register_field_type('district', 'District', parse_district, db_type=XFormField.TYPE_TEXT, xforms_type='string')
 
 #TODO --> facility codes?
-XFormField.register_field_type('facility', 'Health Facility', parse_facility,
-                               db_type=XFormField.TYPE_TEXT, xforms_type='string')
+XFormField.register_field_type('facility', 'Health Facility', parse_facility, db_type=XFormField.TYPE_TEXT, xforms_type='string')
 
 
 def xform_received_handler(sender, **kwargs):
