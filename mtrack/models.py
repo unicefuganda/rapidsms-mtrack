@@ -24,7 +24,7 @@ from mtrack import signals
 
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
-    message = models.ForeignKey(Message)
+    message = models.ManyToManyField(Message) #TODO; implications of not using FK here, view will just pick all anonymous reports
     date = models.DateTimeField(auto_now_add=True)
     district = models.ForeignKey(Location)
     comments = models.TextField(null=True)
@@ -33,40 +33,17 @@ class AnonymousReport(models.Model):
     def __unicode__(self):
         return self.messages
 
-
-def parse_facility_value(value):
-    #TODO full refactor to uganda_commons
-    #TODO thought: should health facility be a free-form name or is it strictly code-based
-    #TODO use dl to get the right "name" of the health facility just in case it is left out.
-    try:
-        if HealthFacility.objects.get(name=value):
-            return HealthFacility.objects.get(name=value)
-        else:
-            return HealthFacility.objects.get(code=value)
-    except:
-        raise ValidationError("Expected an HMIS facility code (got: %s)." % value)
-
 def parse_facility(command,value):
-    return parse_facility_value(value)
+    find_closest_match(value, HealthFacility, match_exact=True)
 
 def parse_district(command,value):
-    cap_value = value.strip().capitalize()
-    # cost of this operation is nasty!
-    for district_name in [district.name for district in Location.objects.all()]:
-        if dl_distance(cap_value, district_name) <= 1:
-            return district_name
-    else:
-        #TODO provide better Luganda translations
-        raise ValidationError("Did not understand your location: %s. Tetutegedde ekiffyo kkyo: %s"%(value,value))
-    
+    find_closest_match(value,Location,match_exact=True) #be a little strict
 
-XFormField.register_field_type('district', 'District', parse_district,
-                               db_type=XFormField.TYPE_TEXT, xforms_type='string')
 
+XFormField.register_field_type('district', 'District', parse_district, db_type=XFormField.TYPE_TEXT, xforms_type='string')
 
 #TODO --> facility codes?
-XFormField.register_field_type('facility', 'Health Facility', parse_facility,
-                               db_type=XFormField.TYPE_TEXT, xforms_type='string')
+XFormField.register_field_type('facility', 'Health Facility', parse_facility, db_type=XFormField.TYPE_TEXT, xforms_type='string')
 
 
 def xform_received_handler(sender, **kwargs):
