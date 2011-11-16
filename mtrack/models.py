@@ -67,8 +67,11 @@ def anonymous_autoreg(**kwargs):
     district_poll = script.steps.get(poll__name='district_name_anonymous').poll
     health_facility_poll = script.steps.get(poll__name='health_facility_anonymous').poll
 
-    district = find_best_response(session, district_poll)
+    # narrow down the health facility in catchment areas; reporter will now be able to report multiple times and in any location
     health_facility = find_best_response(session, health_facility_poll)
+    district = find_best_response(session, district_poll)
+    all_sub_locations = district.get_descendants(include_self=True)
+    health_facility = find_closest_match(health_facility, HealthFacility.objects.filter(catchment_areas__in=all_sub_locations))
 
     anonymous_report = AnonymousReport.objects.filter(connection=connection).latest('date')
     anonymous_report.health_facility = health_facility
