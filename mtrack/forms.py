@@ -2,6 +2,27 @@ from django import forms
 from healthmodels.models.HealthFacility import HealthFacility, HealthFacilityType
 from rapidsms.contrib.locations.models import Location
 
+class FacilityResponseForm(forms.Form):
+    def __init__(self, data=None, **kwargs):
+        response = kwargs.pop('response')
+        if data:
+            forms.Form.__init__(self, data, **kwargs)
+        else:
+            forms.Form.__init__(self, **kwargs)
+
+    value = forms.ModelChoiceField(queryset=HealthFacility.objects.order_by('name'))
+
+class DistrictResponseForm(forms.Form):
+    def __init__(self, data=None, **kwargs):
+        response = kwargs.pop('response')
+        if data:
+            forms.Form.__init__(self, data, **kwargs)
+        else:
+            forms.Form.__init__(self, **kwargs)
+
+    value = forms.ModelChoiceField(queryset=Location.objects.order_by('name'))
+
+
 class FacilityForm(forms.Form):
     """
     How we handle an anonymous "complaint" or "report"

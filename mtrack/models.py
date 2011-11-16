@@ -49,7 +49,7 @@ Poll.register_poll_type('district', 'District', parse_district, db_type=Attribut
                         view_template='mtrack/partials/response_district_view.html',
                         edit_template='mtrack/partials/response_district_edit.html',
                         report_columns=(('Original Text', 'text'), ('District', 'custom',),),
-                        edit_form='mtrack.forms.FacilityResponseForm')
+                        edit_form='mtrack.forms.DistrictResponseForm')
 
 
 def anonymous_autoreg(**kwargs):
