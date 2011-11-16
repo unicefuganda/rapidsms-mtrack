@@ -29,7 +29,7 @@ urlpatterns = patterns('',
     #annonymous messages
     url(r'^dashboard/anonymousreport/$', generic, {
         'model':AnonymousReport,
-        'queryset':get_dashboard_messages,
+        'queryset':get_anonymous_reports,
         'objects_per_page':5,
         'base_template':'mtrack/partials/dashboard.html',
         'partial_base':'mtrack/partials/messages_base.html',

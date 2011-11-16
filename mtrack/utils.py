@@ -5,7 +5,8 @@ from django.db.models import Count, Max, Min
 from healthmodels.models import HealthFacility, HealthProvider
 from rapidsms.contrib.locations.models import Location
 from rapidsms_xforms.models import XFormSubmission
-from uganda_common.utils import get_location_for_user
+from uganda_common.utils import get_location_for_user, get_anonymous_reports
+
 
 
 XFORMS = [
@@ -157,6 +158,14 @@ def get_dashboard_messages(request=None):
     # be sorted the regular way in generic
     return toret.order_by('-date')
 
+def get_anonymous_reports(request=None, **kwargs):
+    from mtrack.models import AnonymousReport #TODO figure out how to use this well
+    request = kwargs.pop('request')
+    messages = get_anonymous_reports(request)
+    #filtering by user's location
+    location = get_location_for_user(request)
+    messages = messages.filter(connection__contact__reporting_location__in=location.get_descendants(include_self=True).all())
+    return messages
 
 ALERTS_TOTAL = 0
 ALERTS_ACTIONED = 1
