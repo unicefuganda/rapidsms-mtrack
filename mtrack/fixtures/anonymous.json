@@ -62,7 +62,7 @@
       "poll": 139, 
       "response": null
     }
-  }
+  },
   {
     "pk": "anonymous_autoreg", 
     "model": "script.script", 
