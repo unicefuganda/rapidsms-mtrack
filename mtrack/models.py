@@ -51,30 +51,6 @@ Poll.register_poll_type('district', 'District', parse_district, db_type=Attribut
                         report_columns=(('Original Text', 'text'), ('District', 'custom',),),
                         edit_form='mtrack.forms.FacilityResponseForm')
 
-"""
-def xform_received_handler(sender, **kwargs):
-    xform = kwargs['xform']
-    submission = kwargs['submission']
-
-    if submission.has_errors:
-        return
-
-    # TODO: check validity
-    kwargs.setdefault('message', None)
-    message = kwargs['message']
-    try:
-        message = message.db_message
-        if not message:
-            return
-    except AttributeError:
-        return
-
-    if xform.keyword == "anonymousreport" and submission.connection.contact:
-        anonymous_report = AnonymousReport(connection=submission.connection,
-            messages
-        )
-"""
-    
 
 def anonymous_autoreg(**kwargs):
     '''
@@ -93,15 +69,31 @@ def anonymous_autoreg(**kwargs):
     districtpoll = script.steps.get(poll__name='district_name_anonymous').poll
     healthfacilitypoll = script.steps.get(poll__name='health_facility_anonymous').poll
 
-
     district = find_best_response(session, districtpoll)
     healthfacility = find_best_response(session, healthfacilitypoll)
-    annonymous_report = AnonymousReport.objects.create(
-        connection=connection,
-        messages="hello+anonymous", #TODO "extract message from incoming texts"
-        district=district,
-        health_facility=healthfacility
-    )
-    annonymous_report.save()
+        
+    contact = connection.contact
+    connection.save() #save instance
+
+    if district:
+        contact.reporting_location = district
+    else:
+        #contact probably arleady in the system (usually we won't have to hit this point)
+        contact.reporting_location = Location.tree.root_notes()[0]
+    if healthfacility:
+        facility = find_closest_match(healthfacility,HealthFacility.objects) #redundant
+        if facility:
+            contact.facility = facility
+    contact.save()
+    connection.save() # save it again; creepy stuff could happen
+#
+#       This has to go and preferably be part of a signal
+#    annonymous_report = AnonymousReport.objects.create(
+#        connection=connection,
+#        messages="hello+anonymous", #TODO "extract message from incoming texts"
+#        district=district,
+#        health_facility=healthfacility
+#    )
+#    annonymous_report.save()
 
 script_progress_was_completed.connect(anonymous_autoreg, weak=False)
