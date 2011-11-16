@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 export_data['reporter'] = r.connection.contact.name if r.connection.contact else 'None'
                 export_data['reporter_id'] = r.connection.contact.pk if r.connection.contact else 'None'
                 export_data['phone'] = r.connection.identity
-                district = (get_district(r.connection.contact.reporting_location) if r.connection.contact else 'None') or 'None'
+                district = str(get_district(r.connection.contact.reporting_location) if r.connection.contact else 'None')
 
                 export_data['district'] = district
                 export_data['facility'] = str(r.connection.contact.healthproviderbase.facility) if (r.connection.contact and r.connection.contact.healthproviderbase) else 'None'
