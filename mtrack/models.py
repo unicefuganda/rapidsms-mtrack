@@ -24,16 +24,16 @@ from mtrack import signals
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
     messages = models.ManyToManyField(Message)
-    date = models.DateTimeField(auto_now_add=True)
-    district = models.ForeignKey(Location)
+    date = models.DateTimeField(auto_now_add=True, null=True)
+    district = models.ForeignKey(Location, null=True)
     comments = models.TextField(null=True)
-    health_facility = models.ForeignKey(HealthFacility)
+    health_facility = models.ForeignKey(HealthFacility, null=True)
 
     def __unicode__(self):
         return self.connection
 
 def parse_facility(value):
-    find_closest_match(value, HealthFacility, match_exact=True)
+    find_closest_match(value, HealthFacility, match_exact=False) #a little lenient
 
 def parse_district(value):
     find_closest_match(value,Location,match_exact=True) #be a little strict
@@ -64,36 +64,16 @@ def anonymous_autoreg(**kwargs):
     session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
     script = progress.script
 
-    #TODO how do we represent that first message that gets sent to the helpline
-    #report = script.steps.get(poll__name="anonymous_report").poll
-    districtpoll = script.steps.get(poll__name='district_name_anonymous').poll
-    healthfacilitypoll = script.steps.get(poll__name='health_facility_anonymous').poll
+    district_poll = script.steps.get(poll__name='district_name_anonymous').poll
+    health_facility_poll = script.steps.get(poll__name='health_facility_anonymous').poll
 
-    district = find_best_response(session, districtpoll)
-    healthfacility = find_best_response(session, healthfacilitypoll)
-        
-    contact = connection.contact
-    connection.save() #save instance
+    district = find_best_response(session, district_poll)
+    health_facility = find_best_response(session, health_facility_poll)
 
-    if district:
-        contact.reporting_location = district
-    else:
-        #contact probably arleady in the system (usually we won't have to hit this point)
-        contact.reporting_location = Location.tree.root_notes()[0]
-    if healthfacility:
-        facility = find_closest_match(healthfacility,HealthFacility.objects) #redundant
-        if facility:
-            contact.facility = facility
-    contact.save()
-    connection.save() # save it again; creepy stuff could happen
-#
-#       This has to go and preferably be part of a signal
-#    annonymous_report = AnonymousReport.objects.create(
-#        connection=connection,
-#        messages="hello+anonymous", #TODO "extract message from incoming texts"
-#        district=district,
-#        health_facility=healthfacility
-#    )
-#    annonymous_report.save()
-
+    anonymous_report = AnonymousReport.objects.filter(connection=connection).latest('date')
+    anonymous_report.health_facility = health_facility
+    anonymous_report.district = district
+    anonymous_report.save()
+    connection.save() #safe
+    
 script_progress_was_completed.connect(anonymous_autoreg, weak=False)
