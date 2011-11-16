@@ -8,7 +8,7 @@
       "end_date": null, 
       "contacts": [], 
       "messages": [], 
-      "question": "Thank you for your report, What District are you reporting from?", 
+      "question": "Thank you for your report, What District are you reporting from? Webaale kututegeezako, tusaaba kumanya linya lya District gyolimu?", 
       "sites": [
         4
       ], 
@@ -27,7 +27,7 @@
       "end_date": null, 
       "contacts": [], 
       "messages": [], 
-      "question": "What is the name of the Health Facility you are reporting from?", 
+      "question": "What is the name of the Health Facility you are reporting from? Tusaaba kumanya linya ly'edwaliro lyo?", 
       "sites": [
         4
       ], 
