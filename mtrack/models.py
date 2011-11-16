@@ -32,19 +32,17 @@ class AnonymousReport(models.Model):
     def __unicode__(self):
         return self.connection
 
-def parse_facility(command,value):
+def parse_facility(value):
     find_closest_match(value, HealthFacility, match_exact=True)
 
-def parse_district(command,value):
+def parse_district(value):
     find_closest_match(value,Location,match_exact=True) #be a little strict
 
 
-XFormField.register_field_type('district', 'District', parse_district, db_type=XFormField.TYPE_TEXT, xforms_type='string')
+Poll.register_poll_type('facility', 'Health Facility', parse_facility, db_type=Attribute.TYPE_OBJECT, view_template='mtrack/partials/response_facility_view.html', edit_template='cvs/partials/response_facility_edit.html', report_columns=(('Original Text', 'text'), ('Health Facility', 'custom',),), edit_form='cvs.forms.FacilityResponseForm')
+Poll.register_poll_type('district', 'District', parse_district, db_type=Attribute.TYPE_OBJECT, view_template='mtrack/partials/response_district_view.html', edit_template='cvs/partials/response_facility_edit.html', report_columns=(('Original Text', 'text'), ('Health Facility', 'custom',),), edit_form='cvs.forms.FacilityResponseForm')
 
-#TODO --> facility codes?
-XFormField.register_field_type('facility', 'Health Facility', parse_facility, db_type=XFormField.TYPE_TEXT, xforms_type='string')
-
-
+"""
 def xform_received_handler(sender, **kwargs):
     xform = kwargs['xform']
     submission = kwargs['submission']
@@ -61,7 +59,7 @@ def xform_received_handler(sender, **kwargs):
             return
     except AttributeError:
         return
-"""
+
     if xform.keyword == "anonymousreport" and submission.connection.contact:
         anonymous_report = AnonymousReport(connection=submission.connection,
             messages
