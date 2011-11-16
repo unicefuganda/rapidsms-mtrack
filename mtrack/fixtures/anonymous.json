@@ -1,0 +1,125 @@
+[
+  {
+    "pk": 138, 
+    "model": "poll.poll", 
+    "fields": {
+      "default_response": "", 
+      "name": "district_name_anonymous", 
+      "end_date": null, 
+      "contacts": [], 
+      "messages": [], 
+      "question": "Thank you for your report, What District are you reporting from? Webaale kututegeezako, tusaaba kumanya linya lya District gyolimu?", 
+      "sites": [
+        4
+      ], 
+      "user": 1, 
+      "type": "t", 
+      "start_date": null, 
+      "response_type": "a"
+    }
+  }, 
+  {
+    "pk": 139, 
+    "model": "poll.poll", 
+    "fields": {
+      "default_response": "", 
+      "name": "health_facility_anonymous", 
+      "end_date": null, 
+      "contacts": [], 
+      "messages": [], 
+      "question": "What is the name of the Health Facility you are reporting from? Tusaaba kumanya linya ly'edwaliro lyo?", 
+      "sites": [
+        4
+      ], 
+      "user": 1, 
+      "type": "t", 
+      "start_date": null, 
+      "response_type": "a"
+    }
+  }, 
+  {
+    "pk": 193, 
+    "model": "poll.category", 
+    "fields": {
+      "error_category": false, 
+      "name": "AnnRD", 
+      "color": "", 
+      "priority": null, 
+      "default": false, 
+      "poll": 138, 
+      "response": null
+    }
+  }, 
+  {
+    "pk": 194, 
+    "model": "poll.category", 
+    "fields": {
+      "error_category": false, 
+      "name": "AnnRHC", 
+      "color": "", 
+      "priority": null, 
+      "default": false, 
+      "poll": 139, 
+      "response": null
+    }
+  },
+  {
+    "pk": "anonymous_autoreg", 
+    "model": "script.script", 
+    "fields": {
+      "enabled": true, 
+      "name": "Anonymous Hotline Script", 
+      "sites": [
+        4
+      ]
+    }
+  }, 
+  {
+    "pk": 97, 
+    "model": "script.scriptstep", 
+    "fields": {
+      "script": "anonymous_autoreg", 
+      "retry_offset": null, 
+      "rule": "w", 
+      "email": null, 
+      "num_tries": null, 
+      "start_offset": null, 
+      "message": "This report will be sent to your District. If this is an emergency, contact your nearest facility", 
+      "poll": null, 
+      "order": 3, 
+      "giveup_offset": 0
+    }
+  }, 
+  {
+    "pk": 96, 
+    "model": "script.scriptstep", 
+    "fields": {
+      "script": "anonymous_autoreg", 
+      "retry_offset": 600, 
+      "rule": "R", 
+      "email": null, 
+      "num_tries": null, 
+      "start_offset": null, 
+      "message": "What is the name of the Health Facility you are reporting on?", 
+      "poll": 139, 
+      "order": 2, 
+      "giveup_offset": 36000
+    }
+  }, 
+  {
+    "pk": 95, 
+    "model": "script.scriptstep", 
+    "fields": {
+      "script": "anonymous_autoreg", 
+      "retry_offset": 600, 
+      "rule": "R", 
+      "email": null, 
+      "num_tries": 3, 
+      "start_offset": null, 
+      "message": "Thank you. What is the name of the District you are reporting on?", 
+      "poll": 138, 
+      "order": 1, 
+      "giveup_offset": 600
+    }
+  }
+]

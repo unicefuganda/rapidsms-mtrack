@@ -1,6 +1,5 @@
 from mtrack import signals
 from rapidsms_xforms.models import XFormField, XForm, XFormSubmission, dl_distance, xform_received
-import re
 import datetime
 from healthmodels.models import *
 from healthmodels.models.HealthProvider import HealthProviderBase
@@ -31,7 +30,7 @@ class AnonymousReport(models.Model):
     health_facility = models.ForeignKey(HealthFacility)
 
     def __unicode__(self):
-        return self.messages
+        return self.connection
 
 def parse_facility(command,value):
     find_closest_match(value, HealthFacility, match_exact=True)
