@@ -38,7 +38,7 @@ urlpatterns = patterns('',
         'selectable':False,
         'results_title':'',
     }, name='dashboard-anonymous-messagelog'),
-
+    url(r'^dashboard/ars/$', direct_to_template, {'template':'mtrack/partials/demo_areports.html'}, name="dashboard-anonymous"),
     # FIXME: dashboard admin summary
     url(r'^dashboard/admin/$', admin, name='dashboard-admin'),
 

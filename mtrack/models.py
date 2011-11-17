@@ -53,11 +53,11 @@ Poll.register_poll_type('facility', 'Health Facility', parse_facility, db_type=A
                         report_columns=(('Original Text', 'text'), ('Health Facility', 'custom',),),
                         edit_form='mtrack.forms.FacilityResponseForm')
 
-Poll.register_poll_type('district', 'District', parse_district, db_type=Attribute.TYPE_OBJECT,
-                        view_template='mtrack/partials/response_district_view.html',
-                        edit_template='mtrack/partials/response_district_edit.html',
-                        report_columns=(('Original Text', 'text'), ('District', 'custom',),),
-                        edit_form='mtrack.forms.DistrictResponseForm')
+#Poll.register_poll_type('district', 'District', parse_district, db_type=Attribute.TYPE_OBJECT,
+#                        view_template='mtrack/partials/response_district_view.html',
+#                        edit_template='mtrack/partials/response_district_edit.html',
+#                        report_columns=(('Original Text', 'text'), ('District', 'custom',),),
+#                        edit_form='mtrack.forms.DistrictResponseForm')
 
 
 def anonymous_autoreg(**kwargs):
