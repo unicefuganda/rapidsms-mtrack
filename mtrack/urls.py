@@ -8,7 +8,7 @@ from rapidsms_xforms.models import XFormSubmission
 from mtrack.models import AnonymousReport
 from mtrack.utils import get_dashboard_messages
 from mtrack.views.dashboard import admin, approve
-from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view
+from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view, get_anonymous_reports
 from mtrack.reports import ManagementReport
 
 urlpatterns = patterns('',
@@ -27,16 +27,16 @@ urlpatterns = patterns('',
     }, name='dashboard-messagelog'),
 
 #    #FIXTHIS annonymous messages
-#    url(r'^dashboard/anonymousreport/$', generic, {
-#        'model':AnonymousReport,
-#        'queryset':get_anonymous_reports,
-#        'objects_per_page':5,
-#        'base_template':'mtrack/partials/dashboard.html',
-#        'partial_base':'mtrack/partials/messages_base.html',
-#        'partial_header':'mtrack/partials/messages_header.html',
-#        'selectable':False,
-#        'results_title':'',
-#    }, name='dashboard-anonymous-messagelog'),
+    url(r'^dashboard/anonymousreport/$', generic, {
+        'model':AnonymousReport,
+        'queryset':get_anonymous_reports,
+        'objects_per_page':5,
+        'base_template':'mtrack/partials/dashboard.html',
+        'partial_base':'mtrack/partials/messages_base.html',
+        'partial_header':'mtrack/partials/messages_header.html',
+        'selectable':False,
+        'results_title':'',
+    }, name='dashboard-anonymous-messagelog'),
 
     # FIXME: dashboard admin summary
     url(r'^dashboard/admin/$', admin, name='dashboard-admin'),

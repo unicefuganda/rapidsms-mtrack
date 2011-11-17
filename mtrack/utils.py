@@ -8,7 +8,6 @@ from rapidsms_xforms.models import XFormSubmission
 from uganda_common.utils import get_location_for_user
 
 
-
 XFORMS = [
     'anonymous' #anonymous report collecting
 ]
@@ -161,7 +160,8 @@ def get_dashboard_messages(request=None):
 
 
 def get_anonymous_reports(request=None):
-    toret = AnoymousReport.objects.filter(date_gte=datetime.now() - datetime.timedelta(hours=1))
+    from .models import AnonymousReport
+    toret = AnonymousReport.objects.filter(date__gte=datetime.datetime.now() - datetime.timedelta(hours=1))
     return toret.order_by('-date')
 
 ALERTS_TOTAL = 0
