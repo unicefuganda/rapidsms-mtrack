@@ -32,7 +32,7 @@ urlpatterns = patterns('',
         'model':AnonymousReport,
         'queryset':get_anonymous_reports,
         'objects_per_page':5,
-        'base_template':'mtrack/partials/dashboard.html',
+        'base_template':'mtrack/partials/anonymous_reports_base.html',
         'partial_base':'mtrack/partials/messages_base.html',
         'partial_header':'mtrack/partials/messages_header.html',
         'selectable':False,
@@ -47,7 +47,7 @@ urlpatterns = patterns('',
 
     url(r'^dashboard/approve/$', approve, name='dashboard-approve'),
     # FIXME: dashboard contacts
-    url(r'^dashboard/contacts/$', direct_to_template, {'template':'mtrack/partials/demo_contacts.html'}, name='dashboard-contacts'),
+    url(r'^dashboard/contacts/$', direct_to_template, {'template':'mtrack/partials/demo_contacts.html'}, name='dashboard-x'),
     # FIXME: dashboard stock map
     url(r'^dashboard/stockmap/$', direct_to_template, {'template':'mtrack/partials/demo_map_stock.html'}, name='dashboard-stock-map'),
     # FIXME: dashboard disease map
