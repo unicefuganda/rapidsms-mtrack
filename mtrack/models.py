@@ -84,7 +84,7 @@ def anonymous_autoreg(**kwargs):
     anonymous_report = AnonymousReport.objects.filter(connection=connection).latest('date')
     anonymous_report.health_facility = health_facility
     anonymous_report.district = district
-    anonymous_report.action = 'Op' #TODO default action on reports is open {is it done at DB level??}
+    #anonymous_report.action = 'Op' #Set by default to "open"
     anonymous_report.save()
     connection.save() #safe
     
