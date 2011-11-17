@@ -21,6 +21,14 @@ from rapidsms.contrib.locations.models import Location
 from healthmodels.models.HealthFacility import HealthFacility
 from mtrack import signals
 
+
+ACTIONS = (
+    ('Op','Open'),
+    ('Ig', 'Ignore'),
+    ('Na', 'No Action needed'),
+    ('S', 'Stock out'),
+    ('Ot', 'Other critical')
+)
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
     messages = models.ManyToManyField(Message)
@@ -28,7 +36,7 @@ class AnonymousReport(models.Model):
     district = models.ForeignKey(Location, null=True)
     comments = models.TextField(null=True)
     health_facility = models.ForeignKey(HealthFacility, null=True)
-
+    action = models.CharField(max_length=2, choices=ACTIONS, default='Op') #is this the right way??
     def __unicode__(self):
         return self.connection
 
@@ -76,6 +84,7 @@ def anonymous_autoreg(**kwargs):
     anonymous_report = AnonymousReport.objects.filter(connection=connection).latest('date')
     anonymous_report.health_facility = health_facility
     anonymous_report.district = district
+    anonymous_report.action = 'Op' #TODO default action on reports is open {is it done at DB level??}
     anonymous_report.save()
     connection.save() #safe
     
