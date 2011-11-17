@@ -26,17 +26,17 @@ urlpatterns = patterns('',
         'results_title':'',
     }, name='dashboard-messagelog'),
 
-    #annonymous messages
-    url(r'^dashboard/anonymousreport/$', generic, {
-        'model':AnonymousReport,
-        'queryset':get_anonymous_reports,
-        'objects_per_page':5,
-        'base_template':'mtrack/partials/dashboard.html',
-        'partial_base':'mtrack/partials/messages_base.html',
-        'partial_header':'mtrack/partials/messages_header.html',
-        'selectable':False,
-        'results_title':'',
-    }, name='dashboard-anonymous-messagelog'),
+#    #FIXTHIS annonymous messages
+#    url(r'^dashboard/anonymousreport/$', generic, {
+#        'model':AnonymousReport,
+#        'queryset':get_anonymous_reports,
+#        'objects_per_page':5,
+#        'base_template':'mtrack/partials/dashboard.html',
+#        'partial_base':'mtrack/partials/messages_base.html',
+#        'partial_header':'mtrack/partials/messages_header.html',
+#        'selectable':False,
+#        'results_title':'',
+#    }, name='dashboard-anonymous-messagelog'),
 
     # FIXME: dashboard admin summary
     url(r'^dashboard/admin/$', admin, name='dashboard-admin'),
