@@ -15,5 +15,7 @@ class App(AppBase):
                 ar = AnonymousReport.objects.create(connection=message.connection)
             elif ScriptProgress.objects.filter(script__slug="mtrac_anonymous_autoreg", connection=message.connection).exists():
                 return False
+            else:
+                ar = AnonymousReport.objects.filter(connection=message.connection).latest('date')
             ar.messages.add(message.db_message)
             return True
