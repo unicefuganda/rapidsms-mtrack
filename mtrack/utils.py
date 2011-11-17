@@ -161,8 +161,8 @@ def get_dashboard_messages(request=None):
 
 
 def get_anonymous_reports(request=None):
-    anomymous_reports = AnoymousReport.objects.filter(date_gte=datetime.now() - datetime.timedelta(hours=1))
-    return anonymous_reports.order_by('-date')
+    toret = AnoymousReport.objects.filter(date_gte=datetime.now() - datetime.timedelta(hours=1))
+    return toret.order_by('-date')
 
 ALERTS_TOTAL = 0
 ALERTS_ACTIONED = 1
