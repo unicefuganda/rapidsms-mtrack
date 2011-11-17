@@ -26,8 +26,9 @@ urlpatterns = patterns('',
         'results_title':'',
     }, name='dashboard-messagelog'),
 
-#    #FIXTHIS annonymous messages
-    url(r'^dashboard/anonymousreport/$', generic, {
+    #FIXTHIS annonymous messages
+    # login required added
+    url(r'^dashboard/anonymousreport/$',login_required(generic), {
         'model':AnonymousReport,
         'queryset':get_anonymous_reports,
         'objects_per_page':5,
