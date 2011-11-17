@@ -28,7 +28,7 @@ urlpatterns = patterns('',
 
     #FIXTHIS annonymous messages
     # login required added
-    url(r'^dashboard/anonymousreport/$',login_required(generic), {
+    url(r'^dashboard/anonymousreports/$',login_required(generic), {
         'model':AnonymousReport,
         'queryset':get_anonymous_reports,
         'objects_per_page':5,
