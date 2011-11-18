@@ -28,7 +28,7 @@ urlpatterns = patterns('',
 
     #FIXTHIS annonymous messages
     # login required added
-    url(r'^dashboard/anonymousreports/$',login_required(generic), {
+    url(r'^dashboard/anonymousreports/$', login_required(generic), {
         'model':AnonymousReport,
         'queryset':get_anonymous_reports,
         'objects_per_page':25,
@@ -47,7 +47,7 @@ urlpatterns = patterns('',
 
     url(r'^dashboard/approve/$', approve, name='dashboard-approve'),
     # FIXME: dashboard contacts
-    url(r'^dashboard/contacts/$', direct_to_template, {'template':'mtrack/partials/demo_contacts.html'}, name='dashboard-x'),
+    url(r'^dashboard/contacts/$', direct_to_template, {'template':'mtrack/partials/demo_contacts.html'}, name='dashboard-contacts'),
     # FIXME: dashboard stock map
     url(r'^dashboard/stockmap/$', direct_to_template, {'template':'mtrack/partials/demo_map_stock.html'}, name='dashboard-stock-map'),
     # FIXME: dashboard disease map
