@@ -31,7 +31,7 @@ urlpatterns = patterns('',
     url(r'^dashboard/anonymousreports/$',login_required(generic), {
         'model':AnonymousReport,
         'queryset':get_anonymous_reports,
-        'objects_per_page':5,
+        'objects_per_page':25,
         'base_template':'mtrack/partials/anonymous_reports_base.html',
         'partial_base':'mtrack/partials/messages_base.html',
         'partial_header':'mtrack/partials/messages_header.html',
