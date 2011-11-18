@@ -8,7 +8,7 @@ from rapidsms_xforms.models import XFormSubmission
 from mtrack.models import AnonymousReport
 from mtrack.utils import get_dashboard_messages
 from mtrack.views.dashboard import admin, approve
-from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view, get_anonymous_reports
+from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view
 from mtrack.reports import ManagementReport
 
 urlpatterns = patterns('',
@@ -28,15 +28,17 @@ urlpatterns = patterns('',
 
     #FIXTHIS annonymous messages
     # login required added
-    url(r'^dashboard/anonymousreports/$', login_required(generic), {
+    url(r'^anonymousreports/$', login_required(generic), {
         'model':AnonymousReport,
-        'queryset':get_anonymous_reports,
         'objects_per_page':25,
-        'base_template':'mtrack/partials/anonymous_reports_base.html',
-        'partial_base':'mtrack/partials/messages_base.html',
-        'partial_header':'mtrack/partials/messages_header.html',
+        'partial_row':'mtrack/partials/anon_row.html',
         'selectable':False,
-        'results_title':'',
+        'columns':[('Facility', True, 'health_facility', SimpleSorter()), \
+                   ('District', True, 'district', SimpleSorter(),), \
+                   ('Date', True, 'date', SimpleSorter(),), \
+                   ('Reports', True, 'messages', SimpleSorter(),), \
+                   ('', False, '', None,)], \
+        'results_title':'Anonymous reports',
     }, name='dashboard-anonymous-messagelog'),
     url(r'^dashboard/ars/$', direct_to_template, {'template':'mtrack/partials/demo_areports.html'}, name="dashboard-anonymous"),
     # FIXME: dashboard admin summary

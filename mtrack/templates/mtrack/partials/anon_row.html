@@ -1,0 +1,21 @@
+{% extends 'generic/partials/partial_row.html' %}
+{% block remaining_row_content %}
+<td>
+    {{ object.health_facility }}
+</td>
+<td>
+    {{ object.district }}
+</td>
+<td>
+    {{ object.date }}
+</td>
+<td>
+    <ul>
+    {% for m in object.messages.all %}
+        <li>{{ m.text }}</li>
+    {% endfor %}
+    </ul>
+</td>
+<td>
+</td>
+{% endblock %}

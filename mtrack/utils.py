@@ -158,12 +158,6 @@ def get_dashboard_messages(request=None):
     return toret.order_by('-date')
 
 
-
-def get_anonymous_reports(request=None):
-    from .models import AnonymousReport
-    toret = AnonymousReport.objects.filter(date__gte=datetime.datetime.now() - datetime.timedelta(hours=1))
-    return toret.order_by('-date')
-
 ALERTS_TOTAL = 0
 ALERTS_ACTIONED = 1
 ALERTS_CREATED = 2

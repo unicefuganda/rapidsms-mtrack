@@ -83,10 +83,10 @@
       "rule": "w", 
       "email": null, 
       "num_tries": null, 
-      "start_offset": null, 
+      "start_offset": 0, 
       "message": "This report will be sent to your District. If this is an emergency, contact your nearest facility", 
       "poll": null, 
-      "order": 3, 
+      "order": 2, 
       "giveup_offset": 0
     }
   }, 
@@ -98,12 +98,12 @@
       "retry_offset": 600, 
       "rule": "R", 
       "email": null, 
-      "num_tries": null, 
-      "start_offset": null, 
+      "num_tries": 3, 
+      "start_offset": 0, 
       "message": "What is the name of the Health Facility you are reporting on?", 
       "poll": 139, 
-      "order": 2, 
-      "giveup_offset": 36000
+      "order": 1, 
+      "giveup_offset": 3600
     }
   }, 
   {
@@ -115,10 +115,10 @@
       "rule": "R", 
       "email": null, 
       "num_tries": 3, 
-      "start_offset": null, 
+      "start_offset": 0, 
       "message": "Thank you. What is the name of the District you are reporting on?", 
       "poll": 138, 
-      "order": 1, 
+      "order": 0, 
       "giveup_offset": 600
     }
   }

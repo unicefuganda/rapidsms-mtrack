@@ -23,7 +23,7 @@ from mtrack import signals
 
 
 ACTIONS = (
-    ('Op','Open'),
+    ('Op', 'Open'),
     ('Ig', 'Ignore'),
     ('Na', 'No Action needed'),
     ('S', 'Stock out'),
@@ -38,13 +38,13 @@ class AnonymousReport(models.Model):
     health_facility = models.ForeignKey(HealthFacility, null=True)
     action = models.CharField(max_length=2, choices=ACTIONS, default='Op') #is this the right way??
     def __unicode__(self):
-        return self.connection
+        return self.connection.identity
 
 def parse_facility(value):
     find_closest_match(value, HealthFacility, match_exact=False) #a little lenient
 
 def parse_district(value):
-    find_closest_match(value,Location,match_exact=True) #be a little strict
+    find_closest_match(value, Location, match_exact=True) #be a little strict
 
 
 Poll.register_poll_type('facility', 'Health Facility', parse_facility, db_type=Attribute.TYPE_OBJECT,
@@ -78,14 +78,16 @@ def anonymous_autoreg(**kwargs):
     # narrow down the health facility in catchment areas; reporter will now be able to report multiple times and in any location
     health_facility = find_best_response(session, health_facility_poll)
     district = find_best_response(session, district_poll)
-    all_sub_locations = district.get_descendants(include_self=True)
+    if district:
+        district = find_closest_match(district, Location.objects.filter(type__name='district'))
+        all_sub_locations = district.get_descendants(include_self=True)
+    else:
+        all_sub_locations = Location.objects.all()
     health_facility = find_closest_match(health_facility, HealthFacility.objects.filter(catchment_areas__in=all_sub_locations))
 
     anonymous_report = AnonymousReport.objects.filter(connection=connection).latest('date')
     anonymous_report.health_facility = health_facility
     anonymous_report.district = district
-    #anonymous_report.action = 'Op' #Set by default to "open"
     anonymous_report.save()
-    connection.save() #safe
-    
+
 script_progress_was_completed.connect(anonymous_autoreg, weak=False)
