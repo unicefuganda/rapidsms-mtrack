@@ -11,6 +11,7 @@ class App(AppBase):
     def handle(self, message):
         if message.connection.backend.name == getattr(settings, 'HOTLINE_BACKEND', 'console'):
             d = datetime.datetime.now() - datetime.timedelta(hours=1)
+            
             if not AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists():
                 ScriptProgress.objects.create(script=Script.objects.get(slug="anonymous_autoreg"), connection=message.connection)
                 ar = AnonymousReport.objects.create(connection=message.connection)

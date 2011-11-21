@@ -71,7 +71,7 @@ def anonymous_autoreg(**kwargs):
         return
     session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
     script = progress.script
-    import pdb; pdb.set_trace()
+
     district_poll = script.steps.get(poll__name='district_name_anonymous').poll
     health_facility_poll = script.steps.get(poll__name='health_facility_anonymous').poll
 
@@ -86,6 +86,7 @@ def anonymous_autoreg(**kwargs):
             all_sub_locations = Location.objects.all()
     else:
         all_sub_locations = Location.objects.all()
+
     health_facility = find_closest_match(health_facility, HealthFacility.objects.filter(catchment_areas__in=all_sub_locations))
 
     anonymous_report = AnonymousReport.objects.filter(connection=connection).latest('date')
