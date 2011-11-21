@@ -80,7 +80,10 @@ def anonymous_autoreg(**kwargs):
     district = find_best_response(session, district_poll)
     if district:
         district = find_closest_match(district, Location.objects.filter(type__name='district'))
-        all_sub_locations = district.get_descendants(include_self=True)
+        if district:
+            all_sub_locations = district.get_descendants(include_self=True)
+        else:
+            all_sub_locations = Location.objects.all()
     else:
         all_sub_locations = Location.objects.all()
     health_facility = find_closest_match(health_facility, HealthFacility.objects.filter(catchment_areas__in=all_sub_locations))
