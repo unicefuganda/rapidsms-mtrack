@@ -71,7 +71,7 @@ def anonymous_autoreg(**kwargs):
         return
     session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
     script = progress.script
-
+    import pdb; pdb.set_trace()
     district_poll = script.steps.get(poll__name='district_name_anonymous').poll
     health_facility_poll = script.steps.get(poll__name='health_facility_anonymous').poll
 
