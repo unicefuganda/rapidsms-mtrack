@@ -78,6 +78,7 @@ def anonymous_autoreg(**kwargs):
     # narrow down the health facility in catchment areas; reporter will now be able to report multiple times and in any location
     health_facility = find_best_response(session, health_facility_poll)
     district = find_best_response(session, district_poll)
+
     if district:
         district = find_closest_match(district, Location.objects.filter(type__name='district'))
         if district:
@@ -85,9 +86,12 @@ def anonymous_autoreg(**kwargs):
         else:
             all_sub_locations = Location.objects.all()
     else:
-        all_sub_locations = Location.objects.all()
+        all_sub_locations = Location.objects.all() # in case district is "failed"
 
     health_facility = find_closest_match(health_facility, HealthFacility.objects.filter(catchment_areas__in=all_sub_locations))
+#TODO get district just in case a good district not found
+#    if not district and health_facility:
+#        district = health_facility.district
 
     anonymous_report = AnonymousReport.objects.filter(connection=connection).latest('date')
     anonymous_report.health_facility = health_facility
