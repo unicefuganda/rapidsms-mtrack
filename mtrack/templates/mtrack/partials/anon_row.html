@@ -9,6 +9,7 @@
 <td>
     {{ object.date }}
 </td>
+<!-- messages for report -->
 <td>
     <ul>
     {% for m in object.messages.all %}
@@ -17,5 +18,16 @@
     </ul>
 </td>
 <td>
+{{ object.comments }}
+</td>
+<td class="button_col">
+<div class="buttons">
+<a href="javascript:void(0)">
+<img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/>
+</a>
+<a href="/xforms/submissions/{{ object.pk }}/edit/" title="Edit">
+<img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png"/>
+</a>
+</div>
 </td>
 {% endblock %}
