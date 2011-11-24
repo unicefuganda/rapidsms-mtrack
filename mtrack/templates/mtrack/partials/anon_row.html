@@ -22,10 +22,10 @@
 </td>
 <td class="button_col">
 <div class="buttons">
-<a href="javascript:void(0)">
+<a href="javascript:void(0)" onClick="deleteReport(this, 'alert('hello')')">
 <img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/>
 </a>
-<a href="/xforms/submissions/{{ object.pk }}/edit/" title="Edit">
+<a href="/anonymousreports/{{ object.pk }}/edit/" title="Edit">
 <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png"/>
 </a>
 </div>
