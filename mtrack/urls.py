@@ -37,6 +37,7 @@ urlpatterns = patterns('',
                    ('District', True, 'district', SimpleSorter(),), \
                    ('Date', True, 'date', SimpleSorter(),), \
                    ('Reports', True, 'messages', SimpleSorter(),), \
+		   ('Comments', True, 'comments', SimpleSorter(),),
                    ('', False, '', None,)], \
         'results_title':'Anonymous reports',
     }, name='dashboard-anonymous-messagelog'),
