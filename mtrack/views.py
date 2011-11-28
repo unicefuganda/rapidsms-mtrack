@@ -3,8 +3,6 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 
 @login_required
-def delete_report(requestion, report_id):
-    report = get_object_or_404(AnonymousReport, pk=report_id)
-    if request.method == 'POST':
-        report.delete()
-    return HttpResponse(status=200)
+def delete_report(request, id):
+    AnonymousReport.objects.get(id=id).delete()
+    return HttpResponseRedirect('repdelete/')
