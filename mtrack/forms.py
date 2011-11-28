@@ -71,4 +71,4 @@ class AnonymousEditReportForm(forms.ModelForm):
 	We can now edit any reports that come in anonymously
 	"""
 	class Meta:
-		model = AnonymousReport
+		model = AnonymousReport		
