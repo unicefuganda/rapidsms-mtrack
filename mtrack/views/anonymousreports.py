@@ -24,4 +24,4 @@ def edit_report(req, id):
 			return generic_row(req, model=AnonymousReport,pk=id, partial_row="mtrack/partials/anon_row.html")
 		else:
 			return render_to_response('mtrack/partials/anon_edit_row.html')
-	return render_to_response('/mtrack/partials/anon_edit_form.html', context_instance=RequestContext(req))
+	return render_to_response('/mtrack/partials/anon_edit_form.html', {'form':edit_report_form}, context_instance=RequestContext(req))
