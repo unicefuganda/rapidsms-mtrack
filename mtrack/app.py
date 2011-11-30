@@ -11,12 +11,28 @@ class App(AppBase):
     def handle(self, message):
         if message.connection.backend.name == getattr(settings, 'HOTLINE_BACKEND', 'console'):
             d = datetime.datetime.now() - datetime.timedelta(hours=1)
-            if not AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists():
-                ScriptProgress.objects.create(script=Script.objects.get(slug="anonymous_autoreg"), connection=message.connection)
-                ar = AnonymousReport.objects.create(connection=message.connection)
-            elif ScriptProgress.objects.filter(script__slug="anonymous_autoreg", connection=message.connection).exists():
-                return False
+            #snatch and compare every immediate SMS connections & timestamps to existing Anonymous Reports messages
+
+            #skip the script
+            #TODO compute better time intervals subject to environment variables like Yo!, MTN, Warid and others
+            #>>> time_diff = datetime.datetime.now() - message.date
+            # or
+            #>>> msg_date = AnonymousReport.objects.all().order_by('-date')[0].messages.values()[0]['date']
+            #>>> time_diff = datetime.datetime.now() - msg_date <-- using that filters for message times that are more recent
+            # typically, a data reporter will have about 10 to 30 minutes moving from place to place at a hospital
+            # another common use cases are immediate reports or rapid reporting which can be accurately predicted.
+            if AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists() and not ScriptProgress.objects.filter(connection=message.connection).exists():
+                #get anonymous report objects that already passed the first script progress
+                ar = AnonymousReport.objects.filter(connection=message.connection).order_by('-date')[0] #get last report by user
+                ar.messages.add(message.db_message)
+                return True
             else:
-                ar = AnonymousReport.objects.filter(connection=message.connection).latest('date')
-            ar.messages.add(message.db_message)
-            return True
+                if not AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists():
+                    ScriptProgress.objects.create(script=Script.objects.get(slug="anonymous_autoreg"), connection=message.connection)
+                    ar = AnonymousReport.objects.create(connection=message.connection)
+                elif ScriptProgress.objects.filter(script__slug="anonymous_autoreg", connection=message.connection).exists():
+                    return False
+                else:
+                    ar = AnonymousReport.objects.filter(connection=message.connection).latest('date')
+                ar.messages.add(message.db_message)
+                return True

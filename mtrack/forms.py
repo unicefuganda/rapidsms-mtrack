@@ -1,6 +1,8 @@
 from django import forms
 from healthmodels.models.HealthFacility import HealthFacility, HealthFacilityType
 from rapidsms.contrib.locations.models import Location
+from .models import AnonymousReport
+
 
 class FacilityResponseForm(forms.Form):
     def __init__(self, data=None, **kwargs):
@@ -34,6 +36,8 @@ class FacilityForm(forms.Form):
     facility_district = forms.ModelChoiceField(queryset=Location.objects.filter(type__name='district').order_by('name'), empty_label='----', required=False, \
                                       widget=forms.Select({'onchange':'update_facility_district(this)'}))
     
+
+
     def __init__(self, *args, **kwargs):
         self.facility = kwargs.pop('instance')
         if not 'data' in kwargs:
@@ -60,3 +64,11 @@ class FacilityForm(forms.Form):
         for c in cleaned_data.get('catchment_areas'):
             self.facility.catchment_areas.add(c)
         return
+
+
+class AnonymousEditReportForm(forms.ModelForm):
+	"""
+	We can now edit any reports that come in anonymously
+	"""
+	class Meta:
+		model = AnonymousReport		
