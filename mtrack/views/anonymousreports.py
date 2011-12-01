@@ -15,7 +15,6 @@ def delete_report(request, id):
 
 @login_required
 def edit_report(req, id):
-	import pdb; pdb.set_trace()
 	anonymous_report = get_object_or_404(AnonymousReport, pk=id)
 	edit_report_form = AnonymousEditReportForm(instance=anonymous_report)
 	if req.method == 'POST':
