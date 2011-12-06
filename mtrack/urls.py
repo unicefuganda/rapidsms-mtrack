@@ -46,8 +46,9 @@ urlpatterns = patterns('',
         'results_title':'Anonymous reports',
     }, name='dashboard-anonymous-messagelog'),
 
-    url(r'^anonymousreports/(?P<id>\d+)/edit', anonymousreports.edit_report),
+    #url(r'^anonymousreports/(?P<id>\d+)/edit', anonymousreports.edit_report),
 
+    # FIXME: add anonymous repots to dashboard
     url(r'^dashboard/ars/$', direct_to_template, {'template':'mtrack/partials/demo_areports.html'}, name="dashboard-anonymous"),
     # FIXME: dashboard admin summary
     url(r'^dashboard/admin/$', admin, name='dashboard-admin'),

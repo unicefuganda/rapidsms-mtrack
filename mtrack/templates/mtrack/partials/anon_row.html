@@ -1,35 +1,35 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block content %}
-{% block remaining_row_content %}
-<td>
-    {{ object.health_facility }}
-</td>
-<td>
-    {{ object.district }}
-</td>
-<td>
-    {{ object.date }}
-</td>
-<!-- messages for report -->
-<td>
-    <ul>
-    {% for m in object.messages.all %}
-        <li>{{ m.text }}</li>
-    {% endfor %}
-    </ul>
-</td>
-<td>
-{{ object.comments }}
-</td>
-<td class="button_col">
-<div class="buttons">
-<a href="javascript:void(0)" onClick="deleteReport(this, 'alert('hello')')">
-<img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/>
-</a>
-<a href="/anonymousreports/{{ object.pk }}/edit/" title="Edit">
-<img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png"/>
-</a>
-</div>
-</td>
-{% endblock %}
+    {% block remaining_row_content %}
+    <td>
+        {{ object.health_facility }}
+    </td>
+    <td>
+        {{ object.district }}
+    </td>
+    <td>
+        {{ object.date }}
+    </td>
+    <!-- messages for report -->
+    <td>
+        <ul>
+        {% for m in object.messages.all %}
+            <li>{{ m.text }}</li>
+        {% endfor %}
+        </ul>
+    </td>
+    <td>
+        {{ object.comments }}
+    </td>
+    <td class="button_col">
+        <div class="buttons">
+            <a href="javascript:void(0)" onClick="deleteReport(this, {{ object.pk }}, '{{ object.health_facility }}', '{% url dashboard-anonymous-messagelog %}')">
+                <img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/>
+            </a>
+            <a href="javascript:void(0)" onclick="editAnonymousReport(this, {{ object.pk }}, '{% url dashboard-anonymous-messagelog %}')">
+                <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png"/>
+            </a>
+        </div>
+    </td>
+    {% endblock %}
 {% endblock %}
