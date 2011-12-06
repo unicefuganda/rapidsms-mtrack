@@ -13,7 +13,7 @@ from logistics.const import Reports
 from logistics.models import SupplyPoint, SupplyPointType, \
     ProductReportType, ContactRole, Product, ProductType
 from logistics.util import config
-from healthmodels.models import HealthFacility
+from healthmodels.models import HealthFacility, HealthFacilityType
 from rapidsms.models import Contact
 
 def mtrack_init():
@@ -106,12 +106,20 @@ def add_supply_points_to_facilities(log_to_console=False):
                 print "  %s supply point created" % f.name
 
 def create_supply_point_from_facility(f):
-    type_, created = SupplyPointType.objects.get_or_create(code=f.type.slug)
+    try:
+        type_, created = SupplyPointType.objects.get_or_create(code=f.type.slug)
+    except HealthFacilityType.DoesNotExist:
+        # TODO: LOG AN ERROR?
+        type_, created = SupplyPointType.objects.get_or_create(code='UNKNOWN')
     default_loc = Location.tree.root_nodes()[0]
-    sp, created = SupplyPoint.objects.get_or_create(code=f.code,
-                     name=f.name,
-                     type=type_,
-                     active=True, defaults={'location':default_loc})
+    sp, created = SupplyPoint.objects.get_or_create(code=f.code)
+    if created:
+        sp.name = f.name
+        sp.type = type_
+        sp.active = True
+        # what is this?
+        sp.defaults = {'location':default_loc}
+        sp.save()
     try:
         sp.location = get_location_from_facility(f)
     except ValueError:

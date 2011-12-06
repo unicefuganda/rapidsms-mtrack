@@ -1,6 +1,6 @@
 from django.db.models.signals import pre_save, post_save
 from rapidsms_xforms.models import xform_received
-from healthmodels.models import HealthFacility
+from healthmodels.models import HealthFacility, HealthFacilityType
 from healthmodels.models.HealthFacility import HealthFacilityBase
 from logistics.models import SupplyPoint, SupplyPointType
 from mtrack.loader import create_supply_point_from_facility, get_location_from_facility
@@ -65,7 +65,11 @@ def update_supply_point_from_facility(sender, instance, **kwargs):
     """ 
     whenever a facility is updated, automatically update the supply point
     """
-    supply_point = instance.supply_point
+    try:
+        supply_point = instance.supply_point
+    except SupplyPoint.DoesNotExist:
+        # TODO: LOG AN ERROR?
+        supply_point = None
     try:
         base = HealthFacilityBase.objects.get(pk=instance.pk)
     except HealthFacilityBase.DoesNotExist:
@@ -76,7 +80,11 @@ def update_supply_point_from_facility(sender, instance, **kwargs):
         return
 
     # else update
-    type_, created = SupplyPointType.objects.get_or_create(code=base.type.slug)
+    try:
+        type_, created = SupplyPointType.objects.get_or_create(code=base.type.slug)
+    except HealthFacilityType.DoesNotExist:
+        # TODO: LOG AN ERROR?
+        type_, created = SupplyPointType.objects.get_or_create(code='UNKNOWN')
     supply_point.type = type_
     try:
         supply_point.location = get_location_from_facility(base)
