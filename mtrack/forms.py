@@ -84,12 +84,42 @@ class EditAnonymousReportForm(forms.ModelForm):
         model = AnonymousReport
 #        fields = ('health_facility', 'district', 'messages', 'comments' )
 
+class ReplyForm(forms.Form):
+    recipient = forms.CharField(max_length=20)
+    message = forms.CharField(max_length=160, widget=forms.TextInput(attrs={'size':'60'}))
+    in_response_to = forms.ModelChoiceField(queryset=Message.objects.filter(direction='I'), widget=forms.HiddenInput())
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        text = cleaned_data.get('message')
+
+        #replace common MS-word characters with SMS-friendly characters
+        for find, replace in [(u'\u201c', '"'),
+                              (u'\u201d', '"'),
+                              (u'\u201f', '"'),
+                              (u'\u2018', "'"),
+                              (u'\u2019', "'"),
+                              (u'\u201B', "'"),
+                              (u'\u2013', "-"),
+                              (u'\u2014', "-"),
+                              (u'\u2015', "-"),
+                              (u'\xa7', "$"),
+                              (u'\xa1', "i"),
+                              (u'\xa4', ''),
+                              (u'\xc4', 'A')]:
+            cleaned_data['message'] = text.replace(find, replace)
+            cleaned_data['message'] = text.replace('%', '%%')
+        return cleaned_data
+
+
+
 class MassTextForm(ActionForm):
+    
     text = forms.CharField(max_length=160, required=True, widget=SMSInput())
     action_label = "Send Message"
 
     def clean_text(self):
-        text = self.clean_data['text']
+        text = self.cleaned_data['text']
         for find, replace in [
             (u'\u201c', '"'),
             (u'\u201d', '"'),
@@ -109,10 +139,11 @@ class MassTextForm(ActionForm):
         return text
     
     def perform(self, request, results):
+        import pdb; pdb.set_trace()
         if results is None or len(results) == 0:
             return ('A message must have one or more recipients!', 'error',)
         if request.user and request.user.has_perm('auth.add_message'):
-            connections = list(Connection.objects.filter(contact__in=results).distint())
+            connections = list(Connection.objects.filter(contact__in=results).distinct())
             text = self.cleaned_data.get('text', "")
             text = text.replace("%", u'\u0025')
 
@@ -128,5 +159,3 @@ class MassTextForm(ActionForm):
             return ("Message successfully sent to %d numbers" % len(connections), 'success',)
         else:
             return ("You don't have permission to send messages!", "error",)
-                
-            

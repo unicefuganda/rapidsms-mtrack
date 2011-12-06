@@ -1,20 +1,30 @@
 {% load stats_extras %}
 <td>&nbsp;</td>
-<td>{{ report_form.health_facility }}
+<td>
+    {{ report_form.health_facility }}
     {% if report_form.health_facility.errors %}
         <br clear="left"/>
         {{ report_form.health_facility.errors }}
     {% endif %}
 </td>
 
-<td>{{ report_form.location }}
+<td>
+    {{ report_form.location }}
     {% if report_form.location.errors %}
         <br clear="left"/>
         {{ report_form.location.errors }}
     {% endif %}
 </td>
 
-<td>{{ anonymous_report|date:"d-m-Y" }}</td>
+<td></td>
+
+<td>
+    <ul>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+</td>
 
 <td>
     {{ report_form.comments }}

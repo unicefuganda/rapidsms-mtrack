@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.conf.urls.defaults import patterns, url, include
-from generic.views import generic
+from generic.views import generic, generic_row
 from generic.sorters import SimpleSorter
 from django.views.generic.simple import direct_to_template
 from rapidsms_httprouter.models import Message
@@ -11,7 +11,7 @@ from mtrack.views.dashboard import admin, approve
 from mtrack.views.anonymous_reports import edit_report, delete_report
 from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view
 from mtrack.reports import ManagementReport
-from mtrack.forms import MassTextForm
+from contact.forms import MassTextForm, ReplyTextForm
 
 urlpatterns = patterns('',
 #    url(r'^facility/(?P<code>\w+)/config/?$',
@@ -36,18 +36,19 @@ urlpatterns = patterns('',
         'base_template':'mtrack/mtrack_generic_base.html',
         'partial_row':'mtrack/partials/anon_row.html',
         'selectable':True,
-        'action_forms':[MassTextForm],
-        'columns':[('Facility', True, 'health_facility', SimpleSorter()), \
-                   ('District', True, 'district', SimpleSorter(),), \
-                   ('Date', True, 'date', SimpleSorter(),), \
-                   ('Reports', True, 'messages', SimpleSorter(),), \
-		   ('Comments', True, 'comments', SimpleSorter(),),
-                   ('', False, '', None,)], \
+        'action_forms':[ReplyTextForm],#, MassTextForm],
+        'columns':[('Facility', True, 'health_facility', SimpleSorter()),
+            ('District', True, 'district', SimpleSorter(),),
+            ('Date', True, 'date', SimpleSorter(),),
+            ('Reports', True, 'messages', SimpleSorter(),),
+            ('Comments', True, 'comments', SimpleSorter(),),
+            ('', False, '', None,)], \
         'results_title':'Anonymous reports',
     }, name='dashboard-anonymous-messagelog'),
 
     url(r'^anonymousreports/(\d+)/edit/', edit_report, name='edit-report'),
     url(r'^anonymousreports/(\d+)/delete/', delete_report, name='delete-report'),
+    url(r'^anonymousreports/(?P<pk>\d+)/show', generic_row, {'model':AnonymousReport, 'partial_row':'mtrack/partials/anon_row.html'}),
 
     # FIXME: add anonymous repots to dashboard
     url(r'^dashboard/ars/$', direct_to_template, {'template':'mtrack/partials/demo_areports.html'}, name="dashboard-anonymous"),
