@@ -112,14 +112,14 @@ def create_supply_point_from_facility(f):
         # TODO: LOG AN ERROR?
         type_, created = SupplyPointType.objects.get_or_create(code='UNKNOWN')
     default_loc = Location.tree.root_nodes()[0]
-    sp, created = SupplyPoint.objects.get_or_create(code=f.code)
-    if created:
+    try:
+        sp = SupplyPoint.objects.get(code=f.code)
+    except SupplyPoint.DoesNotExist:
+        sp = SupplyPoint(code=f.code, type= type_)
         sp.name = f.name
-        sp.type = type_
         sp.active = True
         # what is this?
         sp.defaults = {'location':default_loc}
-        sp.save()
     try:
         sp.location = get_location_from_facility(f)
     except ValueError:
