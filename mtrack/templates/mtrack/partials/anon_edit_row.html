@@ -1,1 +1,37 @@
-<p>hey there</p>
+{% load stats_extras %}
+<td>&nbsp;</td>
+<td>{{ report_form.health_facility }}
+    {% if report_form.health_facility.errors %}
+        <br clear="left"/>
+        {{ report_form.health_facility.errors }}
+    {% endif %}
+</td>
+
+<td>{{ report_form.location }}
+    {% if report_form.location.errors %}
+        <br clear="left"/>
+        {{ report_form.location.errors }}
+    {% endif %}
+</td>
+
+<td>{{ anonymous_report|date:"d-m-Y" }}</td>
+
+<td>
+    {{ report_form.comments }}
+    {% if report_form.comments.errors %}
+        <br clear="left"/>
+        {{ report_form.comments.errors }}
+    {% endif %}
+</td>
+<td class="button_col">
+    <div class="buttons">
+        <a href="javascript:void(0)"
+           onclick="$(this).parents('tr').load('../anonymousreport/{{ anonymous_report.pk }}/show/')">
+            <img src="{{ MEDIA_URL }}rapidsms/icons/silk/decline.png"/>
+        </a>
+        <a href="javascript:void(0)"
+           onclick="submitForm(this, '../anonymousreport/{{ anonysmous_report.pk }}/edit/', $(this).parents('tr'))">
+            <img src="{{ MEDIA_URL }}rapidsms/icons/silk/accept.png"/>
+        </a>
+    </div>
+</td>

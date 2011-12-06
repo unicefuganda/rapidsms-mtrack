@@ -23,7 +23,11 @@ def edit_report(req, anonymous_report_pk):
         edit_report_form = AnonymousEditReportForm(instance=anonymous_report, data=request.POST)
         if edit_report_form.is_valid:
             edit_report_form.save()
-            return generic_row(req, model=AnonymousReport,pk=id, partial_row="mtrack/partials/anon_row.html")
         else:
-            return render_to_response('mtrack/partials/anon_edit_row.html')
-    return render_to_response('/mtrack/partials/anon_edit_form.html', {'form':edit_report_form}, context_instance=RequestContext(req))
+            return render_to_response('mtrack/partials/anon_edit_row.html',
+                    {'report_form':edit_report_form, 'anonymous_report':anonymous_report}, context_instance=RequestContext(req))
+        return render_to_response('mtrack/partials/anon_row.html',
+                {'object':AnonymousReport.objects.get(pk=anonymous_report_pk),'selectable':True}, context_instance=RequestContext(req))
+    else:
+        return render_to_response('mtrack/partials/anon_edit_row.html',
+                {'report_form':edit_report_form, 'anonysmous_report':anonymous_report},context_instance=RequestContext(req))

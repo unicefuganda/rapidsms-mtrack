@@ -8,7 +8,7 @@ from rapidsms_xforms.models import XFormSubmission
 from mtrack.models import AnonymousReport
 from mtrack.utils import get_dashboard_messages
 from mtrack.views.dashboard import admin, approve
-from mtrack.views import anonymousreports
+from mtrack.views.anonymous_reports import edit_report, delete_report
 from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view
 from mtrack.reports import ManagementReport
 from mtrack.forms import MassTextForm
@@ -46,7 +46,8 @@ urlpatterns = patterns('',
         'results_title':'Anonymous reports',
     }, name='dashboard-anonymous-messagelog'),
 
-    #url(r'^anonymousreports/(?P<id>\d+)/edit', anonymousreports.edit_report),
+    url(r'^anonymousreports/(\d+)/edit/', edit_report, name='edit-report'),
+    url(r'^anonymousreports/(\d+)/delete/', delete_report, name='delete-report'),
 
     # FIXME: add anonymous repots to dashboard
     url(r'^dashboard/ars/$', direct_to_template, {'template':'mtrack/partials/demo_areports.html'}, name="dashboard-anonymous"),
