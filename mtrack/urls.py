@@ -11,6 +11,7 @@ from mtrack.views.dashboard import admin, approve
 from mtrack.views import anonymousreports
 from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view
 from mtrack.reports import ManagementReport
+from mtrack.forms import MassTextForm
 
 urlpatterns = patterns('',
 #    url(r'^facility/(?P<code>\w+)/config/?$',
@@ -32,8 +33,10 @@ urlpatterns = patterns('',
     url(r'^anonymousreports/$', login_required(generic), {
         'model':AnonymousReport,
         'objects_per_page':25,
+        'base_template':'mtrack/mtrack_generic_base.html',
         'partial_row':'mtrack/partials/anon_row.html',
-        'selectable':False,
+        'selectable':True,
+        'action_forms':[MassTextForm],
         'columns':[('Facility', True, 'health_facility', SimpleSorter()), \
                    ('District', True, 'district', SimpleSorter(),), \
                    ('Date', True, 'date', SimpleSorter(),), \
@@ -42,7 +45,9 @@ urlpatterns = patterns('',
                    ('', False, '', None,)], \
         'results_title':'Anonymous reports',
     }, name='dashboard-anonymous-messagelog'),
+
     url(r'^anonymousreports/(?P<id>\d+)/edit', anonymousreports.edit_report),
+
     url(r'^dashboard/ars/$', direct_to_template, {'template':'mtrack/partials/demo_areports.html'}, name="dashboard-anonymous"),
     # FIXME: dashboard admin summary
     url(r'^dashboard/admin/$', admin, name='dashboard-admin'),

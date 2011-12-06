@@ -1,4 +1,5 @@
 {% extends 'generic/partials/partial_row.html' %}
+{% block content %}
 {% block remaining_row_content %}
 <td>
     {{ object.health_facility }}
@@ -30,4 +31,5 @@
 </a>
 </div>
 </td>
+{% endblock %}
 {% endblock %}

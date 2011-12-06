@@ -1,8 +1,14 @@
 from django import forms
 from healthmodels.models.HealthFacility import HealthFacility, HealthFacilityType
 from rapidsms.contrib.locations.models import Location
+from rapidsms.models import Connection
+from contact.models import MassText
+from rapidsms_httprouter.models import Message
 from .models import AnonymousReport
-
+from generic.forms import ActionForm
+from uganda_common.forms import SMSInput
+from django.conf import settings
+from django.contrib.sites.models import Site
 
 class FacilityResponseForm(forms.Form):
     def __init__(self, data=None, **kwargs):
@@ -67,8 +73,55 @@ class FacilityForm(forms.Form):
 
 
 class AnonymousEditReportForm(forms.ModelForm):
-	"""
+    """
 	We can now edit any reports that come in anonymously
 	"""
-	class Meta:
-		model = AnonymousReport		
+    class Meta:
+        model = AnonymousReport
+
+class MassTextForm(ActionForm):
+    text = forms.CharField(max_length=160, required=True, widget=SMSInput())
+    action_label = "Send Message"
+
+    def clean_text(self):
+        text = self.clean_data['text']
+        for find, replace in [
+            (u'\u201c', '"'),
+            (u'\u201d', '"'),
+            (u'\u201f', '"'),
+            (u'\u2018', "'"),
+            (u'\u2019', "'"),
+            (u'\u201B', "'"),
+            (u'\u2013', "-"),
+            (u'\u2014', "-"),
+            (u'\u2015', "-"),
+            (u'\xa7', "$"),
+            (u'\xa1', "i"),
+            (u'\xa4', ''),
+            (u'\xc4', 'A')
+        ]:
+            text = text.replace(find, replace)
+        return text
+    
+    def perform(self, request, results):
+        if results is None or len(results) == 0:
+            return ('A message must have one or more recipients!', 'error',)
+        if request.user and request.user.has_perm('auth.add_message'):
+            connections = list(Connection.objects.filter(contact__in=results).distint())
+            text = self.cleaned_data.get('text', "")
+            text = text.replace("%", u'\u0025')
+
+            messages = Message.mass_text(text, connections)
+
+            MassText.bulk.bulk_insert(send_pre_save=False,user=request.user,text=text,contacts=list(results))
+            masstexts = MassText.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
+            masstext = masstexts[0]
+
+            if settings.SITE_ID:
+                masstext.sites.add(Site.objects.get_current())
+
+            return ("Message successfully sent to %d numbers" % len(connections), 'success',)
+        else:
+            return ("You don't have permission to send messages!", "error",)
+                
+            
