@@ -6,6 +6,16 @@ from mtrack.forms import EditAnonymousReportForm
 from generic.views import generic_row
 from django.template import RequestContext
 
+
+@login_required
+def view_report(request, report_pk):
+	import pdb; pdb.set_trace()
+	
+	report = get_object_or_404(AnonymousReport, pk=report_pk)
+	anonymous_edit_form = EditAnonymousReportForm(instance=report)
+	return render_to_response('mtrack/partials/anon_view.html', 
+		{'form':anonymous_edit_form}, context_instance=RequestContext(request))
+
 @login_required
 def delete_report(request, report_pk):
     report = get_object_or_404(AnonymousReport, pk=report_pk)

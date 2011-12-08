@@ -5,9 +5,9 @@ function deleteAnonymousReport(elem, pk, name) {
     }
 }
 
-function editAnonymousReport(elem, pk) {
+function editAnonymousReport(elem, pk, url) {
     overlay_loading_panel($(elem).parents('tr'));
-    $(elem).parents('tr').load('../anonymousreport/' + pk + '/edit/', '', function () {
+    $(elem).parents('tr').load(url, '', function () {
         $('#div_panel_loading').hide();    
     });
 }
