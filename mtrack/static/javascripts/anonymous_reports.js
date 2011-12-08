@@ -6,10 +6,9 @@ function deleteAnonymousReport(elem, pk, name, url) {
     }
 }
 
-function editAnonymousReport(elem, pk, url) {
+function editAnonymousReport(elem, pk) {
     overlay_loading_panel($(elem).parents('tr'));
-    $(elem).parents('tr').load(url, '', function () {
-//    $(elem).parents('tr').load('../reporter/' + pk + '/edit/', '', function () {
+    $(elem).parents('tr').load('../anonymousreport/' + pk + '/edit/', '', function () {
         $('#div_panel_loading').hide();    
     });
 }
@@ -26,20 +25,14 @@ function deleteConnection(elem,link,name) {
         $.post(link, function(data) {});
     }
 }
-
-function newConnection(elem, link) {
-	$('#add_contact_form').load(link);
-    $('#add_contact_anchor_row').hide();
-}
-
-function addNumbers(elem, action) {
-    form = $(elem).parents("form");
-    form_data = form.serializeArray();
-    $('#add_contact_form').load(action, form_data);
-}
-
-function addPhoneElm(elem){
-	rowelem = $(elem).parents('tr')
-    rowelem.after('<tr></tr>')
-    rowelem.next().html('<td>Phone Number: </td><td><input name="other_nums" /></td>');
-}
+$(document).ready(function() {
+	//Accordion based messaging history list
+    if($('#accordion').length > 0) {
+    	$(function() {
+    		$( "#accordion" ).accordion({ autoHeight: false, collapsible: true });
+    	});
+    }
+	$(function() {
+        $('.replyForm').hide();
+	});
+});
