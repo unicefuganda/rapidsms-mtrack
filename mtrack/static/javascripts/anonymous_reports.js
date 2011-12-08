@@ -1,8 +1,7 @@
-function deleteAnonymousReport(elem, pk, name, url) {
+function deleteAnonymousReport(elem, pk, name) {
     if (confirm('Are you sure you want to remove ' + name + '?')) {
         $(elem).parents('tr').remove();
-        $.post(url, function(data) {});
-//        $.post('../reporter/' + pk + '/delete/', function(data) {});
+        $.post('../anonymousreport/' + pk + '/delete/', function(data) {});
     }
 }
 
