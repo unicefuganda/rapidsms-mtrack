@@ -25,6 +25,7 @@ class App(AppBase):
             # another common use cases are immediate reports or rapid reporting which can be accurately predicted.
 
             # look for reports that have come in within the hour from the same person and that aren't in any script progress
+
             import pdb; pdb.set_trace()
             if AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists() and not ScriptProgress.objects.filter(connection=message.connection).exists():
                 #get anonymous report objects that already passed the first script progress
@@ -39,6 +40,7 @@ class App(AppBase):
                 return True
             # send a thank you message via backend
             message.connection.message(u"This report will be sent to your District. If this is an emergency, contact your nearest facility")
+            return True
 #                if not AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists():
 #
 #                    ar = AnonymousReport.objects.create(connection=message.connection)

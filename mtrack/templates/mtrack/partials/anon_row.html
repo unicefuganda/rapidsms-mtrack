@@ -21,6 +21,30 @@
     <td>
         {{ object.comments }}
     </td>
+    <td>
+        {% for m in object.messages.all %}
+            {% if m.responses %}
+                <ul>
+                    {% for r in m.responses.all %}
+                        <li>&lt;&lt;
+                            {% ifequal object.application  r.application%}
+                                {% if object.poll_response.all.0.has_errors %}
+                                    <span class="errormessage">
+                                {% else %}
+                                    <span class="successmessage">
+                                {% endif %}
+                            {% else %}
+                                <span class="othermessage">
+                            {% endifequal %}
+                                {{ r.text }}
+                                </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endfor %}
+    </td>
+
     <td class="button_col">
         <div class="buttons">
             <a href="javascript:void(0)" onClick="deleteAnonymousReport(this, {{ object.pk }}, 'a report on {{ object.health_facility }}', '{% url mtrack.views.anonymous_reports.delete_report object.pk %}')">
