@@ -14,24 +14,8 @@ class App(AppBase):
         if message.connection.backend.name == getattr(settings, 'HOTLINE_BACKEND', 'console'):
             d = datetime.datetime.now() - datetime.timedelta(hours=1)
             #snatch and compare every immediate SMS connections & timestamps to existing Anonymous Reports messages
-
-            #skip the script
-            #TODO compute better time intervals subject to environment variables like Yo!, MTN, Warid and others
-            #>>> time_diff = datetime.datetime.now() - message.date
-            # or
-            #>>> msg_date = AnonymousReport.objects.all().order_by('-date')[0].messages.values()[0]['date']
-            #>>> time_diff = datetime.datetime.now() - msg_date <-- using that filters for message times that are more recent
-            # typically, a data reporter will have about 10 to 30 minutes moving from place to place at a hospital
-            # another common use cases are immediate reports or rapid reporting which can be accurately predicted.
-
-            # make sure that incoming message is actually not in any autoreg process
-            if not ScriptProgress.objects.filter(connection=message.connection).exists():
-                import pdb; pdb.set_trace()
-                ar = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
-                ar.save()
-                message.connection.message(u"Thank you for your report. Webaale kututegeezako.")
-                return True
-            #do nothing for messages we don't care about here.
+            ar = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
+            ar.save()
             return True
         
 #            if AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists() and not ScriptProgress.objects.filter(connection=message.connection).exists():
