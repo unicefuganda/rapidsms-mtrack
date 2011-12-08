@@ -59,7 +59,7 @@ Poll.register_poll_type('facility', 'Health Facility', parse_facility, db_type=A
 #                        report_columns=(('Original Text', 'text'), ('District', 'custom',),),
 #                        edit_form='mtrack.forms.DistrictResponseForm')
 
-
+#
 #def anonymous_autoreg(**kwargs):
 #    '''
 #    Anonymous autoreg script
