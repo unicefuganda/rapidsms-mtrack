@@ -12,11 +12,7 @@
     </td>
     <!-- messages for report -->
     <td>
-        <ul>
-        {% for m in object.messages.all %}
-            <li>{{ m.text }}</li>
-        {% endfor %}
-        </ul>
+    {{ object.message.text }}
     </td>
     <td>
         {{ object.comments }}

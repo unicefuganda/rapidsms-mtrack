@@ -24,30 +24,37 @@ class App(AppBase):
             # typically, a data reporter will have about 10 to 30 minutes moving from place to place at a hospital
             # another common use cases are immediate reports or rapid reporting which can be accurately predicted.
 
-            # look for reports that have come in within the hour from the same person and that aren't in any script progress
-
-            import pdb; pdb.set_trace()
-            if AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists() and not ScriptProgress.objects.filter(connection=message.connection).exists():
-                #get anonymous report objects that already passed the first script progress
-                ar = AnonymousReport.objects.filter(connection=message.connection).order_by('-date')[0] #get last report by user
-                ar.messages.add(message.db_message)
+            # make sure that incoming message is actually not in any autoreg process
+            if not ScriptProgress.objects.filter(connection=message.connection).exists():
+                import pdb; pdb.set_trace()
+                ar = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
+                ar.save()
+                message.connection.message(u"Thank you for your report. Webaale kututegeezako.")
                 return True
-            else:
-                # just create a new anonymous report object for first time user
-#                ar = AnonymousReport.objects.create(connection=message.connection)
-                # add message to it!!!
+            #do nothing for messages we don't care about here.
+            return True
+        
+#            if AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists() and not ScriptProgress.objects.filter(connection=message.connection).exists():
+#                #get anonymous report objects that already passed the first script progress
+#                ar = AnonymousReport.objects.filter(connection=message.connection).order_by('-date')[0] #get last report by user
 #                ar.messages.add(message.db_message)
 #                return True
-            # send a thank you message via backend
-            #FIXTHIS is is this a okay?
-#            message.connection.message(u"This report will be sent to your District. If this is an emergency, contact your nearest facility")
-#            return True
-                if not AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists():
-
-                    ar = AnonymousReport.objects.create(connection=message.connection)
-                elif ScriptProgress.objects.filter(script__slug="anonymous_autoreg", connection=message.connection).exists():
-                    return False
-                else:
-                    ar = AnonymousReport.objects.filter(connection=message.connection).latest('date')
-                ar.messages.add(message.db_message)
-                return True
+#            else:
+#                # just create a new anonymous report object for first time user
+##                ar = AnonymousReport.objects.create(connection=message.connection)
+#                # add message to it!!!
+##                ar.messages.add(message.db_message)
+##                return True
+#            # send a thank you message via backend
+#            #FIXTHIS is is this a okay?
+##            message.connection.message(u"This report will be sent to your District. If this is an emergency, contact your nearest facility")
+##            return True
+#                if not AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists():
+#
+#                    ar = AnonymousReport.objects.create(connection=message.connection)
+#                elif ScriptProgress.objects.filter(script__slug="anonymous_autoreg", connection=message.connection).exists():
+#                    return False
+#                else:
+#                    ar = AnonymousReport.objects.filter(connection=message.connection).latest('date')
+#                ar.messages.add(message.db_message)
+#                return True

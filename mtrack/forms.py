@@ -139,7 +139,6 @@ class MassTextForm(ActionForm):
         return text
     
     def perform(self, request, results):
-        import pdb; pdb.set_trace()
         if results is None or len(results) == 0:
             return ('A message must have one or more recipients!', 'error',)
         if request.user and request.user.has_perm('auth.add_message'):
