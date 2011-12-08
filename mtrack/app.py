@@ -39,6 +39,7 @@ class App(AppBase):
                 ar.messages.add(message.db_message)
                 return True
             # send a thank you message via backend
+            #FIXTHIS is is this a okay?
             message.connection.message(u"This report will be sent to your District. If this is an emergency, contact your nearest facility")
             return True
 #                if not AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists():
