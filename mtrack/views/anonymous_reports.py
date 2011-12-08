@@ -29,4 +29,4 @@ def edit_report(request, anonymous_report_pk):
                 {'object':AnonymousReport.objects.get(pk=anonymous_report_pk),'selectable':True}, context_instance=RequestContext(request))
     else:
         return render_to_response('mtrack/partials/anon_edit_row.html',
-                {'report_form':edit_report_form, 'anonysmous_report':anonymous_report, 'messages':messages},context_instance=RequestContext(request))
+                {'report_form':edit_report_form, 'anonymous_report':anonymous_report, 'messages':messages},context_instance=RequestContext(request))
