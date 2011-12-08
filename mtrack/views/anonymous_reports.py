@@ -16,7 +16,7 @@ def delete_report(request, report_pk):
 @login_required
 def edit_report(request, anonymous_report_pk):
     anonymous_report = get_object_or_404(AnonymousReport, pk=anonymous_report_pk)
-    messages = [msg['text'] for msg in anonymous_report.messages.values()]
+    message = anonymous_report.message.text
     edit_report_form = EditAnonymousReportForm(instance=anonymous_report)
     if request.method == 'POST':
         edit_report_form = AnonymousEditReportForm(instance=anonymous_report, data=request.POST)
@@ -24,9 +24,9 @@ def edit_report(request, anonymous_report_pk):
             edit_report_form.save()
         else:
             return render_to_response('mtrack/partials/anon_edit_row.html',
-                    {'report_form':edit_report_form, 'anonymous_report':anonymous_report, 'messages':messages}, context_instance=RequestContext(request))
+                    { 'report_form':edit_report_form, 'anonymous_report':anonymous_report, 'message':message }, context_instance=RequestContext( request ))
         return render_to_response('mtrack/partials/anon_row.html',
-                {'object':AnonymousReport.objects.get(pk=anonymous_report_pk),'selectable':True}, context_instance=RequestContext(request))
+                { 'object':AnonymousReport.objects.get(pk=anonymous_report_pk),'selectable':True }, context_instance=RequestContext( request ))
     else:
         return render_to_response('mtrack/partials/anon_edit_row.html',
-                {'report_form':edit_report_form, 'anonymous_report':anonymous_report, 'messages':messages},context_instance=RequestContext(request))
+                { 'report_form':edit_report_form, 'anonymous_report':anonymous_report, 'message':message },context_instance=RequestContext( request ))
