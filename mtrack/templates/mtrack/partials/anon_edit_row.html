@@ -36,7 +36,7 @@
             <img src="{{ MEDIA_URL }}rapidsms/icons/silk/decline.png"/>
         </a>
         <a href="javascript:void(0)"
-           onclick="submitForm(this, '../anonymousreport/{{ anonymous_report.pk }}/edit/', $(this).parents('tr'))">
+           onclick="editAnonymousForm(this, {{ anonymous_report.pk }}">
             <img src="{{ MEDIA_URL }}rapidsms/icons/silk/accept.png"/>
         </a>
     </div>

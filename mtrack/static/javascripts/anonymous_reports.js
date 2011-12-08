@@ -1,15 +1,15 @@
 function deleteAnonymousReport(elem, pk, name) {
     if (confirm('Are you sure you want to remove ' + name + '?')) {
         $(elem).parents('tr').remove();
-        $.post('../anonymousreport/' + pk + '/delete/', function(data) {});
+        $.post('../anonymousreports/' + pk + '/delete/', function(data) {});
     }
 }
 
-function editAnonymousReport(elem, pk, url) {
+function editAnonymousReport(elem, pk) {
     overlay_loading_panel($(elem).parents('tr'));
-    $(elem).parents('tr').load(url, '', function () {
-        $('#div_panel_loading').hide();    
-    });
+	$(elem).parents('tr').load('../anonymousreports/'+pk+'/edit/','',function(){
+	    $('#div_panel_loading').hide();
+	});
 }
 
 function submitForm(link, action, resultDiv) {
