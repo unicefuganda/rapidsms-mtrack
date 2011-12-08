@@ -60,42 +60,42 @@ Poll.register_poll_type('facility', 'Health Facility', parse_facility, db_type=A
 #                        edit_form='mtrack.forms.DistrictResponseForm')
 
 #
-#def anonymous_autoreg(**kwargs):
-#    '''
-#    Anonymous autoreg script
-#    This method responds to a signal sent by the Script module on completion of the anonymous_autoreg script
-#    '''
-#    connection = kwargs['connection']
-#    progress = kwargs['sender']
-#    if not progress.script.slug == 'anonymous_autoreg':
-#        return
-#    session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
-#    script = progress.script
-#
-#    district_poll = script.steps.get(poll__name='district_name_anonymous').poll
-#    health_facility_poll = script.steps.get(poll__name='health_facility_anonymous').poll
-#
-#    # narrow down the health facility in catchment areas; reporter will now be able to report multiple times and in any location
-#    health_facility = find_best_response(session, health_facility_poll)
-#    district = find_best_response(session, district_poll)
-#
-#    if district:
-#        district = find_closest_match(district, Location.objects.filter(type__name='district'))
-#        if district:
-#            all_sub_locations = district.get_descendants(include_self=True)
-#        else:
-#            all_sub_locations = Location.objects.all()
-#    else:
-#        all_sub_locations = Location.objects.all() # in case district is "failed"
-#
-#    health_facility = find_closest_match(health_facility, HealthFacility.objects.filter(catchment_areas__in=all_sub_locations))
-##TODO get district just in case a good district not found
-##    if not district and health_facility:
-##        district = health_facility.district
-#
-#    anonymous_report = AnonymousReport.objects.filter(connection=connection).latest('date')
-#    anonymous_report.health_facility = health_facility
-#    anonymous_report.district = district
-#    anonymous_report.save()
-#
-#script_progress_was_completed.connect(anonymous_autoreg, weak=False)
+def anonymous_autoreg(**kwargs):
+    '''
+    Anonymous autoreg script
+    This method responds to a signal sent by the Script module on completion of the anonymous_autoreg script
+    '''
+    connection = kwargs['connection']
+    progress = kwargs['sender']
+    if not progress.script.slug == 'anonymous_autoreg':
+        return
+    session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
+    script = progress.script
+
+    district_poll = script.steps.get(poll__name='district_name_anonymous').poll
+    health_facility_poll = script.steps.get(poll__name='health_facility_anonymous').poll
+
+    # narrow down the health facility in catchment areas; reporter will now be able to report multiple times and in any location
+    health_facility = find_best_response(session, health_facility_poll)
+    district = find_best_response(session, district_poll)
+
+    if district:
+        district = find_closest_match(district, Location.objects.filter(type__name='district'))
+        if district:
+            all_sub_locations = district.get_descendants(include_self=True)
+        else:
+            all_sub_locations = Location.objects.all()
+    else:
+        all_sub_locations = Location.objects.all() # in case district is "failed"
+
+    health_facility = find_closest_match(health_facility, HealthFacility.objects.filter(catchment_areas__in=all_sub_locations))
+#TODO get district just in case a good district not found
+#    if not district and health_facility:
+#        district = health_facility.district
+
+    anonymous_report = AnonymousReport.objects.filter(connection=connection).latest('date')
+    anonymous_report.health_facility = health_facility
+    anonymous_report.district = district
+    anonymous_report.save()
+
+script_progress_was_completed.connect(anonymous_autoreg, weak=False)

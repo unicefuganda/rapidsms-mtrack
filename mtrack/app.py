@@ -34,20 +34,20 @@ class App(AppBase):
                 return True
             else:
                 # just create a new anonymous report object for first time user
-                ar = AnonymousReport.objects.create(connection=message.connection)
+#                ar = AnonymousReport.objects.create(connection=message.connection)
                 # add message to it!!!
-                ar.messages.add(message.db_message)
-                return True
-            # send a thank you message via backend
-            #FIXTHIS is is this a okay?
-            message.connection.message(u"This report will be sent to your District. If this is an emergency, contact your nearest facility")
-            return True
-#                if not AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists():
-#
-#                    ar = AnonymousReport.objects.create(connection=message.connection)
-#                elif ScriptProgress.objects.filter(script__slug="anonymous_autoreg", connection=message.connection).exists():
-#                    return False
-#                else:
-#                    ar = AnonymousReport.objects.filter(connection=message.connection).latest('date')
 #                ar.messages.add(message.db_message)
 #                return True
+            # send a thank you message via backend
+            #FIXTHIS is is this a okay?
+#            message.connection.message(u"This report will be sent to your District. If this is an emergency, contact your nearest facility")
+#            return True
+                if not AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists():
+
+                    ar = AnonymousReport.objects.create(connection=message.connection)
+                elif ScriptProgress.objects.filter(script__slug="anonymous_autoreg", connection=message.connection).exists():
+                    return False
+                else:
+                    ar = AnonymousReport.objects.filter(connection=message.connection).latest('date')
+                ar.messages.add(message.db_message)
+                return True
