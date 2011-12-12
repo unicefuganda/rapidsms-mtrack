@@ -73,13 +73,8 @@ class EditAnonymousReportForm(forms.ModelForm):
     """
 	We can now edit any reports that come in anonymously
 	"""
-#    def __init__(self, *args, **kwargs):
-#        super(EditAnonymousReportForm, self).__init__(*args, **kwargs)
-#        self.fields['district'] = TreeNodeChoiceField(queryset=self.fields['district'].queryset, level_indicator=u'.')
-
     class Meta:
         model = AnonymousReport
-#        fields = ('health_facility', 'district', 'messages', 'comments' )
 
 class ReplyTextForm(ActionForm):
     text = forms.CharField(required=True, widget=SMSInput())
