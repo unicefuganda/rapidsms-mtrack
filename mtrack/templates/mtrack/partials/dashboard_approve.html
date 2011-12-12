@@ -1,4 +1,6 @@
+{% load humanize %}
 <br/>
-<a href="{% url approve %}">{{ reports }} report{{ reports|pluralize }} to approve</a> : <input type="button" value="Approve now"><br/>
+{{ reports }} Report{{ reports|pluralize }} to Approve for {{ reporting_period|ordinal }} Reporting Period.
+<a href="{% url approve %}">Approve Reports &raquo;</a>
 <br/>
-<a href="{% url facility-reports %}">see previous reports &raquo;</a>
+<a href="{% url facility-reports %}">View Reports Archive &raquo;</a>

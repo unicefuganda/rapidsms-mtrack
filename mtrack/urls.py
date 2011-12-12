@@ -37,13 +37,13 @@ urlpatterns = patterns('',
         'partial_row':'mtrack/partials/anon_row.html',
         'selectable':True,
         'results_title' : 'Anonymous Reports',
-        'action_forms':[ReplyTextForm],#, MassTextForm],
-        'columns':[('Facility', True, 'health_facility', SimpleSorter(),),            
+        'action_forms':[ReplyTextForm], #, MassTextForm],
+        'columns':[('Facility', True, 'health_facility', SimpleSorter(),),
             ('District', True, 'district', SimpleSorter(),),
             ('Date', True, 'date', SimpleSorter(),),
             ('Reports', True, 'messages', SimpleSorter(),),
             ('Actions', True, 'actions', SimpleSorter(),),
-            ('Comments', True, 'comments', SimpleSorter(),),            
+            ('Comments', True, 'comments', SimpleSorter(),),
             ('Responses', True, 'responses', None,),
             ('', False, '', None,)], \
         'results_title':'Anonymous reports',
@@ -84,6 +84,7 @@ urlpatterns = patterns('',
                    ('Report', True, 'raw', SimpleSorter(),), \
                    ('Date', True, 'created', SimpleSorter(),), \
                    ('', False, '', None,)], \
+        'sort_column':'message__connection__contact__healthproviderbase__healthprovider__facility__name', \
     }, name='approve'),
 
     url(r'^hc/reports/$', generic, { \
@@ -97,7 +98,8 @@ urlpatterns = patterns('',
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),),
                    ('Report', True, 'raw', SimpleSorter(),),
                    ('Date', True, 'created', SimpleSorter(),), \
-                   ('', False, '', None,)],
+                   ('', False, '', None,)], \
+        'sort_column':'message__connection__contact__healthproviderbase__healthprovider__facility__name', \
     }, name='facility-reports'),
 
 

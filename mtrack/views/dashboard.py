@@ -4,7 +4,7 @@
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from uganda_common.utils import get_location_for_user
-from mtrack.utils import reporting_facilities, reporting_vhts, last_reporting_period, total_registered_facilities, total_vhts, get_facility_reports
+from mtrack.utils import reporting_facilities, reporting_vhts, last_reporting_period, total_registered_facilities, total_vhts, get_facility_reports, last_reporting_period_number
 
 def admin(request):
     location = get_location_for_user(request.user)
@@ -22,5 +22,6 @@ def approve(request):
 
     return render_to_response('mtrack/partials/dashboard_approve.html', {
             'reports':get_facility_reports(location, count=True),
+            'reporting_period': last_reporting_period_number(),
         },
         context_instance=RequestContext(request))

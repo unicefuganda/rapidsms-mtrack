@@ -2,7 +2,15 @@
 {% block remaining_row_content %}
     <td>{{ object.message.connection.contact.healthproviderbase.healthprovider.facility.name }}</td>
     <td>{{ object.message.connection.contact.name }}</td>
-    <td>{{ object.raw }}</td>
+    <td>{{ object.raw }}
+        <ul>
+        {% for v in object.eav.get_values %}
+            <li>
+                {{ v.attribute.description }}: {{ v.value_int }}
+            </li>
+        {% endfor %}
+        </ul>    
+    </td>
     <td>{{ object.created|date:"m/j/y G:i:s" }}</td>
     <td>
         <div class="buttons">
