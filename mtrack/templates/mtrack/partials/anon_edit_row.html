@@ -29,6 +29,11 @@
         {{ report_form.comments.errors }}
     {% endif %}
 </td>
+
+<td>
+	{{ report_form.actions }}
+</td>
+
 <td class="button_col">
     <div class="buttons">
         <a href="javascript:void(0)"
@@ -36,7 +41,7 @@
             <img src="{{ MEDIA_URL }}rapidsms/icons/silk/decline.png"/>
         </a>
         <a href="javascript:void(0)"
-           onclick="editAnonymousForm(this, {{ anonymous_report.pk }}">
+           onclick="submitForm(this, '../anonymousreports/{{ anonymous_report.pk }}/edit/', $(this).parents('tr'))">
             <img src="{{ MEDIA_URL }}rapidsms/icons/silk/accept.png"/>
         </a>
     </div>

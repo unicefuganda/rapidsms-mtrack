@@ -11,10 +11,14 @@ from rapidsms_httprouter.models import Message
 
 class App(AppBase):
     def handle(self, message):
-        if message.connection.backend.name == getattr(settings, 'HOTLINE_BACKEND', 'console'):
+        if message.connection.backend.name == getattr(settings, 'HOTLINE_BACKEND', 'console'):            
             d = datetime.datetime.now() - datetime.timedelta(hours=1)
             #snatch and compare every immediate SMS connections & timestamps to existing Anonymous Reports messages
             ar = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
-            Message.objects.create(direction="O",text=u"Thank you for your report! Webaale kututegeezako!",connection=message.connection,in_response_to=ar.message)
+            Message.objects.create(direction="O",
+                                   text=u"Thank you for your report! Webaale kututegeezako!",
+                                   status='Q',
+                                   connection=message.connection,
+                                   in_response_to=ar.message)
             ar.save()
             return True
