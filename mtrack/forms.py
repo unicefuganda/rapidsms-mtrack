@@ -68,7 +68,6 @@ class FacilityForm(forms.Form):
             self.facility.catchment_areas.add(c)
         return
 
-
 class EditAnonymousReportForm(forms.ModelForm):
     """
 	We can now edit any reports that come in anonymously
@@ -78,9 +77,10 @@ class EditAnonymousReportForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super(EditAnonymousReportForm, self).__init__(*args, **kwargs)
-        catchment_areas = Location.objects.filter(type__name="district").order_by('name')
+        catchment_areas = Location.objects.filter(type__name="district").order_by('name')            
         self.fields['district'].queryset = catchment_areas        
-        self.fields['facility'].queryset = HealthFacility.objects.filter()
+        self.fields['health_facility'].queryset = HealthFacility.objects.all().order_by('name')
+        
 class ReplyTextForm(ActionForm):
     text = forms.CharField(required=True, widget=SMSInput())
     action_label = 'Reply to selected'
@@ -101,4 +101,3 @@ class ReplyTextForm(ActionForm):
                 return ("%d messages sent successfully" % results.count, 'success')
         else:
             return ("You don't have permission to send messages!", "error")
-                
