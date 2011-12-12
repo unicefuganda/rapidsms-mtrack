@@ -17,6 +17,11 @@
     <td>
         {{ object.comments }}
     </td>
+    
+    <td>
+		{{ object.action }}
+	</td>
+    
     <td>
         {% for m in object.messages.all %}
             {% if m.responses %}
@@ -41,9 +46,7 @@
         {% endfor %}
     </td>
     
-	<td>
-		{{ object.action }}
-	</td>
+
 
     <td class="button_col">
         <div class="buttons">
