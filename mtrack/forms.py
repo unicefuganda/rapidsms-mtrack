@@ -75,7 +75,11 @@ class EditAnonymousReportForm(forms.ModelForm):
 	"""
     class Meta:
         model = AnonymousReport
-
+    
+    def __init__(self, *args, **kwargs):
+        super(EditAnonymousReportForm, self).__init__(*args, **kwargs)
+        self.fields['district'].queryset = Location.objects.filter(type__name='district').order_by('name')
+        
 class ReplyTextForm(ActionForm):
     text = forms.CharField(required=True, widget=SMSInput())
     action_label = 'Reply to selected'
