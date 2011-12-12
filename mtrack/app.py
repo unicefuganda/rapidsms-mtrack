@@ -15,30 +15,6 @@ class App(AppBase):
             d = datetime.datetime.now() - datetime.timedelta(hours=1)
             #snatch and compare every immediate SMS connections & timestamps to existing Anonymous Reports messages
             ar = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
+            Message.objects.create(direction="O",text=u"Thank you for your report! Webaale kututegeezako!",connection=message.connection,in_response_to=ar.message)
             ar.save()
             return True
-        
-#            if AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists() and not ScriptProgress.objects.filter(connection=message.connection).exists():
-#                #get anonymous report objects that already passed the first script progress
-#                ar = AnonymousReport.objects.filter(connection=message.connection).order_by('-date')[0] #get last report by user
-#                ar.messages.add(message.db_message)
-#                return True
-#            else:
-#                # just create a new anonymous report object for first time user
-##                ar = AnonymousReport.objects.create(connection=message.connection)
-#                # add message to it!!!
-##                ar.messages.add(message.db_message)
-##                return True
-#            # send a thank you message via backend
-#            #FIXTHIS is is this a okay?
-##            message.connection.message(u"This report will be sent to your District. If this is an emergency, contact your nearest facility")
-##            return True
-#                if not AnonymousReport.objects.filter(date__gte=d, connection=message.connection).exists():
-#
-#                    ar = AnonymousReport.objects.create(connection=message.connection)
-#                elif ScriptProgress.objects.filter(script__slug="anonymous_autoreg", connection=message.connection).exists():
-#                    return False
-#                else:
-#                    ar = AnonymousReport.objects.filter(connection=message.connection).latest('date')
-#                ar.messages.add(message.db_message)
-#                return True
