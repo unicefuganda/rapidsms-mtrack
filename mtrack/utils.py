@@ -110,6 +110,14 @@ def get_facility_reports_for_view(request=None):
     location = get_location_for_user(request.user)
     return get_facility_reports(location, count=False)
 
+def get_district_for_facility(hc):
+    bounds = hc.catchment_areas.aggregate(Min('lft'), Max('rght'))
+    l = Location.objects.filter(lft__lte=bounds['lft__min'], rght__gte=bounds['rght__max'], type__name='district')
+    if l.count():
+        return l[0]
+    return None
+
+
 def reporting_facilities(location, facilities=None, count=True, date_range=None):
     facilities = facilities or total_facilities(location, count=False)
     staff = get_staff_for_facility(facilities)
@@ -142,13 +150,6 @@ def reporting_vhts(location):
         .values('message__connection__contact')\
         .count()
 
-def get_district_for_facility(hc):
-    bounds = hc.catchment_areas.aggregate(Min('lft'), Max('rght'))
-    l = Location.objects.filter(lft__lte=bounds['lft__min'], rght__gte=bounds['rght__max'], type__name='district')
-    if l.count():
-        return l[0]
-
-    return None
 
 def get_dashboard_messages(request=None):
     from cvs.utils import get_unsolicited_messages

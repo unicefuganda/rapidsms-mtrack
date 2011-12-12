@@ -11,7 +11,7 @@ from mtrack.views.dashboard import admin, approve
 from mtrack.views.anonymous_reports import edit_report, delete_report, view_report
 from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view
 from mtrack.reports import ManagementReport
-from contact.forms import MassTextForm, ReplyTextForm
+from .forms import ReplyTextForm
 
 urlpatterns = patterns('',
 #    url(r'^facility/(?P<code>\w+)/config/?$',
