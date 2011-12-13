@@ -32,11 +32,11 @@ ACTIONS = (
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
     message = models.ForeignKey(Message)
-    date = models.DateTimeField(auto_now_add=True, null=True)
+    date = models.DateTimeField(auto_now_add=True)
     district = models.ForeignKey(Location, null=True)
     comments = models.TextField(null=True)
     health_facility = models.ForeignKey(HealthFacility, null=True)
-    action = models.CharField(max_length=2, choices=ACTIONS, default='Open') #is this the right way??
+    action = models.CharField(max_length=20, choices=ACTIONS, default='Open') #is this the right way??
     def __unicode__(self):
         return self.connection.identity
 

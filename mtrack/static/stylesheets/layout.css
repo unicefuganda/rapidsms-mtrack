@@ -247,9 +247,6 @@ div.clear-hack {
             font-size: 2em;
         }
 
-
-
-
 /* some apps (erm, just the querylog, actually) add big triggers to the
  * bottom of the page to show or perform some action. */
 div.trigger {

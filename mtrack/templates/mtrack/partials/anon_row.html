@@ -55,7 +55,7 @@
             <a href="javascript:void(0)" onClick="deleteAnonymousReport(this, {{ object.pk }}, 'a report on {{ object.health_facility }}', '{% url mtrack.views.anonymous_reports.delete_report object.pk %}')">
                 <img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/>
             </a>
-            <a href="javascript:void(0)" onclick="editAnonymousReport(this, {{ object.pk }}, '{% url mtrack.views.anonymous_reports.edit_report object.pk %}')">
+            <a href="javascript:void(0)" onclick="editAnonymousReport(this, {{ object.pk }})">
                 <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png"/>
             </a>
         </div>

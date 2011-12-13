@@ -42,7 +42,7 @@ urlpatterns = patterns('',
             ('District', True, 'district', SimpleSorter(),),
             ('Date', True, 'date', SimpleSorter(),),
             ('Reports', True, 'messages', SimpleSorter(),),
-            ('Actions', True, 'actions', SimpleSorter(),),
+            ('Status', True, 'actions', SimpleSorter(),),
             ('Comments', True, 'comments', SimpleSorter(),),
             ('Responses', True, 'responses', None,),
             ('', False, '', None,)], \
