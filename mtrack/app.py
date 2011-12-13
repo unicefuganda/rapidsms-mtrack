@@ -1,14 +1,7 @@
-from contact.models import Flag, MessageFlag
 from django.conf import settings
 from mtrack.models import AnonymousReport
-from poll.models import Poll
 from rapidsms.apps.base import AppBase
-from rapidsms.models import Contact
 from rapidsms_httprouter.models import Message
-from script.models import Script, ScriptProgress
-import rapidsms
-import datetime
-#sending messages??? outbound!
 
 class App(AppBase):
     def handle(self, message):
@@ -20,4 +13,4 @@ class App(AppBase):
                                    status='Q',
                                    connection=message.connection,
                                    in_response_to=ar.message)            
-            return True
+            return True    
