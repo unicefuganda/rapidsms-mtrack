@@ -13,11 +13,8 @@ import datetime
 class App(AppBase):
     def handle(self, message):
         if message.connection.backend.name == getattr(settings, 'HOTLINE_BACKEND', 'console'):
-            #import pdb; pdb.set_trace()            
-            d = datetime.datetime.now() - datetime.timedelta(hours=1)
-            #snatch and compare every immediate SMS connections & timestamps to existing Anonymous Reports messages
             ar = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
-            ar.save()                        
+            ar.save()                    
             Message.objects.create(direction="O",
                                    text="Thank you for your report! Webaale kututegeezako!",
                                    status='Q',

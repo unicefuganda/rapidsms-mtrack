@@ -36,7 +36,7 @@ class AnonymousReport(models.Model):
     district = models.ForeignKey(Location, null=True)
     comments = models.TextField(null=True)
     health_facility = models.ForeignKey(HealthFacility, null=True)
-    action = models.CharField(max_length=20, choices=ACTIONS, default='Open') #is this the right way??
+    action = models.CharField(max_length=2, choices=ACTIONS, default='Op') #is this the right way??
     def __unicode__(self):
         return self.connection.identity
 
