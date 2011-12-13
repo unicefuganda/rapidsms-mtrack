@@ -15,10 +15,11 @@ class App(AppBase):
         if message.connection.backend.name == getattr(settings, 'HOTLINE_BACKEND', 'console'):            
             d = datetime.datetime.now() - datetime.timedelta(hours=1)
             #snatch and compare every immediate SMS connections & timestamps to existing Anonymous Reports messages
-            AnonymousReport.objects.create(connection=message.connection, message=message.db_message)                        
+            ar = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
+            ar.save()                        
             Message.objects.create(direction="O",
                                    text="Thank you for your report! Webaale kututegeezako!",
                                    status='Q',
                                    connection=message.connection,
-                                   in_response_to=message)            
+                                   in_response_to=ar.message)            
             return True

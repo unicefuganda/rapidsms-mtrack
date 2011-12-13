@@ -10,17 +10,19 @@
     <td>
         {{ object.date }}
     </td>
+
     <!-- messages for report -->
     <td>
     {{ object.message.text }}
-    </td>
-    <td>
-        {{ object.comments }}
     </td>
     
     <td>
 		{{ object.action }}
 	</td>
+
+    <td>
+        {{ object.comments }}
+    </td>
     
     <td>
         {% for m in object.messages.all %}
