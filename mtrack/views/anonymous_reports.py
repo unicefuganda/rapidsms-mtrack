@@ -26,9 +26,10 @@ def delete_report(request, report_pk):
 def edit_report(request, anonymous_report_pk):            
     anonymous_report = get_object_or_404(AnonymousReport, pk=anonymous_report_pk)
     message = anonymous_report.message.text
-    edit_report_form = EditAnonymousReportForm(instance=anonymous_report)
+    edit_report_form = EditAnonymousReportForm(request.POST, instance=anonymous_report)
     if request.method == 'POST':
-        edit_report_form = EditAnonymousReportForm(request.POST, instance=anonymous_report)
+        #edit_report_form = EditAnonymousReportForm(request.POST, instance=anonymous_report)
+        #edit_report_form.save()
         if edit_report_form.is_valid:
             edit_report_form.save()
         else:
