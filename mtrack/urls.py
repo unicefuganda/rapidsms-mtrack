@@ -31,7 +31,7 @@ urlpatterns = patterns('',
     #FIXTHIS annonymous messages
     # login required added
     url(r'^anonymousreports/$', login_required(generic), {
-        'model':AnonymousReport,
+        'model':AnonymousReport,        
         'objects_per_page':25,
         'base_template':'mtrack/mtrack_generic_base.html',
         'partial_row':'mtrack/partials/anon_row.html',
@@ -41,7 +41,7 @@ urlpatterns = patterns('',
         'columns':[('Facility', True, 'health_facility', SimpleSorter(),),
             ('District', True, 'district', SimpleSorter(),),
             ('Date', True, 'date', SimpleSorter(),),
-            ('Reports', True, 'messages', SimpleSorter(),),
+            ('Reports', True, 'messages', None,),
             ('Status', True, 'actions', SimpleSorter(),),
             ('Comments', True, 'comments', SimpleSorter(),),
             ('Responses', True, 'responses', None,),
