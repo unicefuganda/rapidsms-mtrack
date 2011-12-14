@@ -2,16 +2,26 @@
 {% block content %}
     {% block remaining_row_content %}
     <td>
+        {% if object.health_facility %}
         {{ object.health_facility }}
+        {% else %}
+            <span style="font-size:0.7em;">missing</span>
+        {% endif %}
     </td>
     <td>
+        {% if object.district %}
         {{ object.district }}
+        {% else %}
+        <span style="font-size:0.7em;">missing</span>
+        {% endif %}
     </td>
     <td>
         {{ object.date }}
     </td>
-    <td>
-    {{ object.message.text }}
+    <td width="20%">
+        <span style="font-size:0.8em;">
+        {{ object.message.text }}
+        </span>
     </td>
     <td>
 		{{ object.get_action_display }}
@@ -26,7 +36,7 @@
     <td>
     <ul>
         {% for resp in object.message.responses.values %}
-    	<li>&lt;&lt; {{ resp.text }}</li>
+    	<li>&lt;&lt; {{ resp.text|truncatewords:10 }}</li>
     	{% endfor %}
     </ul>
     </td>
@@ -40,5 +50,6 @@
             </a>
         </div>
     </td>
+
     {% endblock %}
 {% endblock %}
