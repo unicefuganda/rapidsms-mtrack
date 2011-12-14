@@ -28,8 +28,6 @@ def edit_report(request, anonymous_report_pk):
     message = anonymous_report.message.text
     edit_report_form = EditAnonymousReportForm(request.POST, instance=anonymous_report)
     if request.method == 'POST':
-        #edit_report_form = EditAnonymousReportForm(request.POST, instance=anonymous_report)
-        #edit_report_form.save()
         if edit_report_form.is_valid:
             edit_report_form.save()
         else:
