@@ -77,9 +77,8 @@ class EditAnonymousReportForm(forms.ModelForm):
         exclude = ('connection', 'message', 'date')
     
     def __init__(self, *args, **kwargs):
-        super(EditAnonymousReportForm, self).__init__(*args, **kwargs)
-        catchment_areas = Location.objects.filter(type__name="district").order_by('name')            
-        self.fields['district'].queryset = catchment_areas        
+        super(EditAnonymousReportForm, self).__init__(*args, **kwargs)        
+        self.fields['district'].queryset = Location.objects.filter(type__name="district").order_by("name")        
         self.fields['health_facility'].queryset = HealthFacility.objects.all().order_by('name')
         # make this non-required
         for key, field in self.fields.iteritems():
