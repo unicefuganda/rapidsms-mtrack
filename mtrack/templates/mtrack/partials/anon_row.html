@@ -10,20 +10,19 @@
     <td>
         {{ object.date }}
     </td>
-
-    <!-- messages for report -->
     <td>
     {{ object.message.text }}
     </td>
-    
     <td>
 		{{ object.action }}
 	</td>
-
     <td>
-        {{ object.comments }}
+    	{% if object.comments %}
+        <span style="font-size:0.9em; color:green;">{{ object.comments }}</span>
+        {% else %}
+        <span style="font-size:0.7em; color:blue;">There are no comments</span>
+        {% endif %}
     </td>
-    
     <td>
     <ul>
         {% for resp in object.message.responses.values %}
@@ -31,9 +30,6 @@
     	{% endfor %}
     </ul>
     </td>
-    
-
-
     <td class="button_col">
         <div class="buttons">
             <a href="javascript:void(0)" onClick="deleteAnonymousReport(this, {{ object.pk }}, 'a report on {{ object.health_facility }}', '{% url mtrack.views.anonymous_reports.delete_report object.pk %}')">
