@@ -25,27 +25,11 @@
     </td>
     
     <td>
-        {% for m in object.messages.all %}
-            {% if m.responses %}
-                <ul>
-                    {% for r in m.responses.all %}
-                        <li>&lt;&lt;
-                            {% ifequal object.application  r.application%}
-                                {% if object.poll_response.all.0.has_errors %}
-                                    <span class="errormessage">
-                                {% else %}
-                                    <span class="successmessage">
-                                {% endif %}
-                            {% else %}
-                                <span class="othermessage">
-                            {% endifequal %}
-                                {{ r.text }}
-                                </span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endfor %}
+    <ul>
+        {% for resp in object.message.responses.values %}
+    	<li>&lt;&lt; {{ resp.text }}</li>
+    	{% endfor %}
+    </ul>
     </td>
     
 
