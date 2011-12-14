@@ -81,6 +81,9 @@ class EditAnonymousReportForm(forms.ModelForm):
         catchment_areas = Location.objects.filter(type__name="district").order_by('name')            
         self.fields['district'].queryset = catchment_areas        
         self.fields['health_facility'].queryset = HealthFacility.objects.all().order_by('name')
+        # make this non-required
+        for key, field in self.fields.iteritems():
+            self.fields[key].required = False
         
 class ReplyTextForm(ActionForm):
     text = forms.CharField(required=True, widget=SMSInput())
