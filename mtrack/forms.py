@@ -91,7 +91,6 @@ class ReplyTextForm(ActionForm):
             return ('A message must have one or more recipients!', 'error')        
         if request.user and request.user.has_perm('contact.can_message'):
             text = self.cleaned_data['text']
-            import pdb; pdb.set_trace()            
             for anonymous_report in results:
                 Message.objects.create(direction="O",
                                        text=text,
