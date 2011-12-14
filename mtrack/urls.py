@@ -31,7 +31,8 @@ urlpatterns = patterns('',
     #FIXTHIS anonymous messages
     # login required added
     url(r'^anonymousreports/$', login_required(generic), {
-        'model':AnonymousReport,        
+        'model':AnonymousReport,  
+        'queryset': AnonymousReport.objects.all().order_by('-date'),      
         'objects_per_page':25,
         'base_template':'mtrack/mtrack_generic_base.html',
         'partial_row':'mtrack/partials/anon_row.html',

@@ -9,8 +9,8 @@ class App(AppBase):
             ar = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
             ar.save()                    
             Message.objects.create(direction="O",
-                                   text="Thank you for your report! Webaale kututegeezako!",
+                                   text = "Thank you for your report, this report will be sent to relevant authorities. If this is an emergency, contact your nearest facility",
                                    status='Q',
                                    connection=message.connection,
                                    in_response_to=ar.message)            
-            return True    
+        return True  
