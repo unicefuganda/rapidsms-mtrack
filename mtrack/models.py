@@ -1,25 +1,11 @@
-from mtrack import signals
-from rapidsms_xforms.models import XFormField, XForm, XFormSubmission, dl_distance, xform_received
-import datetime
-from healthmodels.models import *
-from healthmodels.models.HealthProvider import HealthProviderBase
-from rapidsms.contrib.locations.models import Location
-from rapidsms.models import Contact
-from poll.models import Poll
-from eav.models import Attribute
-from mtrack.utils import XFORMS
-from script.signals import *
-from script.models import *
-from uganda_common.utils import parse_district_value
-from script.utils.handling import find_closest_match, find_best_response
-import itertools
-
 from django.db import models
+from eav.models import Attribute
+from healthmodels.models.HealthFacility import HealthFacility
+from poll.models import Poll
+from rapidsms.contrib.locations.models import Location
 from rapidsms.models import Connection
 from rapidsms_httprouter.models import Message
-from rapidsms.contrib.locations.models import Location
-from healthmodels.models.HealthFacility import HealthFacility
-from mtrack import signals
+from script.utils.handling import find_closest_match
 
 
 ACTIONS = (
