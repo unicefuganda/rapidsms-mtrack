@@ -90,7 +90,8 @@ class ReplyTextForm(ActionForm):
         if results is None or len(results) == 0:
             return ('A message must have one or more recipients!', 'error')        
         if request.user and request.user.has_perm('contact.can_message'):
-            text = self.cleaned_data['text']            
+            text = self.cleaned_data['text']
+            import pdb; pdb.set_trace()            
             for anonymous_report in results:
                 Message.objects.create(direction="O",
                                        text=text,
@@ -98,6 +99,9 @@ class ReplyTextForm(ActionForm):
                                        status="Q",
                                        in_response_to=anonymous_report.message                                
                                        )
-                return ("%d messages sent successfully" % results.count, 'success')
+            return ("%d messages sent successfully" % results.count(), 'success')
         else:
             return ("You don't have permission to send messages!", "error")
+        
+class MassTextForm(ActionForm):
+    pass        

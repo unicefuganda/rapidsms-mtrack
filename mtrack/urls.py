@@ -1,17 +1,17 @@
-from django.contrib.auth.decorators import login_required
+from .forms import ReplyTextForm, MassTextForm
 from django.conf.urls.defaults import patterns, url, include
-from generic.views import generic, generic_row
-from generic.sorters import SimpleSorter
+from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
+from generic.sorters import SimpleSorter
+from generic.views import generic, generic_row
+from mtrack.models import AnonymousReport
+from mtrack.reports import ManagementReport
+from mtrack.utils import get_dashboard_messages, get_facility_reports_for_view, \
+    get_all_facility_reports_for_view
+from mtrack.views.anonymous_reports import edit_report, delete_report
+from mtrack.views.dashboard import admin, approve
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
-from mtrack.models import AnonymousReport
-from mtrack.utils import get_dashboard_messages
-from mtrack.views.dashboard import admin, approve
-from mtrack.views.anonymous_reports import edit_report, delete_report, view_report
-from mtrack.utils import get_facility_reports_for_view, get_all_facility_reports_for_view
-from mtrack.reports import ManagementReport
-from .forms import ReplyTextForm
 
 urlpatterns = patterns('',
 #    url(r'^facility/(?P<code>\w+)/config/?$',
@@ -37,7 +37,7 @@ urlpatterns = patterns('',
         'partial_row':'mtrack/partials/anon_row.html',
         'selectable':True,
         'results_title' : 'Anonymous Reports',
-        'action_forms':[ReplyTextForm], #, MassTextForm],
+        'action_forms':[ReplyTextForm],
         'columns':[('Facility', True, 'health_facility', SimpleSorter(),),
             ('District', True, 'district', SimpleSorter(),),
             ('Date', True, 'date', SimpleSorter(),),
