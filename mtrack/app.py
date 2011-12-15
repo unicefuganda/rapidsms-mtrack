@@ -8,7 +8,7 @@ from rapidsms_httprouter.models import Message
 class App(AppBase):
     def handle(self, message):
         if message.connection.backend.name == getattr(settings, 'HOTLINE_BACKEND', 'console'):
-            d = datetime.datetime.now() - datetime.timedelta(1)
+            d = datetime.datetime.now() - datetime.timedelta(0,3600)
             anonymous_report = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
             anonymous_report.save()
 
