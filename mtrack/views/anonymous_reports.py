@@ -24,7 +24,7 @@ def edit_report(request, anonymous_report_pk):
                 'action' : anonymous_report.action,
                 'comments' : anonymous_report.comments
             }
-        )})
+        )}, context_instance=RequestContext(request))
 
     if request.method == 'POST':
         if edit_report_form.is_valid:

@@ -37,7 +37,12 @@
 </td>
 
 <td>
-	------
+    <ul>
+        {% for resp in anonymous_report.message.responses.values %}
+        <li>&lt;&lt; {{ resp.text|truncatewords:10 }}</li>
+        {% endfor %}
+    </ul>
+
 </td>
 
 <td class="button_col">
