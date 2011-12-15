@@ -15,10 +15,10 @@
         <span style="font-size:0.7em;">missing</span>
         {% endif %}
     </td>
-    <td>
-        {{ object.date }}
+    <td width="60px;">
+        <span style="font-size: 0.7em;">{{ object.date|date }}</span>
     </td>
-    <td width="20%">
+    <td>
         <span style="font-size:0.8em;">
         {{ object.message.text }}
         </span>
