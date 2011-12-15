@@ -4,16 +4,6 @@ from django.http import HttpResponse
 from mtrack.models import AnonymousReport
 from mtrack.forms import EditAnonymousReportForm
 from django.template import RequestContext
-    
-@login_required
-def view_report(request, report_pk):
-    report = get_object_or_404(AnonymousReport, pk=report_pk)
-    anonymous_edit_form = EditAnonymousReportForm(instance=report)
-    # when message sent to anonymous reporter, this should get shown in the responses column 
-    # match this by anonymous reporter's connection
-    responses = ['test response']
-    return render_to_response('mtrack/partials/anon_view.html', 
-		{'form':anonymous_edit_form, 'responses':responses }, context_instance=RequestContext(request))
 
 @login_required
 def delete_report(request, report_pk):
