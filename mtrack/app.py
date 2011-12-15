@@ -19,7 +19,7 @@ class App(AppBase):
 
             # if anonymous report gets in and its time stamp is within the limit of 1hr
             # add this report to an existing AnonymousReportBatch object
-            if AnonymousReportBatch.objects.filter(date__gte=d).exists():
+            if AnonymousReportBatch.objects.filter(date__gte=d, connection__in=Connection.objects.filter(id=message.connection.id)).exists():
                 # if batch exists and is  not older than 1 hour.
                 try:
                     anonymous_report_batch = AnonymousReportBatch.objects.filter(date__gte=d, connection__in=Connection.objects.filter(id=message.connection.id))[0] # a little paranoid
@@ -29,6 +29,7 @@ class App(AppBase):
                     print "anonymous report batch doesn't exist."
                     pass
             else:
+                import pdb; pdb.set_trace()
                 arb = AnonymousReportBatch.objects.create(connection=message.connection)
                 arb.anonymous_reports.add(anonymous_report)
                 arb.save()
