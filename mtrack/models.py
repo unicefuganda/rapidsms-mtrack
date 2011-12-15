@@ -22,7 +22,13 @@ class AnonymousReport(models.Model):
     def __unicode__(self):
         return self.connection.identity
 
+    class Meta:
+        order = '-date'
+
 class AnonymousReportBatch(models.Model):
     connection = models.ForeignKey(Connection)
     anonymous_reports = models.ManyToManyField(AnonymousReport, null=True, default=None)
     date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        order = '-date'
