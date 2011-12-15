@@ -1,7 +1,9 @@
 from django import forms
+from django.db import transaction
 from healthmodels.models.HealthFacility import HealthFacility, HealthFacilityType
 from rapidsms.contrib.locations.models import Location
 from rapidsms_httprouter.models import Message
+from poll.models import Poll
 from .models import AnonymousReport
 from generic.forms import ActionForm
 from contact.forms import SMSInput
@@ -105,4 +107,54 @@ class ReplyTextForm(ActionForm):
             return ("You don't have permission to send messages!", "error")
         
 class MassTextForm(ActionForm):
-    pass        
+    pass
+
+
+
+class PollNoContact(Poll):
+    """
+    Sending out a poll without a Contact object (i.e. anonymous users will previously not have registered to use
+    mtrac's other short code. This class contains a method that will create a poll to one or more users. Responses to
+    8200 shortcode in a short time will be tagged as replies to that poll.
+    """
+    @classmethod
+    @transaction.commit_on_success
+    def create_with_bulk(cls, name, type, question, connections, user):
+        # contacts in this case will loosely be connected to just the connection.
+        #contact_ids = [contact.id for contact in contacts]
+        # pass distinct connections
+        Message.mass_text(gettext_db(field=question), connections, status='L')
+        poll = Poll.objects.create(name=name, type=type, question=question, user=user)
+
+        # This is the fastest (pretty much only) was to get contacts and messages M2M into the
+        # DB fast enough at scale
+        cursor = connection.cursor()
+        for language in localized_messages.keys():
+            raw_sql = "insert into poll_poll_contacts (poll_id, contact_id) values %s" % ','.join(\
+                ["(%d, %d)" % (poll.pk, c.pk) for c in localized_messages.get(language)[1]])
+            cursor.execute(raw_sql)
+
+            raw_sql = "insert into poll_poll_messages (poll_id, message_id) values %s" % ','.join(\
+                ["(%d, %d)" % (poll.pk, m.pk) for m in localized_messages.get(language)[0]])
+            cursor.execute(raw_sql)
+
+        if 'django.contrib.sites' in settings.INSTALLED_APPS:
+            poll.sites.add(Site.objects.get_current())
+        return poll
+
+
+class AskAQuestionForm(ActionForm):
+    text = forms.CharField(required=True, widget=SMSInput())
+    action_label = "Poll reporters"
+    def perform(self, request, results):
+        if results is None or len(results):
+            return ('A question to reporters must have one or more recipients', 'error')
+        if request.user and request.user.has_perm('contact.can_message'):
+            text = self.cleaned_data['text']
+            for anonymous_reporter in results:
+                Message.objects.create(direction="O",text=text,connection=anonymous_reporter.connection, status="Q", in_response_to=anonymous_reporter.message)
+                # create a poll to specific user, any response will be shown to mtrac user
+                Poll.objects.create()
+            return ("%d messages sent successfully"%results.count(), 'success')
+        else:
+            return ("You don't have permission to send messages!", "error")

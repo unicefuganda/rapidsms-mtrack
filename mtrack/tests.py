@@ -70,4 +70,12 @@ class MTrackTests(TestCase):
         hf.catchment_areas.add(Location.objects.all()[2])
         hf.save()
         self.assertEquals(hf.supply_point.location.name,'UG')
+
+#    def testAnonymousReportBatchCreation(self):
+#        from mtrack.models import *
+#        from rapidsms.models import Connection
+#        anonymous_report = AnonymousReport.objects.create(
+#            #use randomn connection, effect should be the same.
+#            connection = Connection.objects.all()[0],
+#        )
         

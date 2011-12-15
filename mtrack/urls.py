@@ -1,4 +1,4 @@
-from .forms import ReplyTextForm, MassTextForm
+from .forms import ReplyTextForm, MassTextForm, AskAQuestionForm
 from django.conf.urls.defaults import patterns, url, include
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
@@ -38,7 +38,7 @@ urlpatterns = patterns('',
         'partial_row':'mtrack/partials/anon_row.html',
         'selectable':True,
         'results_title' : 'Anonymous Reports',
-        'action_forms':[ReplyTextForm],
+        'action_forms':[ReplyTextForm, AskAQuestionForm],
         'columns':[('Facility', True, 'health_facility', SimpleSorter(),),
             ('District', True, 'district', SimpleSorter(),),
             ('Date', True, 'date', SimpleSorter(),),
