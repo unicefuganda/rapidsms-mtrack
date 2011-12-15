@@ -29,7 +29,6 @@ class App(AppBase):
                     print "anonymous report batch doesn't exist."
                     pass
             else:
-                import pdb; pdb.set_trace()
                 arb = AnonymousReportBatch.objects.create(connection=message.connection)
                 arb.anonymous_reports.add(anonymous_report)
                 arb.save()
