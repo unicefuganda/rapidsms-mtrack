@@ -13,7 +13,7 @@ ACTIONS = (
 )
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
-    message = models.ManyToManyField(Message, null=True, default=None)
+    messages = models.ManyToManyField(Message, null=True, default=None)
     date = models.DateTimeField(auto_now_add=True)
     district = models.ForeignKey(Location, null=True)
     comments = models.TextField(null=True)
