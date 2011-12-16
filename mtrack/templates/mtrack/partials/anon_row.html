@@ -21,7 +21,7 @@
     <td>
         <span style="font-size:0.8em;">
             <ul>
-                {% for msg in object.messages.all %}
+                {% for msg in object.messages.all.distinct %}
                 <li>
                 &gt;&gt;{{ msg.text }}
                 </li>
