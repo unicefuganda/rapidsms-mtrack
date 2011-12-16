@@ -21,7 +21,7 @@
     <td>
         <span style="font-size:0.8em;">
             <ul>
-                {% for msg in object.message.all %}
+                {% for msg in object.messages.all %}
                 <li>
                 &gt;&gt;{{ msg.text }}
                 </li>
@@ -42,7 +42,7 @@
     </td>
     <td>
           <ul>
-                {% for msg in object.message.all %}
+                {% for msg in object.messages.all %}
                     {% for resp in msg.responses.all %}
                     <li>
                     <span style="font-size:0.8em;">
