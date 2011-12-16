@@ -1,6 +1,6 @@
 import datetime
 from django.conf import settings
-from mtrack.models import AnonymousReport, AnonymousReportBatch
+from mtrack.models import AnonymousReport
 from rapidsms.models import Connection
 from rapidsms.apps.base import AppBase
 from rapidsms_httprouter.models import Message
@@ -8,36 +8,32 @@ from rapidsms_httprouter.models import Message
 class App(AppBase):
     def handle(self, message):
         if message.connection.backend.name == getattr(settings, 'HOTLINE_BACKEND', 'console'):
-            d = datetime.datetime.now() - datetime.timedelta(0,3600)
-            anonymous_report = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
-            anonymous_report.save()
+            #anonymous_report = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
+            #anonymous_report.save()
             # if anonymous report gets in and its time stamp is within the limit of 1hr
             # add this report to an existing AnonymousReportBatch object
             end_epoch = datetime.datetime.now()
             start_epoch = end_epoch - datetime.timedelta(hours=1)
-            if AnonymousReportBatch.objects.filter(date__range=[start_epoch, end_epoch], connection__in=Connection.objects.filter(id=message.connection.id)).exists():
-                # if batch exists and is  not older than 1 hour.
+            if AnonymousReport.objects.filter(date__range=[start_epoch, end_epoch], connection__in=Connection.objects.filter(id=message.connection.id)).exists():
                 try:
-                    anonymous_report_batch = AnonymousReportBatch.objects.filter(date__gte=d, connection__in=Connection.objects.filter(id=message.connection.id))[0] # a little paranoid
-                    anonymous_report_batch.anonymous_reports.add(anonymous_report)
-                    anonymous_report_batch.save()
+                    anonymous_report = AnonymousReport.objects.filter(date__range=[start_epoch,end_epoch], connection__in=Connection.objects.filter(id=message.connection.id))[0]
+                    anonymous_report.message.add(message.db_message)
+                    anonymous_report.save()
                     Message.objects.create(direction="O",
                         text = "Thank you for your consistent feedback about this health facility.",
                         status='Q',
                         connection=message.connection,
-                        in_response_to=anonymous_report.message)
-
+                        in_response_to=message.db_message)
+                    return True
                 except IndexError:
-                    print "anonymous report batch doesn't exist."
                     pass
             else:
-                arb = AnonymousReportBatch.objects.create(connection=message.connection)
-                arb.anonymous_reports.add(anonymous_report)
-                arb.save()
+                anonymous_report = AnonymousReport.objects.create(connection=message.connection)
+                anonymous_report.message.add(message.db_message)
+                anonymous_report.save()
                 Message.objects.create(direction="O",
                     text = "Thank you for your report, this report will be sent to relevant authorities. If this is an emergency, contact your nearest facility",
                     status='Q',
                     connection=message.connection,
-                    in_response_to=anonymous_report.message)
-
-        return True
+                    in_response_to=message.db_message)
+                return True

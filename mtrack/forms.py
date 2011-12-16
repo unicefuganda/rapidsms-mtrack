@@ -96,12 +96,18 @@ class ReplyTextForm(ActionForm):
         if request.user and request.user.has_perm('contact.can_message'):
             text = self.cleaned_data['text']
             for anonymous_report in results:
-                Message.objects.create(direction="O",
+                try:
+                    # responses are still made to the most recent message
+                    # unless better way for handling this is found.
+                    Message.objects.create(direction="O",
                                        text=text,
                                        connection=anonymous_report.connection,
                                        status="Q",
-                                       in_response_to=anonymous_report.message                                
+                                       in_response_to=anonymous_report.message.all().order_by('-date')[0]
                                        )
+                except IndexError:
+                    print "no messages got into the anonymous report"
+                    pass
             return ("%d messages sent successfully" % results.count(), 'success')
         else:
             return ("You don't have permission to send messages!", "error")

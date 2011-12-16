@@ -20,7 +20,14 @@
     </td>
     <td>
         <span style="font-size:0.8em;">
-        {{ object.message.text }}
+            <ul>
+            <li>
+                {% for msg in object.message.all %}
+                {{ msg.text }}
+                {% endfor %}
+            </li>
+            </ul>
+
         </span>
     </td>
     <td>

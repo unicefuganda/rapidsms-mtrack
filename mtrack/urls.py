@@ -4,11 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
 from generic.sorters import SimpleSorter
 from generic.views import generic, generic_row
-from mtrack.models import AnonymousReport, AnonymousReportBatch
+from mtrack.models import AnonymousReport
 from mtrack.reports import ManagementReport
 from mtrack.utils import get_dashboard_messages, get_facility_reports_for_view, \
     get_all_facility_reports_for_view
-from mtrack.views.anonymous_reports import edit_report, delete_report, AnonymousReportBatchView
+from mtrack.views.anonymous_reports import edit_report, delete_report
 from mtrack.views.dashboard import admin, approve
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
@@ -41,7 +41,7 @@ urlpatterns = patterns('',
         'partial_row':'mtrack/partials/anon_row.html',
         'selectable':True,
         'results_title' : 'Anonymous Reports',
-        'action_forms':[ReplyTextForm, AskAQuestionForm],
+        'action_forms':[ReplyTextForm], #, AskAQuestionForm],
         'columns':[('Facility', True, 'health_facility', SimpleSorter(),),
             ('District', True, 'district', SimpleSorter(),),
             ('Date', True, 'date', SimpleSorter(),),

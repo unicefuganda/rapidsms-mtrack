@@ -1,0 +1,49 @@
+{% extends 'generic/partials/partial_row.html' %}
+{% block content %}
+{% block remaining_row_content %}
+    {% comment %}
+    object list --> AnonymousBatchReport.objects.all() generates this little baby.
+    {% endcomment %}
+        {% for anonymous_report in object.anonymous_reports.all %}
+                <td>
+                    {% if anonymous_report.health_facility %}
+                    <span style="font-size: 0.8em;">{{ anonymous_report.health_facility }}</span>
+                    {% else %}
+                    <span style="font-size:0.7em;">missing</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if anonymous_report.district %}
+                    <span style="font-size: 0.8em;">{{ anonymous_report.district }}</span>
+                    {% else %}
+                    <span style="font-size:0.7em;">missing</span>
+                    {% endif %}
+                </td>
+                <td width="60px;">
+                    <span style="font-size: 0.7em;">{{ anonymous_report.date|date }}</span>
+                </td>
+                <td>
+                    <span style="font-size:0.8em;">
+                    {{ anonymous_report.message.text }}
+                    </span>
+                </td>
+                <td>
+                    {{ anonymous_report.get_action_display }}
+                </td>
+                <td>
+                    {% if anoymous_report.comments %}
+                    <span style="font-size:0.9em; color:green;">{{ anonymous_report.comments }}</span>
+                    {% else %}
+                    <span style="font-size:0.7em; color:blue;">There are no comments</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <ul>
+                        {% for resp in anonymous_report.message.responses.values %}
+                        <li>&lt;&lt; {{ resp.text|truncatewords:10 }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+        {% endfor %}
+{% endblock %}
+{% endblock %}

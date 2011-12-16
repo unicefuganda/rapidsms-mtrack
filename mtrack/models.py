@@ -13,7 +13,7 @@ ACTIONS = (
 )
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
-    message = models.ForeignKey(Message)
+    message = models.ManyToManyField(Message, null=True, default=None)
     date = models.DateTimeField(auto_now_add=True)
     district = models.ForeignKey(Location, null=True)
     comments = models.TextField(null=True)
@@ -25,7 +25,7 @@ class AnonymousReport(models.Model):
     class Meta:
         ordering = ['-date', 'action']
 
-class AnonymousReportBatch(models.Model):
-    connection = models.ForeignKey(Connection)
-    anonymous_reports = models.ManyToManyField(AnonymousReport, null=True, default=None)
-    date = models.DateTimeField(auto_now_add=True)
+#class AnonymousReportBatch(models.Model):
+#    connection = models.ForeignKey(Connection)
+#    anonymous_reports = models.ManyToManyField(AnonymousReport, null=True, default=None)
+#    date = models.DateTimeField(auto_now_add=True)
