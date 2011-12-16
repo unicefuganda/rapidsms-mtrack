@@ -17,7 +17,7 @@ class App(AppBase):
             if AnonymousReport.objects.filter(date__range=[start_epoch, end_epoch], connection__in=Connection.objects.filter(id=message.connection.id)).exists():
                 try:
                     anonymous_report = AnonymousReport.objects.filter(date__range=[start_epoch,end_epoch], connection__in=Connection.objects.filter(id=message.connection.id))[0]
-                    anonymous_report.message.add(message.db_message)
+                    anonymous_report.messages.add(message.db_message)
                     anonymous_report.save()
                     Message.objects.create(direction="O",
                         text = "Thank you for your consistent feedback about this health facility.",
@@ -29,7 +29,7 @@ class App(AppBase):
                     pass
             else:
                 anonymous_report = AnonymousReport.objects.create(connection=message.connection)
-                anonymous_report.message.add(message.db_message)
+                anonymous_report.messages.add(message.db_message)
                 anonymous_report.save()
                 Message.objects.create(direction="O",
                     text = "Thank you for your report, this report will be sent to relevant authorities. If this is an emergency, contact your nearest facility",
