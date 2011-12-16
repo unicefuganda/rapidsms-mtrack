@@ -29,6 +29,3 @@ class AnonymousReportBatch(models.Model):
     connection = models.ForeignKey(Connection)
     anonymous_reports = models.ManyToManyField(AnonymousReport, null=True, default=None)
     date = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        order_with_respect_to = 'anonymous_reports'
