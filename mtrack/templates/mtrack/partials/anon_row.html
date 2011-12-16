@@ -21,11 +21,11 @@
     <td>
         <span style="font-size:0.8em;">
             <ul>
-            <li>
                 {% for msg in object.message.all %}
-                {{ msg.text }}
+                <li>
+                &gt;&gt;{{ msg.text }}
+                </li>
                 {% endfor %}
-            </li>
             </ul>
 
         </span>
@@ -41,11 +41,17 @@
         {% endif %}
     </td>
     <td>
-    <ul>
-        {% for resp in object.message.responses.values %}
-    	<li>&lt;&lt; {{ resp.text|truncatewords:10 }}</li>
-    	{% endfor %}
-    </ul>
+          <ul>
+                {% for msg in object.message.all %}
+                    {% for resp in msg.responses.all %}
+                    <li>
+                    <span style="font-size:0.8em;">
+                        &lt;&lt;{{ resp.text }}
+                    </span>
+                    </li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
     </td>
     <td class="button_col">
         <div class="buttons">
