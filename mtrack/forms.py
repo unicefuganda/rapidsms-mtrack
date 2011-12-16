@@ -93,7 +93,8 @@ class ReplyTextForm(ActionForm):
     def perform(self, request, results):
         if results is None or len(results) == 0:
             return ('A message must have one or more recipients!', 'error')        
-        if request.user and request.user.has_perm('contact.can_message'):
+        
+	if request.user and request.user.has_perm('contact.can_message'):
             text = self.cleaned_data['text']
             import pdb; pdb.set_trace()
             for anonymous_report in results:
@@ -104,7 +105,7 @@ class ReplyTextForm(ActionForm):
                                        text=text,
                                        connection=anonymous_report.connection,
                                        status="Q",
-                                       in_response_to=anonymous_report.message.all().order_by('-date')[0]
+                                       in_response_to=anonymous_report.messages.all().order_by('-date')[0]
                                        )
                 except IndexError:
                     print "no messages got into the anonymous report"
