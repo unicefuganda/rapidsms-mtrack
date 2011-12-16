@@ -93,10 +93,8 @@ class ReplyTextForm(ActionForm):
     def perform(self, request, results):
         if results is None or len(results) == 0:
             return ('A message must have one or more recipients!', 'error')        
-        
-	if request.user and request.user.has_perm('contact.can_message'):
-            text = self.cleaned_data['text']
-            import pdb; pdb.set_trace()
+        if request.user and request.user.has_perm('contact.can_message'):
+            text = self.cleaned_data['text']            
             for anonymous_report in results:
                 try:
                     # responses are still made to the most recent message
