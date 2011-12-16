@@ -14,7 +14,8 @@ def delete_report(request, report_pk):
 
 @login_required
 def edit_report(request, anonymous_report_pk):            
-    anonymous_report = get_object_or_404(AnonymousReport, pk=anonymous_report_pk)
+    #anonymous_report = get_object_or_404(AnonymousReport, pk=anonymous_report_pk)
+    anonymous_report = AnonymousReport.objects.get(pk=anonymous_report_pk)
     edit_report_form = EditAnonymousReportForm(request.POST, instance=anonymous_report)
     if request.method == "GET":
         return render_to_response('mtrack/partials/anon_edit_row.html',{'anonymous_report':anonymous_report, 'report_form':EditAnonymousReportForm(
