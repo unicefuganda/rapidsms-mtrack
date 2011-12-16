@@ -4,14 +4,17 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
 from generic.sorters import SimpleSorter
 from generic.views import generic, generic_row
-from mtrack.models import AnonymousReport
+from mtrack.models import AnonymousReport, AnonymousReportBatch
 from mtrack.reports import ManagementReport
 from mtrack.utils import get_dashboard_messages, get_facility_reports_for_view, \
     get_all_facility_reports_for_view
-from mtrack.views.anonymous_reports import edit_report, delete_report
+from mtrack.views.anonymous_reports import edit_report, delete_report, AnonymousReportBatchView
 from mtrack.views.dashboard import admin, approve
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
+
+from django.views.generic import ListView
+
 
 urlpatterns = patterns('',
 #    url(r'^facility/(?P<code>\w+)/config/?$',
@@ -53,6 +56,8 @@ urlpatterns = patterns('',
     url(r'^anonymousreports/(\d+)/edit/', edit_report, name='edit-report'),
     url(r'^anonymousreports/(\d+)/delete/', delete_report, name='delete-report'),
     url(r'^anonymousreports/(?P<pk>\d+)/show', generic_row, {'model':AnonymousReport, 'partial_row':'mtrack/partials/anon_row.html'}),
+
+
 
     # FIXME: add anonymous repots to dashboard
     url(r'^dashboard/ars/$', direct_to_template, {'template':'mtrack/partials/demo_areports.html'}, name="dashboard-anonymous"),

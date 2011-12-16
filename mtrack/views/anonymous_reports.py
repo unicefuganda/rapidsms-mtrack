@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from mtrack.models import AnonymousReport
 from mtrack.forms import EditAnonymousReportForm
 from django.template import RequestContext
+from django.views.generic.base import TemplateView
 
 @login_required
 def delete_report(request, report_pk):
@@ -38,3 +39,6 @@ def edit_report(request, anonymous_report_pk):
     else:
         return render_to_response('mtrack/partials/anon_edit_row.html',
                 { 'report_form':edit_report_form, 'anonymous_report':anonymous_report },context_instance=RequestContext(request))
+
+class AnonymousReportBatchView(TemplateView):
+    template_name = "mtrack/partials/test_row.html"
