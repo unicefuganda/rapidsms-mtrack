@@ -16,12 +16,16 @@
     {% endif %}
 </td>
 
-<td>{{ anonymous_report.date|date }}</td>
+<td>{{ anonymous_report.date }}</td>
 
 <td>
+   <ul>
+   {% for msg in anonymous_report.messages.all %}
     <span style="font-size: 0.9em;">
-    {{ anonymous_report.message.text }}
+    <li>{{ msg.text }}</li>
     </span>
+   {% endfor %}
+   </ul>
 </td>
 
 <td>
