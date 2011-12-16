@@ -76,7 +76,7 @@ class EditAnonymousReportForm(forms.ModelForm):
 	"""
     class Meta:
         model = AnonymousReport
-        exclude = ('connection', 'message', 'date')
+        exclude = ('connection', 'messages', 'date')
     
     def __init__(self, *args, **kwargs):
         super(EditAnonymousReportForm, self).__init__(*args, **kwargs)        
