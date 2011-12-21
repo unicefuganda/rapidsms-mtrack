@@ -1,3 +1,4 @@
+import logging
 from django.db.models.signals import pre_save, post_save
 from rapidsms_xforms.models import xform_received
 from healthmodels.models import HealthFacility, HealthFacilityType
@@ -9,7 +10,11 @@ def xform_received_handler(sender, **kwargs):
     from logistics.models import ProductReportsHelper
     from logistics.util import config
     from logistics import const
+    stock_reports = ['act', 'qun', 'rdt']
     xform = kwargs['xform']
+    if xform.keyword not in stock_reports:
+        return
+
     submission = kwargs['submission']
     message = None
     if 'message' in kwargs:
@@ -18,16 +23,19 @@ def xform_received_handler(sender, **kwargs):
         message = message.db_message
         health_provider = submission.connection.contact.healthproviderbase.healthprovider
     except:
+        logging.error('%s contact is not a health provider' % submission.connection.identity)
+        return
+    if not message:
+        logging.error('%s sent an empty message' % submission.connection.identity)
+        return
+    if health_provider.facility is None:
+        logging.error('%s has no associated facility' % submission.connection.identity)
         return
 
-    if not message or health_provider.facility is None:
-        return
-
-    if xform.keyword == 'act':
+    if xform.keyword == stock_reports[0]:
         stock_report = ProductReportsHelper(health_provider.facility.supply_point,
                                             const.Reports.SOH,
                                             message)
-
         stock_report.add_product_receipt(config.Products.SIX_PACK, submission.eav.act_spd)
         stock_report.add_product_stock(config.Products.SIX_PACK, submission.eav.act_sps)
         stock_report.add_product_receipt(config.Products.TWELVE_PACK, submission.eav.act_tpd)
@@ -37,7 +45,7 @@ def xform_received_handler(sender, **kwargs):
         stock_report.add_product_receipt(config.Products.TWENTY_FOUR_PACK, submission.eav.act_fpd)
         stock_report.add_product_stock(config.Products.TWENTY_FOUR_PACK, submission.eav.act_fps)
         stock_report.save()
-    elif xform.keyword == 'qun':
+    elif xform.keyword == stock_reports[1]:
         stock_report = ProductReportsHelper(health_provider.facility.supply_point,
                                             const.Reports.SOH,
                                             message)
@@ -48,7 +56,7 @@ def xform_received_handler(sender, **kwargs):
         stock_report.add_product_stock(config.Products.QUININE, submission.eav.qun_qus)
         stock_report.save()
 
-    elif xform.keyword == 'rdt':
+    elif xform.keyword == stock_reports[2]:
         stock_report = ProductReportsHelper(health_provider.facility.supply_point,
                                             const.Reports.SOH,
                                             message)
