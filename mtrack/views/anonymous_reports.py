@@ -43,7 +43,6 @@ def edit_report(request, anonymous_report_pk):
 
 @login_required
 def create_excel(request):
-    import pdb; pdb.set_trace()
     book = xlwt.Workbook(encoding="utf8")    
     headings = ["Facility", "District", "Date", "Reports", "Status", "Comments"]
     data_set = []
@@ -54,16 +53,16 @@ def create_excel(request):
             if not ar.health_facility and not ar.district:
                 data_set.append(["Missing", "Missing", ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.comments])
             if not ar.health_facility:
-                data_set.append(["Missing", ar.health_facility, ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.comments])
+                data_set.append(["Missing", ar.district__unicode__(), ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.comments])
             if not ar.district:
-                data_set.append([ar.health_facility, "Missing", ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.comments])
+                data_set.append([ar.health_facility.__unicode__(), "Missing", ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.comments])
             else:
-                data_set.append([ar.district, ar.health_facility, ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.comments])
+                data_set.append([ar.health_facility.__unicode__(), ar.health_facility.__unicode__(), ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.comments])
         except:
             pass
     #data_set = [[ar.health_facility, ar.district, ar.date, ar.messages.values()[0], ar.action, ar.comments] for ar in AnonymousReport.objects.all()]
-    write_xls(sheet_name="Anonymous Reports", headings=None, data=data_set, book=book)
+    write_xls(sheet_name="Anonymous Reports", headings=headings, data=data_set, book=book)
     response = HttpResponse(mimetype="application/vnd.ms-excel")
     response["Content-Disposition"] = 'attachment; filename=anonymous_report.xls'
-    book.save()
+    book.save(response)
     return response
