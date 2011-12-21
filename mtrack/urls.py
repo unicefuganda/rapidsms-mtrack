@@ -8,7 +8,7 @@ from mtrack.models import AnonymousReport
 from mtrack.reports import ManagementReport
 from mtrack.utils import get_dashboard_messages, get_facility_reports_for_view, \
     get_all_facility_reports_for_view
-from mtrack.views.anonymous_reports import edit_report, delete_report
+from mtrack.views.anonymous_reports import edit_report, delete_report, create_excel
 from mtrack.views.dashboard import admin, approve
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
@@ -33,6 +33,7 @@ urlpatterns = patterns('',
 
     #FIXTHIS anonymous messages
     # login required added
+    url(r'^anonymousreports/excelreport/$', create_excel),
     url(r'^anonymousreports/$', login_required(generic), {
         'model':AnonymousReport,  
         # primitive filtering by actions
@@ -58,6 +59,8 @@ urlpatterns = patterns('',
     url(r'^anonymousreports/(\d+)/edit/', edit_report, name='edit-report'),
     url(r'^anonymousreports/(\d+)/delete/', delete_report, name='delete-report'),
     url(r'^anonymousreports/(?P<pk>\d+)/show', generic_row, {'model':AnonymousReport, 'partial_row':'mtrack/partials/anon_row.html'}),
+    
+
 
 
 
