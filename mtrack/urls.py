@@ -40,7 +40,7 @@ urlpatterns = patterns('',
         #TODO subclass SimpleSorter to sort actions
         'queryset': AnonymousReport.objects.all().order_by('action','-date'), #action --> analogous to status of report      
         'objects_per_page':25,
-        'base_template':'mtrack/mtrack_generic_base.html',
+        'base_template':'mtrack/partials/anonymous_base.html',
         'partial_row':'mtrack/partials/anon_row.html',
         'selectable':True,
         'results_title' : 'Anonymous Reports',
