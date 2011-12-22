@@ -4,6 +4,7 @@ from uganda_common.reports import XFormAttributeColumn, XFormSubmissionColumn, Q
 from uganda_common.views import XFormReport
 from cvs.utils import active_reporters, registered_reporters
 from cvs.reports import ActiveReportersColumn, RegisteredReportersColumn
+from cvs.views.reports import CVSReportView
 from uganda_common.utils import reorganize_location
 from uganda_common.reports import QuotientColumn, DifferenceColumn
 from mtrack.utils import ALERTS_ACTIONED, ALERTS_CREATED, ALERTS_TOTAL, alerts_report, last_reporting_period
@@ -19,7 +20,12 @@ class AlertReportsColumn(Column):
         reorganize_location(key, val, dictionary)
 
 
-class ManagementReport(XFormReport):
+class ManagementReport(CVSReportView):
+
+    def drill_on(self, key):
+        CVSReportView.drill_on(self, key)
+        if self.drill_to_facility:
+            self.partial_row = 'mtrack/partials/stats_row.html'
 
     def get_top_columns(self):
         return [
