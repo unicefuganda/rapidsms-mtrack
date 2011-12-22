@@ -1,0 +1,44 @@
+{% extends 'generic/reporting/partials/partial_row.html' %}
+{% load reportdict %}
+{% block row_heading %}
+<! -- link here to HC id {{ d|reportdict:drill_key }} -->
+<td>{{ d|reportdict:row_name_key }}</td>
+{% endblock %}
+{% block remaining_content %}
+    {% for attname, colinstance in columns %}
+        {% if not attname == drill_key %}
+           {% if not attname == row_name_key %}
+               {% if not attname == 'registered_hcs' %}
+               {% if not attname == 'active_hcs' %}
+               {% if not attname == 'percent_change_hcs' %}
+	                <td>
+	                       {{ d|reportdict:attname }}
+	                </td>
+                {% endif %}
+                {% endif %}
+                {% endif %}
+           {% endif %}
+        {% endif %}
+        {% ifequal attname 'registered_hcs' %}
+            {% if d|reportdict:'registered_hcs' %}
+                <td>yes</td>
+            {% else %}
+                <td>no</td>
+            {% endif %}
+        {% endifequal %}
+        {% ifequal attname 'active_hcs' %}
+            <td>
+            {% if d|reportdict:'active_hcs' %}
+                yes
+            {% else %}
+                no
+            {% endif %}
+            </td>
+        {% endifequal %}
+        {% ifequal attname 'percent_change_hcs' %}
+            <td>----</td>
+        {% endifequal %}
+    {% endfor %}
+{% endblock %}
+
+
