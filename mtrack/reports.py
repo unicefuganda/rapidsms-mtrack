@@ -29,7 +29,7 @@ class ManagementReport(CVSReportView):
 
     def get_top_columns(self):
         return [
-            ('Alerts', '#', 4),
+            ('District', '#', 3),
             ('VHTs', '#', 3),
             ('Health Centers', '#', 3),
         ]
@@ -38,20 +38,20 @@ class ManagementReport(CVSReportView):
 
     new_alerts = AlertReportsColumn(type=ALERTS_CREATED, period=1, title='Alerts this week', order=0)
     alerts_actioned = AlertReportsColumn(type=ALERTS_ACTIONED, period=1, title='Alerts actioned this week', order=1)
-    percentage_change = DifferenceColumn(\
-        QuotientColumn(\
-            AlertReportsColumn(type=ALERTS_ACTIONED, period=1), \
-            AlertReportsColumn(type=ALERTS_CREATED, period=1) \
-        ), \
-        QuotientColumn(\
-            AlertReportsColumn(type=ALERTS_ACTIONED, period=2), \
-            AlertReportsColumn(type=ALERTS_CREATED, period=2) \
-        ), \
-    order=2, title='% Change (prev week)')
-    total_outstanding = AlertReportsColumn(type=ALERTS_TOTAL, period=1, title='Total Outstanding', order=3)
+#    percentage_change = DifferenceColumn(\
+#        QuotientColumn(\
+#            AlertReportsColumn(type=ALERTS_ACTIONED, period=1), \
+#            AlertReportsColumn(type=ALERTS_CREATED, period=1) \
+#        ), \
+#        QuotientColumn(\
+#            AlertReportsColumn(type=ALERTS_ACTIONED, period=2), \
+#            AlertReportsColumn(type=ALERTS_CREATED, period=2) \
+#        ), \
+#    order=2, title='% Change (prev week)')
+    total_outstanding = AlertReportsColumn(type=ALERTS_TOTAL, period=1, title='Total Outstanding Alerts', order=2)
 
-    registered_vhts = RegisteredReportersColumn(order=4, title="Registered", chart_title='Active VHTs')
-    active_vhts = ActiveReportersColumn(order=5, title="Submitted A Report For Last Period", chart_title='Active VHTs')
+    registered_vhts = RegisteredReportersColumn(order=3, title="Registered", chart_title='Active VHTs')
+    active_vhts = ActiveReportersColumn(order=4, title="Submitted A Report For Last Period", chart_title='Active VHTs')
     percent_change_vhts = DifferenceColumn(\
         QuotientColumn(\
             ActiveReportersColumn(), \
@@ -61,10 +61,10 @@ class ManagementReport(CVSReportView):
             ActiveReportersColumn(period=2), \
             RegisteredReportersColumn() \
         ), \
-    order=6, title='% Change (from prev week)')
+    order=5, title='% Change (from prev week)')
 
-    registered_hcs = RegisteredReportersColumn(order=7, title="Registered", roles=['HC'], chart_title='Active HCs')
-    active_hcs = ActiveReportersColumn(order=8, title="Submitted A Report For Last Period", roles=['HC'], chart_title='Active HCs')
+    registered_hcs = RegisteredReportersColumn(order=6, title="Registered", roles=['HC'], chart_title='Active HCs')
+    active_hcs = ActiveReportersColumn(order=7, title="Submitted A Report For Last Period", roles=['HC'], chart_title='Active HCs')
     percent_change_hcs = DifferenceColumn(\
         QuotientColumn(\
             ActiveReportersColumn(roles=['HC']), \
@@ -74,4 +74,4 @@ class ManagementReport(CVSReportView):
             ActiveReportersColumn(roles=['HC'], period=2), \
             RegisteredReportersColumn(roles=['HC']) \
         ), \
-    order=9, title='% Change (from prev week)')
+    order=8, title='% Change (from prev week)')

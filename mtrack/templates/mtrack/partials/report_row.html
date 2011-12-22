@@ -1,10 +1,11 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
+{% load stats_extras %}
     <td>{{ object.message.connection.contact.healthproviderbase.healthprovider.facility.name }}</td>
     <td>{{ object.message.connection.contact.name }}</td>
     <td>{{ object.raw }}
         <ul>
-        {% for v in object.eav.get_values %}
+        {% for v in object|get_submission_values %}
             <li>
                 {{ v.attribute.description }}: {{ v.value_int }}
             </li>
