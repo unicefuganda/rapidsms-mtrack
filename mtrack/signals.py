@@ -6,36 +6,35 @@ from healthmodels.models.HealthFacility import HealthFacilityBase
 from logistics.models import SupplyPoint, SupplyPointType
 from mtrack.loader import create_supply_point_from_facility, get_location_from_facility
 
+stock_reports = ['act', 'qun', 'rdt']
+
 def xform_received_handler(sender, **kwargs):
-    from logistics.models import ProductReportsHelper
-    from logistics.util import config
-    from logistics import const
-    stock_reports = ['act', 'qun', 'rdt']
     xform = kwargs['xform']
     if xform.keyword not in stock_reports:
         return
-
     submission = kwargs['submission']
-    message = None
-    if 'message' in kwargs:
-        message = kwargs['message']
+    process_xform(submission)
+    
+def process_xform(submission):
+    from logistics.models import ProductReportsHelper
+    from logistics.util import config
+    from logistics import const
     try:
-        message = message.db_message
         health_provider = submission.connection.contact.healthproviderbase.healthprovider
     except:
         logging.error('%s contact is not a health provider' % submission.connection.identity)
         return
-    if not message:
+    if not submission.message:
         logging.error('%s sent an empty message' % submission.connection.identity)
         return
     if health_provider.facility is None:
         logging.error('%s has no associated facility' % submission.connection.identity)
         return
 
-    if xform.keyword == stock_reports[0]:
+    if submission.xform.keyword == stock_reports[0]:
         stock_report = ProductReportsHelper(health_provider.facility.supply_point,
                                             const.Reports.SOH,
-                                            message)
+                                            submission.message)
         stock_report.add_product_receipt(config.Products.SIX_PACK, submission.eav.act_spd)
         stock_report.add_product_stock(config.Products.SIX_PACK, submission.eav.act_sps)
         stock_report.add_product_receipt(config.Products.TWELVE_PACK, submission.eav.act_tpd)
@@ -48,7 +47,7 @@ def xform_received_handler(sender, **kwargs):
     elif xform.keyword == stock_reports[1]:
         stock_report = ProductReportsHelper(health_provider.facility.supply_point,
                                             const.Reports.SOH,
-                                            message)
+                                            submission.message)
 
         stock_report.add_product_receipt(config.Products.OTHER_ACT_STOCK, submission.eav.qun_oad)
         stock_report.add_product_stock(config.Products.OTHER_ACT_STOCK, submission.eav.qun_oas)
@@ -59,12 +58,11 @@ def xform_received_handler(sender, **kwargs):
     elif xform.keyword == stock_reports[2]:
         stock_report = ProductReportsHelper(health_provider.facility.supply_point,
                                             const.Reports.SOH,
-                                            message)
+                                            submission.message)
 
         stock_report.add_product_receipt(config.Products.RAPID_DIAGNOSTIC_TEST, submission.eav.rdt_rdd)
         stock_report.add_product_stock(config.Products.RAPID_DIAGNOSTIC_TEST, submission.eav.rdt_rds)
         stock_report.save()
-
     return
 
 xform_received.connect(xform_received_handler, weak=True)

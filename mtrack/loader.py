@@ -15,6 +15,7 @@ from logistics.models import SupplyPoint, SupplyPointType, \
 from logistics.util import config
 from healthmodels.models import HealthFacility, HealthFacilityType
 from rapidsms.models import Contact
+from rapidsms_xforms.models import XFormSubmission
 
 def mtrack_init():
     from logistics import loader as logi_loader
@@ -359,3 +360,32 @@ def init_dho_users():
             u = User.objects.create_user(l.name.upper(), 'mtrac@gmail.com', password)
             print "%s\t%s" % (l.name.upper(), password)
             Contact.objects.create(user=u, reporting_location=l, name='%s DHO User' % l.name)
+            
+def process_xforms():
+    from signals import process_xform
+    from logistics.models import ProductReport
+    submissions = XFormSubmission.objects.all().order_by('pk')
+    count = 0
+    ignored_count = 0
+    error_count = 0
+    print "%s existing submissions." % submissions.count()
+    for submit in submissions:
+        # only process submissions that don't already have a product report associated
+        if ProductReport.objects.filter(message=submit.message).count() == 0:
+            print "  Submission %s to be processed." % submit.pk
+            try:
+                process_xform(submit)
+                count = count + 1
+                print "  Submission %s processed." % submit.pk
+            except:
+                print "  Submission %s had errors." % submit.pk
+                print "    %s" % submit.message
+                error_count = error_count + 1
+        else:
+            print "  Submission %s ignored." % submit.pk
+            ignored_count = ignored_count + 1
+        pass
+    print "%s new submissions processed." % count
+    print "%s submissions ignored." % ignored_count
+    print "%s submissions had errors." % error_count
+    return
