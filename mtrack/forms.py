@@ -40,7 +40,7 @@ class FacilityForm(forms.Form):
     catchment_areas = forms.ModelMultipleChoiceField(queryset=Location.objects.all(), required=False)
     facility_district = forms.ModelChoiceField(queryset=Location.objects.filter(type__name='district').order_by('name'), empty_label='----', required=False, \
                                       widget=forms.Select({'onchange':'update_facility_district(this)'}))
-    
+
 
 
     def __init__(self, *args, **kwargs):
@@ -77,24 +77,24 @@ class EditAnonymousReportForm(forms.ModelForm):
     class Meta:
         model = AnonymousReport
         exclude = ('connection', 'messages', 'date')
-    
+
     def __init__(self, *args, **kwargs):
-        super(EditAnonymousReportForm, self).__init__(*args, **kwargs)        
-        self.fields['district'].queryset = Location.objects.filter(type__name="district").order_by("name")        
+        super(EditAnonymousReportForm, self).__init__(*args, **kwargs)
+        self.fields['district'].queryset = Location.objects.filter(type__name="district").order_by("name")
         self.fields['health_facility'].queryset = HealthFacility.objects.all().order_by('name')
         # make this non-required
         for key, field in self.fields.iteritems():
             self.fields[key].required = False
-        
+
 class ReplyTextForm(ActionForm):
     text = forms.CharField(required=True, widget=SMSInput())
     action_label = 'Reply to selected'
 
     def perform(self, request, results):
         if results is None or len(results) == 0:
-            return ('A message must have one or more recipients!', 'error')        
+            return ('A message must have one or more recipients!', 'error')
         if request.user and request.user.has_perm('contact.can_message'):
-            text = self.cleaned_data['text']            
+            text = self.cleaned_data['text']
             for anonymous_report in results:
                 try:
                     # responses are still made to the most recent message
@@ -111,10 +111,9 @@ class ReplyTextForm(ActionForm):
             return ("%d messages sent successfully" % results.count(), 'success')
         else:
             return ("You don't have permission to send messages!", "error")
-        
+
 class MassTextForm(ActionForm):
     pass
-
 
 
 class PollNoContact(Poll):
@@ -158,9 +157,19 @@ class AskAQuestionForm(ActionForm):
         if request.user and request.user.has_perm('contact.can_message'):
             text = self.cleaned_data['text']
             for anonymous_reporter in results:
-                Message.objects.create(direction="O",text=text,connection=anonymous_reporter.connection, status="Q", in_response_to=anonymous_reporter.message)
+                Message.objects.create(direction="O", text=text, connection=anonymous_reporter.connection, status="Q", in_response_to=anonymous_reporter.message)
                 # create a poll to specific user, any response will be shown to mtrac user
                 Poll.objects.create()
-            return ("%d messages sent successfully"%results.count(), 'success')
+            return ("%d messages sent successfully" % results.count(), 'success')
         else:
             return ("You don't have permission to send messages!", "error")
+
+
+class ApproveForm(ActionForm):
+    action_label = 'Approve Selected'
+    def perform(self, request, results):
+        if results is None or len(results) == 0:
+            return ('You must approve one or more reports', 'error')
+        else:
+            results.update(approved=True)
+            return ("%d reports approved successfully" % results.count(), 'success')

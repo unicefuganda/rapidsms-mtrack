@@ -96,7 +96,7 @@ def get_last_reporting_date(facility):
 
     return None
 
-def get_facility_reports(location, count=False, date_range=last_reporting_period()):
+def get_facility_reports(location, count=False, date_range=last_reporting_period(), approved=None):
     facilities = total_facilities(location, count=False)
     staff = get_staff_for_facility(facilities)
     date_range = last_reporting_period()
@@ -105,6 +105,8 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
         has_errors=False)
     if date_range:
         toret = toret.filter(created__range=date_range)
+    if approved is not None:
+        toret = toret.filter(approved=approved)
 
     if count:
         return toret.count()
@@ -117,7 +119,7 @@ def get_all_facility_reports_for_view(request=None):
 
 def get_facility_reports_for_view(request=None):
     location = get_location_for_user(request.user)
-    return get_facility_reports(location, count=False)
+    return get_facility_reports(location, count=False, approved=False)
 
 def get_district_for_facility(hc):
     bounds = hc.catchment_areas.aggregate(Min('lft'), Max('rght'))
@@ -211,7 +213,7 @@ def write_xls(sheet_name=None, headings=None, data=None, book=None):
         for colx, value in enumerate(headings):
             sheet.write(rowx, colx, value)
         sheet.set_panes_frozen(True)
-        sheet.set_horz_split_pos(rowx+1)
+        sheet.set_horz_split_pos(rowx + 1)
         sheet.set_remove_splits(True)
     for row in data:
         rowx += 1
@@ -220,4 +222,4 @@ def write_xls(sheet_name=None, headings=None, data=None, book=None):
                 value = value.strftime("%d/%m/%Y")
             except:
                 pass
-            sheet.write(rowx, colx, value)            
+            sheet.write(rowx, colx, value)

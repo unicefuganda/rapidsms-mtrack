@@ -1,4 +1,4 @@
-from .forms import ReplyTextForm, MassTextForm, AskAQuestionForm
+from .forms import ReplyTextForm, MassTextForm, AskAQuestionForm, ApproveForm
 from django.conf.urls.defaults import patterns, url, include
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
@@ -35,10 +35,10 @@ urlpatterns = patterns('',
     # login required added
     url(r'^anonymousreports/excelreport/$', create_excel),
     url(r'^anonymousreports/$', login_required(generic), {
-        'model':AnonymousReport,  
+        'model':AnonymousReport,
         # primitive filtering by actions
         #TODO subclass SimpleSorter to sort actions
-        'queryset': AnonymousReport.objects.all().order_by('action','-date'), #action --> analogous to status of report      
+        'queryset': AnonymousReport.objects.all().order_by('action', '-date'), #action --> analogous to status of report      
         'objects_per_page':25,
         'base_template':'mtrack/partials/anonymous_base.html',
         'partial_row':'mtrack/partials/anon_row.html',
@@ -59,7 +59,7 @@ urlpatterns = patterns('',
     url(r'^anonymousreports/(\d+)/edit/', edit_report, name='edit-report'),
     url(r'^anonymousreports/(\d+)/delete/', delete_report, name='delete-report'),
     url(r'^anonymousreports/(?P<pk>\d+)/show', generic_row, {'model':AnonymousReport, 'partial_row':'mtrack/partials/anon_row.html'}),
-    
+
 
 
 
@@ -87,13 +87,14 @@ urlpatterns = patterns('',
         'queryset':get_facility_reports_for_view, \
         'objects_per_page':25, \
         'base_template':'mtrack/mtrack_generic_base.html', \
-        'partial_base':'mtrack/partials/reports_base.html', \
         'partial_row':'mtrack/partials/report_row.html', \
         'results_title':'Last Reporting Period Results', \
+        'action_forms':[ApproveForm], \
         'columns':[('Facility', True, 'message__connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()), \
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),), \
                    ('Report', True, 'raw', SimpleSorter(),), \
                    ('Date', True, 'created', SimpleSorter(),), \
+                   ('Approved', True, 'approved', SimpleSorter(),), \
                    ('', False, '', None,)], \
         'sort_column':'message__connection__contact__healthproviderbase__healthprovider__facility__name', \
     }, name='approve'),
@@ -109,6 +110,7 @@ urlpatterns = patterns('',
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),),
                    ('Report', True, 'raw', SimpleSorter(),),
                    ('Date', True, 'created', SimpleSorter(),), \
+                   ('Approved', True, 'approved', SimpleSorter(),), \
                    ('', False, '', None,)], \
         'sort_column':'message__connection__contact__healthproviderbase__healthprovider__facility__name', \
     }, name='facility-reports'),

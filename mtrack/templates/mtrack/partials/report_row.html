@@ -1,7 +1,9 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
 {% load stats_extras %}
-    <td>{{ object.message.connection.contact.healthproviderbase.healthprovider.facility.name }}</td>
+    <td>{{ object.message.connection.contact.healthproviderbase.healthprovider.facility.name }}
+    {{ object.message.connection.contact.healthproviderbase.healthprovider.facility.type.name }} 
+    </td>
     <td>{{ object.message.connection.contact.name }}</td>
     <td>{{ object.raw }}
         <ul>
@@ -13,11 +15,9 @@
         </ul>    
     </td>
     <td>{{ object.created|date:"m/j/y G:i:s" }}</td>
+    <td>{{ object.approved }}</td>
     <td>
         <div class="buttons">
-            <a title="Approve" class="approve" onclick="$(this).hide()">
-                <img src="{{ MEDIA_URL }}rapidsms/icons/silk/accept.png" alt=""/>
-            </a>
             <a href="/xforms/submissions/{{ object.pk }}/edit/">
                 <img src="{{ MEDIA_URL }}rapidsms_xforms/icons/silk/pencil.png" alt=""/> Edit
             </a>
