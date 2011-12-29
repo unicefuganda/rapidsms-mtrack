@@ -99,7 +99,6 @@ def get_last_reporting_date(facility):
 def get_facility_reports(location, count=False, date_range=last_reporting_period(), approved=None):
     facilities = total_facilities(location, count=False)
     staff = get_staff_for_facility(facilities)
-    date_range = last_reporting_period()
     toret = XFormSubmission.objects.filter(\
         message__connection__contact__in=staff, \
         has_errors=False)

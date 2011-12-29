@@ -173,3 +173,12 @@ class ApproveForm(ActionForm):
         else:
             results.update(approved=True)
             return ("%d reports approved successfully" % results.count(), 'success')
+
+class RejectForm(ActionForm):
+    action_label = 'Reject Selected'
+    def perform(self, request, results):
+        if results is None or len(results) == 0:
+            return ('You must reject one or more reports', 'error')
+        else:
+            results.update(has_errors=True)
+            return ("%d reports rejected successfully" % results.count(), 'success')

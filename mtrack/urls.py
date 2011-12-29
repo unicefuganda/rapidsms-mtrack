@@ -1,4 +1,4 @@
-from .forms import ReplyTextForm, MassTextForm, AskAQuestionForm, ApproveForm
+from .forms import ReplyTextForm, MassTextForm, AskAQuestionForm, ApproveForm, RejectForm
 from django.conf.urls.defaults import patterns, url, include
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
@@ -10,6 +10,7 @@ from mtrack.utils import get_dashboard_messages, get_facility_reports_for_view, 
     get_all_facility_reports_for_view
 from mtrack.views.anonymous_reports import edit_report, delete_report, create_excel
 from mtrack.views.dashboard import admin, approve
+from mtrack.views.reports import edit_report
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
 
@@ -86,10 +87,10 @@ urlpatterns = patterns('',
         'model':XFormSubmission, \
         'queryset':get_facility_reports_for_view, \
         'objects_per_page':25, \
-        'base_template':'mtrack/mtrack_generic_base.html', \
+        'base_template':'mtrack/approve_base.html', \
         'partial_row':'mtrack/partials/report_row.html', \
         'results_title':'Last Reporting Period Results', \
-        'action_forms':[ApproveForm], \
+        'action_forms':[ApproveForm, RejectForm], \
         'columns':[('Facility', True, 'message__connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()), \
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),), \
                    ('Report', True, 'raw', SimpleSorter(),), \
@@ -115,6 +116,7 @@ urlpatterns = patterns('',
         'sort_column':'message__connection__contact__healthproviderbase__healthprovider__facility__name', \
     }, name='facility-reports'),
 
+    url(r"^xforms/submissions/(\d+)/edit/$", login_required(edit_report)),
 
     (r'^mtrack/mgt/stats/', include(ManagementReport().as_urlpatterns(name='mtrack-mgt-stats'))),
 )

@@ -15,20 +15,20 @@
 {% endblock %}
 
 {% block content %}
-<img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/>
+<!-- <img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/>
 This first dashboard view - with alerts and reports to approve - is currently using test data. You will be notified when your content is available.
-<img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/>
+<img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/> -->
 <div class="module">
-    <h2>Alerts</h2>
+<!--     <h2>Alerts</h2>
     <div id="alerts">
     </div>
     <br clear="both/>
     <br/>
 </div>
 <div class="clear-hack"></div>
-<div class="two-columns">
+<div class="two-columns"> -->
 	<!--  FIXME loose the BRs! -->
-	<div class="col-1 module">
+	<!-- <div class="col-1 module"> -->
 		<h2>Approve HMIS Reports</h2>
 		<div id="approve"></div>
 		<br/>
@@ -42,17 +42,17 @@ This first dashboard view - with alerts and reports to approve - is currently us
 		<div id="contacts"></div> -->
 		<br/>
 	</div>
-	<div class="col-2">
+<!-- 	<div class="col-2">
 	    <div class="module">
 			<h2>Disease/Nutrition</h2>
 			<div id="epi-map" class="map init"></div>
 		    <br clear="both"/>
 		    <a href="{% url cvs-map %}">go to map &raquo;</a>
 		    <br/>
-			<!--  <h2>Stock</h2>
-			<div id='map_canvas' class="init"></div> -->
-		</div>
-	</div>
+			<h2>Stock</h2>
+			<div id='map_canvas' class="init"></div>
+		</div> 
+	</div> -->
 	<script type="text/javascript">
 	$(document).ready(function() {
 		$('#alerts').load('{% url dashboard-alerts %}');
@@ -61,9 +61,9 @@ This first dashboard view - with alerts and reports to approve - is currently us
 	    $('#message').load('{% url dashboard-messagelog %}');
 	    //$('#contacts').load('{% url dashboard-contacts %}');
 	    //init_map('stock-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
-	    init_map('epi-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
+	    // init_map('epi-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
 	    // FIXME: need some dummy data for this to look nice
-	    plot_layer('epi-map', 'Health Facilities', '/cvs/stats/healthfacility', '/cvs/stats/healthfacility');
+	    // plot_layer('epi-map', 'Health Facilities', '/cvs/stats/healthfacility', '/cvs/stats/healthfacility');
 	
 	    /*var data = new google.visualization.DataTable();
 	    data.addRows(4);
