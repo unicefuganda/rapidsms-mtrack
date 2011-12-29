@@ -19,12 +19,12 @@
 This first dashboard view - with alerts and reports to approve - is currently using test data. You will be notified when your content is available.
 <img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/> -->
 <div class="module">
-<!--     <h2>Alerts</h2>
+     <h2>Alerts</h2>
     <div id="alerts">
     </div>
-    <br clear="both/>
+    <br clear="both"/>
     <br/>
-</div>
+<!-- </div>
 <div class="clear-hack"></div>
 <div class="two-columns"> -->
 	<!--  FIXME loose the BRs! -->
@@ -41,8 +41,8 @@ This first dashboard view - with alerts and reports to approve - is currently us
 		<!--  <h2>Contacts</h2>
 		<div id="contacts"></div> -->
 		<br/>
-	</div>
-<!-- 	<div class="col-2">
+<!--	</div>
+ 	<div class="col-2">
 	    <div class="module">
 			<h2>Disease/Nutrition</h2>
 			<div id="epi-map" class="map init"></div>
@@ -52,7 +52,7 @@ This first dashboard view - with alerts and reports to approve - is currently us
 			<h2>Stock</h2>
 			<div id='map_canvas' class="init"></div>
 		</div> 
-	</div> -->
+    </div> -->
 	<script type="text/javascript">
 	$(document).ready(function() {
 		$('#alerts').load('{% url dashboard-alerts %}');
