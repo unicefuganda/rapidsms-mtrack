@@ -100,7 +100,7 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
     facilities = total_facilities(location, count=False)
     staff = get_staff_for_facility(facilities)
     toret = XFormSubmission.objects.filter(\
-        message__connection__contact__in=staff, \
+        connection__contact__in=staff, \
         has_errors=False)
     if date_range:
         toret = toret.filter(created__range=date_range)
@@ -131,7 +131,7 @@ def get_district_for_facility(hc):
 def reporting_facilities(location, facilities=None, count=True, date_range=None):
     facilities = facilities or total_facilities(location, count=False)
     staff = get_staff_for_facility(facilities)
-    reporting = XFormSubmission.objects.filter(message__connection__contact__in=staff)
+    reporting = XFormSubmission.objects.filter(connection__contact__in=staff)
     if date_range:
         reporting = reporting.filter(created__range=date_range)
 
