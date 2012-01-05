@@ -15,6 +15,7 @@ from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
 
 from django.views.generic import ListView
+from mtrack.views.visuals import stock_level_viz
 
 
 urlpatterns = patterns('',
@@ -60,7 +61,7 @@ urlpatterns = patterns('',
     url(r'^anonymousreports/(\d+)/edit/', edit_report, name='edit-report'),
     url(r'^anonymousreports/(\d+)/delete/', delete_report, name='delete-report'),
     url(r'^anonymousreports/(?P<pk>\d+)/show', generic_row, {'model':AnonymousReport, 'partial_row':'mtrack/partials/anon_row.html'}),
-
+    url(r'^stocklevelviz/$', stock_level_viz, name='stock-viz'),
 
 
 

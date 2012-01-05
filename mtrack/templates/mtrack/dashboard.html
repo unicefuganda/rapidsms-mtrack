@@ -12,6 +12,7 @@
     <script src="{{MEDIA_URL}}generic/javascripts/generic.js" type="text/javascript"></script>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
     <script type='text/javascript' src="https://www.google.com/uds/?file=visualization&v=1&packages=geochart"></script>
+    <script src="http://openlayers.org/api/OpenLayers.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -41,24 +42,33 @@ This first dashboard view - with alerts and reports to approve - is currently us
 		<!--  <h2>Contacts</h2>
 		<div id="contacts"></div> -->
 		<br/>
-<!--	</div>
- 	<div class="col-2">
+	</div>
+<div class="clear-hack"></div>
+<div class="two-columns">
+ 	<div class="col-1">
 	    <div class="module">
-			<h2>Disease/Nutrition</h2>
+			<!-- <h2>Disease/Nutrition</h2>
 			<div id="epi-map" class="map init"></div>
 		    <br clear="both"/>
 		    <a href="{% url cvs-map %}">go to map &raquo;</a>
-		    <br/>
-			<h2>Stock</h2>
+		    <br/>-->
+			<h2>Stock Levels Map</h2>
 			<div id='map_canvas' class="init"></div>
-		</div> 
-    </div> -->
+		</div>
+    </div>
+    <div class="col-2">
+    	<div class="module">
+			<h2>Stock Pie Chart</h2>
+		</div>
+    </div>
+</div>
 	<script type="text/javascript">
 	$(document).ready(function() {
 		$('#alerts').load('{% url dashboard-alerts %}');
 	    $('#approve').load('{% url dashboard-approve %}');
 	    $('#admin').load('{% url dashboard-admin %}');
 	    $('#message').load('{% url dashboard-messagelog %}');
+	    $('#map_canvas').load('{% url stock-viz %}');
 	    //$('#contacts').load('{% url dashboard-contacts %}');
 	    //init_map('stock-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
 	    // init_map('epi-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
