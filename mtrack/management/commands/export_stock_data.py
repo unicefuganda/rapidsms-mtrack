@@ -17,10 +17,11 @@ class Command(BaseCommand):
                         submission__created__range=last_rp, \
                         value_int=0).filter(Q(attribute__slug__in=['act_sps', 'act_tps', 'act_eps', 'act_fps']))
         for l in rd:
-            district_pk = l.submission.connection.contact.reporting_location.get_ancestors().\
-            filter(type__slug='district')[0].name
-            districts[district_pk][0] = 'red'
-            districts[district_pk][1] = districts[district_pk][1] + 1
+            if l.submission.connection:
+                district_pk = l.submission.connection.contact.reporting_location.get_ancestors().\
+                filter(type__slug='district')[0].name
+                districts[district_pk][0] = 'red'
+                districts[district_pk][1] = districts[district_pk][1] + 1
         yl = XFormSubmissionValue.objects.filter(submission__has_errors=False, \
                         submission__created__range=last_rp).filter(
                                 Q(attribute__slug='act_sps', value_int__lte=75, submission__connection__contact__healthproviderbase__facility__type__name='hcii') | \
@@ -40,22 +41,25 @@ class Command(BaseCommand):
                                 Q(attribute__slug='act_eps', value_int__lte=750, submission__connection__contact__healthproviderbase__facility__type__name='hospital') | \
                                 Q(attribute__slug='act_fps', value_int__lte=750, submission__connection__contact__healthproviderbase__facility__type__name='hospital'))
         for y in yl:
-            district_pk = y.submission.connection.contact.reporting_location.get_ancestors().\
-            filter(type__slug='district')[0].name
-            if districts[district_pk][0] <> 'red':
-                districts[district_pk][0] = 'yellow'
-                districts[district_pk][1] = districts[district_pk][1] + 1
+            if y.submissin.connection:
+                district_pk = y.submission.connection.contact.reporting_location.get_ancestors().\
+                filter(type__slug='district')[0].name
+                if districts[district_pk][0] <> 'red':
+                    districts[district_pk][0] = 'yellow'
+                    districts[district_pk][1] = districts[district_pk][1] + 1
         gr = XFormSubmissionValue.objects.filter(submission__has_errors=False, submission__created__range=last_rp).\
         filter(Q(attribute__slug__in=['act_sps', 'act_tps', 'act_eps', 'act_fps'])).distinct()
         for g in gr:
-            district_pk = g.submission.connection.contact.reporting_location.get_ancestors().\
-            filter(type__slug='district')[0].name
-            if districts[district_pk][0] not in ['red', 'yellow']:
-                districts[district_pk][0] = 'green'
-                districts[district_pk][1] = districts[district_pk][1] + 1
+            if g.submission.connection:
+                district_pk = g.submission.connection.contact.reporting_location.get_ancestors().\
+                filter(type__slug='district')[0].name
+                if districts[district_pk][0] not in ['red', 'yellow']:
+                    districts[district_pk][0] = 'green'
+                    districts[district_pk][1] = districts[district_pk][1] + 1
         for k, v in districts.items():
             d, _ = BasicClassLayer.objects.using('geoserver').get_or_create(district=k.upper(), \
                                                   deployment_id=getattr(settings, 'DEPLOYMENT_ID', 5), \
-                                                  style_class=v[0], \
-                                                  layer_id=0, description="%s: %s occurrences" % (k.title(), v[1]))
+                                                  layer_id=0)
+            d.style_class = v[0]
+            d.description = "%s: %s occurrences" % (k.title(), v[1])
             d.save()
