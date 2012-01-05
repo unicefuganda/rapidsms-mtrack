@@ -1,6 +1,13 @@
 {% load stats_extras %}
 <td>&nbsp;</td>
 <td>
+<style type="text/css">
+	select,textarea {
+		border:1px solid #CCC;
+		background-color: #FFFFFF;
+		font-size: 90%;
+		}
+</style>
     {{ report_form.health_facility }}
     {% if report_form.health_facility.errors %}
         <br clear="left"/>

@@ -5,18 +5,18 @@
         {% if object.health_facility %}
             <span style="font-size: 0.8em;">{{ object.health_facility }}</span>
         {% else %}
-            <span style="font-size:0.7em;">missing</span>
+            <span style="font-size:0.8em;">missing</span>
         {% endif %}
     </td>
     <td>
         {% if object.district %}
             <span style="font-size: 0.8em;">{{ object.district }}</span>
         {% else %}
-        <span style="font-size:0.7em;">missing</span>
+        <span style="font-size:0.8em;">missing</span>
         {% endif %}
     </td>
     <td width="60px;">
-        <span style="font-size: 0.7em;">{{ object.date|date }}</span>
+        <span style="font-size: 0.8em;">{{ object.date|date }}</span>
     </td>
     <td>
         <span style="font-size:0.8em;">
@@ -37,7 +37,7 @@
     	{% if object.comments %}
         <span style="font-size:0.9em; color:green;">{{ object.comments }}</span>
         {% else %}
-        <span style="font-size:0.7em; color:blue;">There are no comments</span>
+        <span style="font-size:0.8em; color:blue;">There are no comments</span>
         {% endif %}
     </td>
     <td>

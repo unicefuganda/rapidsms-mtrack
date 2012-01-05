@@ -77,6 +77,9 @@ class EditAnonymousReportForm(forms.ModelForm):
     class Meta:
         model = AnonymousReport
         exclude = ('connection', 'messages', 'date')
+        widgets = {
+                   'comments': forms.Textarea(attrs={'cols':25, 'rows':5}),
+                   }
 
     def __init__(self, *args, **kwargs):
         super(EditAnonymousReportForm, self).__init__(*args, **kwargs)
