@@ -29,7 +29,7 @@ class Command(BaseCommand):
             code = region.lower()
             reg, created = Location.objects.get_or_create(code=code)
             if not created:
-                print 'Modifying location %s %s to be a top-level region' % (reg.name, reg.pk)
+                print 'Modifying location %s %s to be children of "uganda"' % (reg.name, reg.pk)
             reg.name = region
             reg.type = region_type
             reg.tree_parent = self.country

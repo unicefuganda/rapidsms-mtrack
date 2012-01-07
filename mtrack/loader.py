@@ -3,6 +3,7 @@ Load utils: good for setting up a demo environment,
 first setup of production environment, and automated testing
 """
 
+import logging
 import os
 import random
 import sys
@@ -103,37 +104,35 @@ def add_supply_points_to_facilities(log_to_console=False):
         if f.supply_point is None:
             # technically the below line isn't needed since 
             # it gets called in the facility 'save' signal anyways
-            # f.supply_point = create_supply_point_from_facility(f)
+            # we do it anyways so that we have better error reporting
+            try:
+                f.supply_point = create_supply_point_from_facility(f)
+            except ValueError:
+                print "  ERROR: facility %s %s has no location" % (f.name, f.pk)
+                continue
             f.save()
             if log_to_console:
                 print "  %s supply point created" % f.name
     # verify that this all worked
-    no_sdp = HealthFacility.objects.filter(supply_point=None)
-    if no_sdp.exists():
-        print "Some supply points still missing!"
+    no_sdp_count = HealthFacility.objects.filter(supply_point=None).count()
+    if no_sdp_count > 0:
+        print "%s supply points still missing!" % no_sdp_count
  
 
 def create_supply_point_from_facility(f):
-    try:
-        type_, created = SupplyPointType.objects.get_or_create(code=f.type.slug)
-    except HealthFacilityType.DoesNotExist:
-        # TODO: LOG AN ERROR?
-        type_, created = SupplyPointType.objects.get_or_create(code='UNKNOWN')
-    default_loc = Location.tree.root_nodes()[0]
+    """ this can't live inside of 'facility' since supply points from logistics
+    can be decoupled from facilities from mtrack """
     try:
         sp = SupplyPoint.objects.get(code=f.code)
     except SupplyPoint.DoesNotExist:
-        sp = SupplyPoint(code=f.code, type= type_)
+        sp = SupplyPoint(code=f.code)
         sp.name = f.name
         sp.active = True
         # what is this?
+        default_loc = Location.tree.root_nodes()[0]
         sp.defaults = {'location':default_loc}
-    try:
-        sp.location = get_location_from_facility(f)
-    except ValueError:
-        print "  ERROR: facility %s %s has no location" % (f.name, f.pk)
-        # supply points require a location
-        return None
+    sp.set_type_from_string(f.type.slug)
+    sp.location = get_location_from_facility(f)
     sp.save()
     return sp
 

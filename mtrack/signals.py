@@ -74,7 +74,6 @@ def update_supply_point_from_facility(sender, instance, **kwargs):
     try:
         supply_point = instance.supply_point
     except SupplyPoint.DoesNotExist:
-        # TODO: LOG AN ERROR?
         supply_point = None
     try:
         base = HealthFacilityBase.objects.get(pk=instance.pk)
@@ -82,20 +81,18 @@ def update_supply_point_from_facility(sender, instance, **kwargs):
         base = instance
     if supply_point is None:
         # create
-        instance.supply_point = create_supply_point_from_facility(base)
+        try:
+            instance.supply_point = create_supply_point_from_facility(base)
+        except ValueError:
+            logging.error('facility %s has no location' & base.pk)
         return
 
     # else update
-    try:
-        type_, created = SupplyPointType.objects.get_or_create(code=base.type.slug)
-    except HealthFacilityType.DoesNotExist:
-        # TODO: LOG AN ERROR?
-        type_, created = SupplyPointType.objects.get_or_create(code='UNKNOWN')
-    supply_point.type = type_
+    supply_point.set_type_from_string(base.type.slug)
     try:
         supply_point.location = get_location_from_facility(base)
     except ValueError:
-        pass
+        logging.error('facility %s has no location' & base.pk)
     supply_point.save()
     return
 
