@@ -101,10 +101,17 @@ def add_supply_points_to_facilities(log_to_console=False):
     facilities = HealthFacility.objects.all().order_by('name')
     for f in facilities:
         if f.supply_point is None:
-            f.supply_point = create_supply_point_from_facility(f)
+            # technically the below line isn't needed since 
+            # it gets called in the facility 'save' signal anyways
+            # f.supply_point = create_supply_point_from_facility(f)
             f.save()
             if log_to_console:
                 print "  %s supply point created" % f.name
+    # verify that this all worked
+    no_sdp = HealthFacility.objects.filter(supply_point=None)
+    if no_sdp.exists():
+        print "Some supply points still missing!"
+ 
 
 def create_supply_point_from_facility(f):
     try:
@@ -124,6 +131,7 @@ def create_supply_point_from_facility(f):
     try:
         sp.location = get_location_from_facility(f)
     except ValueError:
+        print "  ERROR: facility %s %s has no location" % (f.name, f.pk)
         # supply points require a location
         return None
     sp.save()

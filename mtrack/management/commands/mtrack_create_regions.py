@@ -28,11 +28,12 @@ class Command(BaseCommand):
         for region in region_names:
             code = region.lower()
             reg, created = Location.objects.get_or_create(code=code)
-            if created:
-                reg.name = region
-                reg.type = region_type
-                reg.parent = self.country
-                reg.save()
+            if not created:
+                print 'Modifying location %s %s to be a top-level region' % (reg.name, reg.pk)
+            reg.name = region
+            reg.type = region_type
+            reg.tree_parent = self.country
+            reg.save()
             regions[code] = reg
         return regions
 
