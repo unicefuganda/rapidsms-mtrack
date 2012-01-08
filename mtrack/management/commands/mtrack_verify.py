@@ -7,3 +7,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         mtrack_loader.add_supply_points_to_facilities()
         mtrack_loader.process_xforms()
+        mtrack_loader.remove_whitespace_from_codes()
