@@ -396,3 +396,17 @@ def process_xforms():
     print "%s submissions ignored." % ignored_count
     print "%s submissions had errors." % error_count
     return
+
+def remove_whitespace_from_codes():
+    """ having spaces in codes breaks all sorts of views.
+    it's also just bad practice """
+    locs = Location.objects.all()
+    for loc in locs:
+        if loc.code != loc.code.strip():
+            loc.code = loc.code.strip()
+            loc.save()
+    facs = HealthFacility.objects.all()
+    for fac in facs:
+        if fac.code != fac.code.strip():
+            fac.code = fac.code.strip()
+            fac.save()
