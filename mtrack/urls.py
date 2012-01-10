@@ -84,7 +84,7 @@ urlpatterns = patterns('',
 
     (r'^alerts/', include('alerts.urls')),
 
-    url(r'^approve/$', generic, { \
+    url(r'^approve/$', login_required(generic), { \
         'model':XFormSubmission, \
         'queryset':get_facility_reports_for_view, \
         'objects_per_page':25, \

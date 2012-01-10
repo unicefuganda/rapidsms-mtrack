@@ -12,7 +12,7 @@ XFORMS = [
     'anonymous' #anonymous report collecting
 ]
 
-def last_reporting_period(period=1, weekday=3):
+def last_reporting_period(period=1, weekday=3, todate=False):
     """
     Find a date range that spans from the most recent Wednesday (exactly a week ago if
     today is Wednesday) to the beginning of Thursday, one week prior
@@ -23,7 +23,7 @@ def last_reporting_period(period=1, weekday=3):
     d = datetime.datetime(d.year, d.month, d.day)
     # find the past day with weekday() of 3
     last_thursday = d - datetime.timedelta((((7 - weekday) + d.weekday()) % 7)) - datetime.timedelta((period - 1) * 7)
-    return (last_thursday - datetime.timedelta(7), last_thursday,)
+    return (last_thursday - datetime.timedelta(7), d if todate else last_thursday,)
 
 def last_reporting_period_number():
     first_monday = last_reporting_period(weekday=0, period=2)[0]
@@ -96,7 +96,7 @@ def get_last_reporting_date(facility):
 
     return None
 
-def get_facility_reports(location, count=False, date_range=last_reporting_period(), approved=None):
+def get_facility_reports(location, count=False, date_range=last_reporting_period(todate=True), approved=None):
     facilities = total_facilities(location, count=False)
     staff = get_staff_for_facility(facilities)
     toret = XFormSubmission.objects.filter(\

@@ -21,7 +21,8 @@ def approve(request):
     location = get_location_for_user(request.user)
 
     return render_to_response('mtrack/partials/dashboard_approve.html', {
-            'reports':get_facility_reports(location, count=True, approved=False),
+            'reports':get_facility_reports(location, date_range=last_reporting_period(), count=True, approved=False),
+            'total_reports':get_facility_reports(location, date_range=last_reporting_period(todate=True), count=True, approved=False),
             'reporting_period': last_reporting_period_number(),
         },
         context_instance=RequestContext(request))
