@@ -123,6 +123,12 @@ def create_supply_point_from_facility(f):
     """ this can't live inside of 'facility' since supply points from logistics
     can be decoupled from facilities from mtrack """
     try:
+        f.type
+    except HealthFacilityType.DoesNotExist:
+        # db is still being initialized. 
+        # we skip this step for now and return to it in mtrack_verify
+        return None
+    try:
         sp = SupplyPoint.objects.get(code=f.code)
     except SupplyPoint.DoesNotExist:
         sp = SupplyPoint(code=f.code)
