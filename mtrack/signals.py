@@ -84,7 +84,7 @@ def update_supply_point_from_facility(sender, instance, **kwargs):
         try:
             instance.supply_point = create_supply_point_from_facility(base)
         except ValueError:
-            logging.error('facility %s has no location' & base.pk)
+            logging.error('facility %s has no location' % base.pk)
         return
 
     # else update
