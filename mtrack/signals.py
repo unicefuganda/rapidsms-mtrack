@@ -31,38 +31,67 @@ def process_xform(submission):
         logging.error('%s has no associated facility' % submission.connection.identity)
         return
 
-    if submission.xform.keyword == stock_reports[0]:
-        stock_report = ProductReportsHelper(health_provider.facility.supply_point,
-                                            const.Reports.SOH,
-                                            submission.message)
-        stock_report.add_product_receipt(config.Products.SIX_PACK, submission.eav.act_spd)
-        stock_report.add_product_stock(config.Products.SIX_PACK, submission.eav.act_sps)
-        stock_report.add_product_receipt(config.Products.TWELVE_PACK, submission.eav.act_tpd)
-        stock_report.add_product_stock(config.Products.TWELVE_PACK, submission.eav.act_tps)
-        stock_report.add_product_receipt(config.Products.EIGHTEEN_PACK, submission.eav.act_epd)
-        stock_report.add_product_stock(config.Products.EIGHTEEN_PACK, submission.eav.act_eps)
-        stock_report.add_product_receipt(config.Products.TWENTY_FOUR_PACK, submission.eav.act_fpd)
-        stock_report.add_product_stock(config.Products.TWENTY_FOUR_PACK, submission.eav.act_fps)
-        stock_report.save()
-    elif xform.keyword == stock_reports[1]:
-        stock_report = ProductReportsHelper(health_provider.facility.supply_point,
-                                            const.Reports.SOH,
-                                            submission.message)
-
-        stock_report.add_product_receipt(config.Products.OTHER_ACT_STOCK, submission.eav.qun_oad)
-        stock_report.add_product_stock(config.Products.OTHER_ACT_STOCK, submission.eav.qun_oas)
-        stock_report.add_product_receipt(config.Products.QUININE, submission.eav.qun_qud)
-        stock_report.add_product_stock(config.Products.QUININE, submission.eav.qun_qus)
-        stock_report.save()
-
-    elif xform.keyword == stock_reports[2]:
-        stock_report = ProductReportsHelper(health_provider.facility.supply_point,
-                                            const.Reports.SOH,
-                                            submission.message)
-
-        stock_report.add_product_receipt(config.Products.RAPID_DIAGNOSTIC_TEST, submission.eav.rdt_rdd)
-        stock_report.add_product_stock(config.Products.RAPID_DIAGNOSTIC_TEST, submission.eav.rdt_rds)
-        stock_report.save()
+    values_count = len(submission.submission_values())
+    try:
+        if submission.xform.keyword == stock_reports[0]:
+            required_length = len(config.Products.ACT_REPORT) * 2
+            if values_count != required_length:
+                if values_count < required_length:
+                    submission.response = "This is an incomplete report. Please submit ALL of your ACT stock data in the form 'act 1 2 3 4 5 6 7 8'"
+                submission.has_errors = True
+                submission.save()
+                return
+            stock_report = ProductReportsHelper(health_provider.facility.supply_point,
+                                                const.Reports.SOH,
+                                                submission.message)
+            stock_report.add_product_receipt(config.Products.SIX_PACK, submission.eav.act_spd)
+            stock_report.add_product_stock(config.Products.SIX_PACK, submission.eav.act_sps)
+            stock_report.add_product_receipt(config.Products.TWELVE_PACK, submission.eav.act_tpd)
+            stock_report.add_product_stock(config.Products.TWELVE_PACK, submission.eav.act_tps)
+            stock_report.add_product_receipt(config.Products.EIGHTEEN_PACK, submission.eav.act_epd)
+            stock_report.add_product_stock(config.Products.EIGHTEEN_PACK, submission.eav.act_eps)
+            stock_report.add_product_receipt(config.Products.TWENTY_FOUR_PACK, submission.eav.act_fpd)
+            stock_report.add_product_stock(config.Products.TWENTY_FOUR_PACK, submission.eav.act_fps)
+            stock_report.save()
+        elif submission.xform.keyword == stock_reports[1]:
+            required_length = len(config.Products.QUN_REPORT) * 2
+            if values_count != required_length:
+                if values_count < required_length:
+                    submission.response = "This is an incomplete report. Please submit ALL of your QUN stock data in the form 'qun 1 2 3 4'"
+                submission.has_errors = True
+                submission.save()
+                return
+            stock_report = ProductReportsHelper(health_provider.facility.supply_point,
+                                                const.Reports.SOH,
+                                                submission.message)
+    
+            stock_report.add_product_receipt(config.Products.OTHER_ACT_STOCK, submission.eav.qun_oad)
+            stock_report.add_product_stock(config.Products.OTHER_ACT_STOCK, submission.eav.qun_oas)
+            stock_report.add_product_receipt(config.Products.QUININE, submission.eav.qun_qud)
+            stock_report.add_product_stock(config.Products.QUININE, submission.eav.qun_qus)
+            stock_report.save()
+    
+        elif submission.xform.keyword == stock_reports[2]:
+            required_length = len(config.Products.RDT_REPORT) * 2
+            if values_count != required_length:
+                if values_count < required_length:
+                    submission.response = "This is an incomplete report. Please submit ALL of your RDT stock data in the form 'act 1 2'"
+                submission.has_errors = True
+                submission.save()
+                return
+            stock_report = ProductReportsHelper(health_provider.facility.supply_point,
+                                                const.Reports.SOH,
+                                                submission.message)
+    
+            stock_report.add_product_receipt(config.Products.RAPID_DIAGNOSTIC_TEST, submission.eav.rdt_rdd)
+            stock_report.add_product_stock(config.Products.RAPID_DIAGNOSTIC_TEST, submission.eav.rdt_rds)
+            stock_report.save()
+    except Exception, e:
+        if submission.xform.keyword in stock_reports:
+            submission.response = unicode(e)
+            submission.has_errors = True
+            submission.save()
+        return
     return
 
 xform_received.connect(xform_received_handler, weak=True)
