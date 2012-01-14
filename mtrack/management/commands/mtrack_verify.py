@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from logistics import loader as logi_loader
 from mtrack import loader as mtrack_loader
 
 class Command(BaseCommand):
@@ -10,4 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         mtrack_loader.add_supply_points_to_facilities()
         mtrack_loader.process_xforms()
+        logi_loader.generate_codes_for_locations()
         mtrack_loader.remove_whitespace_from_codes()
+        logi_loader.load_products_into_facilities()
+        
