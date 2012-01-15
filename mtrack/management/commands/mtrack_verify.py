@@ -12,6 +12,6 @@ class Command(BaseCommand):
         mtrack_loader.add_supply_points_to_facilities()
         mtrack_loader.process_xforms()
         logi_loader.generate_codes_for_locations()
-        mtrack_loader.remove_whitespace_from_codes()
+        mtrack_loader.fix_codes_to_be_well_formed()
         logi_loader.load_products_into_facilities()
         
