@@ -110,4 +110,8 @@ urlpatterns = patterns('',
 
 
     (r'^mtrack/mgt/stats/', include(ManagementReport().as_urlpatterns(name='mtrack-mgt-stats'))),
+    url(r'^mtrack/logistics/?$',
+        'logistics.views.aggregate',
+        {'location_code':'ABI'},
+        name="mtrack-logistics"),
 )
