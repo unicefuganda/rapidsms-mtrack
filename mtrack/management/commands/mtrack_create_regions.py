@@ -15,10 +15,23 @@ class Command(BaseCommand):
             print "It should be of the format 'district, region', with one tuple per line"
             return
         try:
+            country = LocationType.objects.get(name='country')
+        except LocationType.DoesNotExist:
+            country = LocationType(name='country', slug='country')
+            country.save()
+        try:
+            district = LocationType.objects.get(name='district')
+        except LocationType.DoesNotExist:
+            district = LocationType(name='district', slug='district')
+            district.save()
+        try:
             self.country = Location.objects.get(type__name='country')
         except Location.MultipleObjectsReturned:
             print "There should only be one 'country' specified."
             exit()
+        except Location.DoesNotExist:
+            self.country = Location(type=country, name='Uganda', code='uganda')
+            self.country.save()
         self.regions = self.create_regions()
         self.assign_districts(args[0])
     
@@ -32,7 +45,9 @@ class Command(BaseCommand):
                 print 'Modifying location %s %s to be children of "uganda"' % (reg.name, reg.pk)
             reg.name = region
             reg.type = region_type
-            reg.tree_parent = self.country
+            reg.save()
+            # TODO: is this right???
+            reg.move_to(self.country, 'last-child')
             reg.save()
             regions[code] = reg
         return regions
@@ -60,7 +75,8 @@ class Command(BaseCommand):
             if district.tree_parent != self.country:
                 print "  District %s is already set to have %s as its parent" % (district_code, self.country)
                 continue
-            district.tree_parent = self.regions[region_code]
+            # TODO: is this right???
+            district.move_to(self.regions[region_code], 'last-child')
             district.save()
         print "%s districts assigned." % districts_assigned
         print "%s lines had errors." % error_count
