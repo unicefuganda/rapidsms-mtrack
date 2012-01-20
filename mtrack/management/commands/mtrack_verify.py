@@ -13,5 +13,6 @@ class Command(BaseCommand):
         mtrack_loader.process_xforms()
         logi_loader.generate_codes_for_locations()
         mtrack_loader.fix_codes_to_be_well_formed()
+        mtrack_loader.verify_supplypoint_type_names()
         logi_loader.load_products_into_facilities()
         

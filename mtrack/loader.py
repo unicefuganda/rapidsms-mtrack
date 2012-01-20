@@ -403,6 +403,13 @@ def process_xforms():
     print "%s submissions had errors." % error_count
     return
 
+def verify_supplypoint_type_names():
+    spts = SupplyPointType.objects.all()
+    for spt in spts:
+        if spt.name == '' or spt.name is None:
+            spt.name = spt.code
+            spt.save()
+    
 def fix_codes_to_be_well_formed():
     """ having spaces in codes breaks all sorts of views.
     it's also just bad practice """
