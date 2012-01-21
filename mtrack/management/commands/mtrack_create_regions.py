@@ -50,6 +50,11 @@ class Command(BaseCommand):
             reg.move_to(self.country, 'last-child')
             reg.save()
             regions[code] = reg
+        # verify that new regions have been added to the country
+        country = Location.objects.get(pk=self.country.pk)
+        country_children_pks = [c.pk for c in country.get_children()]
+        for x in regions:
+            assert regions[x].pk in country_children_pks
         return regions
 
     def assign_districts(self, filename):
@@ -76,8 +81,16 @@ class Command(BaseCommand):
                 print "  District %s is already set to have %s as its parent" % (district_code, self.country)
                 continue
             # TODO: is this right???
-            district.move_to(self.regions[region_code], 'last-child')
+            region = Location.objects.get(pk=self.regions[region_code].pk)
+            region_children_count = region.get_children().count()
+            district.move_to(region, 'last-child')
             district.save()
+            
+            # verify that new districts have been added to the region
+            region = Location.objects.get(pk=self.regions[region_code].pk)
+            new_region_children_count = region.get_children().count()
+            assert new_region_children_count == region_children_count + 1
+            assert district.get_ancestors(ascending=True)[0] == region
         print "%s districts assigned." % districts_assigned
         print "%s lines had errors." % error_count
         
