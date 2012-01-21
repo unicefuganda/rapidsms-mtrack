@@ -18,7 +18,10 @@ class Command(BaseCommand):
                         value_int=0).filter(Q(attribute__slug__in=['act_sps', 'act_tps', 'act_eps', 'act_fps']))
         for l in rd:
             if l.submission.connection:
-                district_pk = l.submission.connection.contact.reporting_location.get_ancestors().\
+                if l.submission.connection.contact.reporting_location.type.name == 'district':
+                    district_pk = l.submission.connection.contact.reporting_location.name
+                else:
+                    district_pk = l.submission.connection.contact.reporting_location.get_ancestors().\
                 filter(type__slug='district')[0].name
                 districts[district_pk][0] = 'red'
                 districts[district_pk][1] = districts[district_pk][1] + 1
@@ -42,7 +45,10 @@ class Command(BaseCommand):
                                 Q(attribute__slug='act_fps', value_int__lte=750, submission__connection__contact__healthproviderbase__facility__type__name='hospital'))
         for y in yl:
             if y.submissin.connection:
-                district_pk = y.submission.connection.contact.reporting_location.get_ancestors().\
+                if y.submission.connection.contact.reporting_location.type.name == 'district':
+                    district_pk = y.submission.connection.contact.reporting_location.name
+                else:
+                    district_pk = y.submission.connection.contact.reporting_location.get_ancestors().\
                 filter(type__slug='district')[0].name
                 if districts[district_pk][0] <> 'red':
                     districts[district_pk][0] = 'yellow'
@@ -51,8 +57,10 @@ class Command(BaseCommand):
         filter(Q(attribute__slug__in=['act_sps', 'act_tps', 'act_eps', 'act_fps'])).distinct()
         for g in gr:
             if g.submission.connection:
-                district_pk = g.submission.connection.contact.reporting_location.get_ancestors().\
-                filter(type__slug='district')[0].name
+                if g.submission.connection.contact.reporting_location.type.name == 'district':
+                    district_pk = g.submission.connection.contact.reporting_location.name
+                else:
+                    district_pk = g.submission.connection.contact.reporting_location.get_ancestors().filter(type__slug='district')[0].name
                 if districts[district_pk][0] not in ['red', 'yellow']:
                     districts[district_pk][0] = 'green'
                     districts[district_pk][1] = districts[district_pk][1] + 1

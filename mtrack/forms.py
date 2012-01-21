@@ -174,8 +174,9 @@ class ApproveForm(ActionForm):
         if results is None or len(results) == 0:
             return ('You must approve one or more reports', 'error')
         else:
+            count = results.count()
             results.update(approved=True)
-            return ("%d reports approved successfully" % results.count(), 'success')
+            return ("%d reports approved successfully" % count, 'success')
 
 class RejectForm(ActionForm):
     action_label = 'Reject Selected'

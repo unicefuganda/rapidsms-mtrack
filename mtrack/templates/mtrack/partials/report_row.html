@@ -15,7 +15,17 @@
         </ul>    
     </td>
     <td>{{ object.created|date:"m/j/y G:i:s" }}</td>
-    <td>{{ object.approved }}</td>
+    <td>
+    	{% if object.has_errors == 1 %}
+    		{{ "Rejected" }}
+    	{% else %}
+    		{% if object.approved == 1 %}
+    			{{ "Approved" }}
+    		{% else %}
+    			{{ "Unapproved" }}
+    		{% endif %}
+    	{% endif %}
+    </td>
     <td>
         <div class="buttons">
             <a href="/xforms/submissions/{{ object.pk }}/edit/">
