@@ -403,16 +403,26 @@ def process_xforms():
     print "%s submissions had errors." % error_count
     return
 
-def remove_whitespace_from_codes():
+def verify_supplypoint_type_names():
+    spts = SupplyPointType.objects.all()
+    for spt in spts:
+        if spt.name == '' or spt.name is None:
+            spt.name = spt.code
+            spt.save()
+    
+def fix_codes_to_be_well_formed():
     """ having spaces in codes breaks all sorts of views.
     it's also just bad practice """
+    from logistics import loader as logi_loader
     locs = Location.objects.all()
     for loc in locs:
-        if loc.code != loc.code.strip():
-            loc.code = loc.code.strip()
+        good_code = logi_loader._generate_location_code(loc.code, lower=False, check_existing=False)
+        if loc.code != good_code:
+            loc.code = good_code
             loc.save()
     facs = HealthFacility.objects.all()
     for fac in facs:
-        if fac.code != fac.code.strip():
-            fac.code = fac.code.strip()
+        good_code = logi_loader._generate_location_code(fac.code, lower=False, check_existing=False)
+        if fac.code != good_code:
+            fac.code = good_code
             fac.save()
