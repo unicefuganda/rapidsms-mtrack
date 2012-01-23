@@ -14,6 +14,7 @@ def admin(request):
             'good_vhts':reporting_vhts(location),
             'total_facilities':total_registered_facilities(location),
             'total_vhts':total_vhts(location),
+            'reporting_period': last_reporting_period_number(),
         },
         context_instance=RequestContext(request))
 
