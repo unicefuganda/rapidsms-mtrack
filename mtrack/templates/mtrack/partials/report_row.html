@@ -28,9 +28,11 @@
     </td>
     <td>
         <div class="buttons">
+        	{% if perms.rapidsms_xforms.change_xformsubmission %}
             <a href="/xforms/submissions/{{ object.pk }}/edit/">
                 <img src="{{ MEDIA_URL }}rapidsms_xforms/icons/silk/pencil.png" alt=""/> Edit
             </a>
+            {% endif %}
         </div>
     </td>
 {% endblock %}
