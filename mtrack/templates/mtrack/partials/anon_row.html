@@ -1,4 +1,5 @@
 {% extends 'generic/partials/partial_row.html' %}
+{% load usertags %}
 {% block content %}
     {% block remaining_row_content %}
     <td>
@@ -55,12 +56,16 @@
     </td>
     <td class="button_col">
         <div class="buttons">
+        	{% if perms.mtrack.delete_anonymousreport %}
             <a href="javascript:void(0)" onClick="deleteAnonymousReport(this, {{ object.pk }}, 'a report on {{ object.health_facility }}', '{% url mtrack.views.anonymous_reports.delete_report object.pk %}')">
                 <img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/>
             </a>
+            {% endif %}
+            {% if perms.mtrack.change_anonymousreport %}
             <a href="javascript:void(0)" onclick="editAnonymousReport(this, {{ object.pk }})">
                 <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png"/>
             </a>
+            {% endif %}
         </div>
     </td>
 

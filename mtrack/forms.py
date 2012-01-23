@@ -173,16 +173,20 @@ class ApproveForm(ActionForm):
     def perform(self, request, results):
         if results is None or len(results) == 0:
             return ('You must approve one or more reports', 'error')
-        else:
+        if request.user and request.user.has_perm('rapidsms_xforms.can_approve'):
             count = results.count()
             results.update(approved=True)
             return ("%d reports approved successfully" % count, 'success')
+        else:
+            return ("You don't have permission to approve reports!", "error")
 
 class RejectForm(ActionForm):
     action_label = 'Reject Selected'
     def perform(self, request, results):
         if results is None or len(results) == 0:
             return ('You must reject one or more reports', 'error')
-        else:
+        if request.user and request.user.has_perm('rapidsms_xforms.can_approve'):
             results.update(has_errors=True)
             return ("%d reports rejected successfully" % results.count(), 'success')
+        else:
+            return ("You don't have permission to reject reports", "error")
