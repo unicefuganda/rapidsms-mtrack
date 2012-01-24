@@ -9,10 +9,9 @@ class Command(BaseCommand):
            """
 
     def handle(self, *args, **options):
-        mtrack_loader.add_supply_points_to_facilities()
-        mtrack_loader.process_xforms()
+        mtrack_loader.verify_supplypoint_type_names()
         logi_loader.generate_codes_for_locations()
         mtrack_loader.fix_codes_to_be_well_formed()
-        mtrack_loader.verify_supplypoint_type_names()
+        mtrack_loader.add_supply_points_to_facilities()
         logi_loader.load_products_into_facilities()
-        
+        mtrack_loader.process_xforms()
