@@ -101,7 +101,7 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
     staff = get_staff_for_facility(facilities)
     toret = XFormSubmission.objects.filter(\
         connection__contact__in=staff, \
-        has_errors=False)
+        has_errors=False).order_by('-created')
     if date_range:
         toret = toret.filter(created__range=date_range)
     if approved is not None:

@@ -14,6 +14,7 @@
         {% endfor %}
         </ul>    
     </td>
+    <td>{{ object.created|reporting_week }}</td>
     <td>{{ object.created|date:"m/j/y G:i:s" }}</td>
     <td>
     	{% if object.has_errors == 1 %}
