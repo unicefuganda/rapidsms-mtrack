@@ -65,7 +65,6 @@ urlpatterns = patterns('',
 
 
 
-
     # FIXME: add anonymous repots to dashboard
     url(r'^dashboard/ars/$', direct_to_template, {'template':'mtrack/partials/demo_areports.html'}, name="dashboard-anonymous"),
     # FIXME: dashboard admin summary
@@ -95,6 +94,7 @@ urlpatterns = patterns('',
         'columns':[('Facility', True, 'message__connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()), \
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),), \
                    ('Report', True, 'raw', SimpleSorter(),), \
+                   ('Week#', False, '', None,),
                    ('Date', True, 'created', SimpleSorter(),), \
                    ('Approved', True, 'approved', SimpleSorter(),), \
                    ('', False, '', None,)], \
@@ -111,6 +111,7 @@ urlpatterns = patterns('',
         'columns':[('Facility', True, 'message__connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()),
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),),
                    ('Report', True, 'raw', SimpleSorter(),),
+                   ('Week #', False, '', None,),
                    ('Date', True, 'created', SimpleSorter(),), \
                    ('Approved', True, 'approved', SimpleSorter(),), \
                    ('', False, '', None,)], \
