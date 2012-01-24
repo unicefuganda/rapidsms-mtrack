@@ -414,15 +414,25 @@ def fix_codes_to_be_well_formed():
     """ having spaces in codes breaks all sorts of views.
     it's also just bad practice """
     from logistics import loader as logi_loader
-    locs = Location.objects.all()
-    for loc in locs:
-        good_code = logi_loader._generate_location_code(loc.code, lower=False, check_existing=False)
-        if loc.code != good_code:
-            loc.code = good_code
-            loc.save()
-    facs = HealthFacility.objects.all()
-    for fac in facs:
-        good_code = logi_loader._generate_location_code(fac.code, lower=False, check_existing=False)
-        if fac.code != good_code:
-            fac.code = good_code
-            fac.save()
+    def _fix_codes(kls):
+        # we need to store detected dupes in memory because after the dupes are fixed
+        # our queryset becomes stale
+        dupes_detected = []
+        locs = kls.objects.all()
+        for loc in locs:
+            good_code = logi_loader._generate_location_code(loc.code, lower=False, check_existing=False)
+            dupes = kls.objects.filter(code=good_code).exclude(pk=loc.pk)
+            if dupes.count() > 0 and good_code not in dupes_detected:
+                dupes_detected.append(good_code)
+                print "ERROR: Location %s (pk:%s) shares a duplicate code (%s) with other locations. FIXING..." % (loc.name, loc.pk, good_code)
+                for dupe in dupes:
+                    nondupe_code = logi_loader._generate_location_code(good_code, lower=False, check_existing=True, kls=kls)
+                    print " duplicate: %s (pk: %s) (code: %s)" % (dupe.name, dupe.pk, dupe.code)
+                    print " -> changing code %s to code %s" % (dupe.code, nondupe_code)
+                    dupe.code = nondupe_code
+                    dupe.save()
+            if loc.code != good_code:
+                loc.code = good_code
+                loc.save()
+    _fix_codes(Location)
+    _fix_codes(HealthFacility)
