@@ -8,14 +8,14 @@ from mtrack.models import AnonymousReport
 from mtrack.reports import ManagementReport
 from mtrack.utils import get_dashboard_messages, get_facility_reports_for_view, \
     get_all_facility_reports_for_view
-from mtrack.views.anonymous_reports import edit_report as edit_anonymous_report, delete_report, create_excel
+from mtrack.views.anonymous_reports import edit_anonymous_report, delete_report, create_excel
 from mtrack.views.dashboard import admin, approve
 from mtrack.views.reports import edit_report
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
 
 from django.views.generic import ListView
-from mtrack.views.visuals import stock_level_viz
+from mtrack.views.visuals import stock_level_viz, stock_level_piechart
 
 
 urlpatterns = patterns('',
@@ -51,6 +51,7 @@ urlpatterns = patterns('',
             ('District', True, 'district', SimpleSorter(),),
             ('Date', True, 'date', SimpleSorter(),),
             ('Reports', True, 'messages', None,),
+            ('Topic', True, 'topic', SimpleSorter(),),
             ('Status', True, 'actions', SimpleSorter(),),
             ('Comments', True, 'comments', SimpleSorter(),),
             ('Responses', True, 'responses', None,),
@@ -62,6 +63,7 @@ urlpatterns = patterns('',
     url(r'^anonymousreports/(\d+)/delete/', delete_report, name='delete-report'),
     url(r'^anonymousreports/(?P<pk>\d+)/show', generic_row, {'model':AnonymousReport, 'partial_row':'mtrack/partials/anon_row.html'}),
     url(r'^stocklevelviz/$', stock_level_viz, name='stock-viz'),
+    url(r'^stocklevelpie/$', stock_level_piechart, name='stock-pie'),
 
 
 

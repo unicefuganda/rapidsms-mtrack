@@ -7,7 +7,7 @@ from poll.models import Poll
 from .models import AnonymousReport
 from generic.forms import ActionForm
 from contact.forms import SMSInput
-from .utils import get_district_for_facility
+from .utils import get_district_for_facility, get_facilities
 
 class FacilityResponseForm(forms.Form):
     def __init__(self, data=None, **kwargs):

@@ -1,6 +1,5 @@
 {% load stats_extras %}
-<td>&nbsp;</td>
-<td>
+<td>&nbsp;
 <style type="text/css">
 	select,textarea {
 		border:1px solid #CCC;
@@ -8,7 +7,18 @@
 		font-size: 90%;
 		}
 </style>
-    {{ report_form.health_facility }}
+</td>
+<td>
+	{% if facilities %}
+	<select name='health_facility'>
+		<option value=''>-----</option>
+		
+		{% for f in facilities %}
+			<option value='{{ f.id }}' {% if f.id  == pk %} selected='selected' {% endif %}>{{ f.name }}</option>
+		{% endfor %}
+	</select>
+	{% endif %}
+
     {% if report_form.health_facility.errors %}
         <br clear="left"/>
         {{ report_form.health_facility.errors }}
@@ -34,7 +44,9 @@
    {% endfor %}
    </ul>
 </td>
-
+<td>
+	{{ report_form.topic }}
+</td>
 <td>
 	{{ report_form.action }}
 </td>
@@ -68,3 +80,4 @@
         </a>
     </div>
 </td>
+{% if pk|stringformat:"s"  == '1129' %} GWE {% endif %}

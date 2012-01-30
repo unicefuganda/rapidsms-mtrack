@@ -6,11 +6,24 @@ from rapidsms_httprouter.models import Message
 
 ACTIONS = (
     ('Op', 'Open'),
+    ('C', 'Claim'),
+    ('Es', 'Escalate'),
+    ('Cl', 'Close'),
     ('Ig', 'Ignore'),
-    ('Na', 'No Action needed'),
-    ('S', 'Stock out'),
-    ('Ot', 'Other critical')
+    #('Na', 'No Action needed'),
+    #('S', 'Stock out'),
+    #('Ot', 'Other critical')
 )
+TOPICS = (
+          ('Drug Theft', 'Drug Theft'),
+          ('General Complaint', 'General Complaint'),
+          ('General Inquiry', 'General Inquiry'),
+          ('Good Service', 'Good Service'),
+          ('Impersonation', 'Impersonation'),
+          ('Other Critical', 'Other Critical'),
+          ('Stock Out', 'Stock Out'),
+          ('Unknown', 'Unknown'),
+        )
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
     messages = models.ManyToManyField(Message, null=True, default=None)
@@ -19,6 +32,7 @@ class AnonymousReport(models.Model):
     comments = models.TextField(null=True)
     health_facility = models.ForeignKey(HealthFacility, null=True)
     action = models.CharField(max_length=2, choices=ACTIONS, default='Op') #is this the right way??
+    topic = models.CharField(max_length=32, default='Unknown', choices=TOPICS, null=True)
     def __unicode__(self):
         return self.connection.identity
 
