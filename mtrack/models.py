@@ -37,7 +37,7 @@ class AnonymousReport(models.Model):
         return self.connection.identity
 
     class Meta:
-        ordering = ['-date', 'action']
+        ordering = ['-date', 'action', 'topic']
 
 #class AnonymousReportBatch(models.Model):
 #    connection = models.ForeignKey(Connection)

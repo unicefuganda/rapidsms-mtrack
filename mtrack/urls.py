@@ -1,4 +1,4 @@
-from .forms import ReplyTextForm, MassTextForm, AskAQuestionForm, ApproveForm, RejectForm
+from .forms import ReplyTextForm, MassTextForm, AskAQuestionForm, ApproveForm, RejectForm, StatusFilterForm
 from django.conf.urls.defaults import patterns, url, include
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
@@ -40,23 +40,26 @@ urlpatterns = patterns('',
         'model':AnonymousReport,
         # primitive filtering by actions
         #TODO subclass SimpleSorter to sort actions
-        'queryset': AnonymousReport.objects.all().order_by('action', '-date'), #action --> analogous to status of report      
+        'queryset': AnonymousReport.objects.all(), #action --> analogous to status of report      
         'objects_per_page':25,
         'base_template':'mtrack/partials/anonymous_base.html',
         'partial_row':'mtrack/partials/anon_row.html',
+        'partial_header':'mtrack/partials/partial_header.html',
         'selectable':True,
         'results_title' : 'Anonymous Reports',
+        #'filter_forms':[StatusFilterForm],
         'action_forms':[ReplyTextForm], #, AskAQuestionForm],
         'columns':[('Facility', True, 'health_facility', SimpleSorter(),),
             ('District', True, 'district', SimpleSorter(),),
             ('Date', True, 'date', SimpleSorter(),),
             ('Reports', True, 'messages', None,),
             ('Topic', True, 'topic', SimpleSorter(),),
-            ('Status', True, 'actions', SimpleSorter(),),
+            ('Status', True, 'action', SimpleSorter(),),
             ('Comments', True, 'comments', SimpleSorter(),),
             ('Responses', True, 'responses', None,),
             ('', False, '', None,)], \
         'results_title':'Anonymous reports',
+        #'sort_column':'date',
     }, name='dashboard-anonymous-messagelog'),
 
     url(r'^anonymousreports/(\d+)/edit/', edit_anonymous_report, name='edit-report'),
