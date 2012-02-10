@@ -5,7 +5,7 @@ from rapidsms.contrib.locations.models import Location
 from rapidsms_httprouter.models import Message
 from poll.models import Poll
 from .models import AnonymousReport
-from generic.forms import ActionForm
+from generic.forms import ActionForm, FilterForm
 from contact.forms import SMSInput
 from .utils import get_district_for_facility, get_facilities
 
@@ -190,3 +190,11 @@ class RejectForm(ActionForm):
             return ("%d reports rejected successfully" % results.count(), 'success')
         else:
             return ("You don't have permission to reject reports", "error")
+class StatusFilterForm(FilterForm):
+    action = forms.ChoiceField(choices=(('Open', 'Open'),), required=False)
+    #def __init__(self, data=None, **kwargs):
+    #
+    def filter(self, request, queryset):
+        action = self.cleaned_data['action']
+        return queryset
+
