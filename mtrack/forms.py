@@ -5,9 +5,9 @@ from rapidsms.contrib.locations.models import Location
 from rapidsms_httprouter.models import Message
 from poll.models import Poll
 from .models import AnonymousReport
-from generic.forms import ActionForm
+from generic.forms import ActionForm, FilterForm
 from contact.forms import SMSInput
-from .utils import get_district_for_facility
+from .utils import get_district_for_facility, get_facilities
 
 class FacilityResponseForm(forms.Form):
     def __init__(self, data=None, **kwargs):
@@ -173,16 +173,28 @@ class ApproveForm(ActionForm):
     def perform(self, request, results):
         if results is None or len(results) == 0:
             return ('You must approve one or more reports', 'error')
-        else:
+        if request.user and request.user.has_perm('rapidsms_xforms.can_approve'):
             count = results.count()
             results.update(approved=True)
             return ("%d reports approved successfully" % count, 'success')
+        else:
+            return ("You don't have permission to approve reports!", "error")
 
 class RejectForm(ActionForm):
     action_label = 'Reject Selected'
     def perform(self, request, results):
         if results is None or len(results) == 0:
             return ('You must reject one or more reports', 'error')
-        else:
+        if request.user and request.user.has_perm('rapidsms_xforms.can_approve'):
             results.update(has_errors=True)
             return ("%d reports rejected successfully" % results.count(), 'success')
+        else:
+            return ("You don't have permission to reject reports", "error")
+class StatusFilterForm(FilterForm):
+    action = forms.ChoiceField(choices=(('Open', 'Open'),), required=False)
+    #def __init__(self, data=None, **kwargs):
+    #
+    def filter(self, request, queryset):
+        action = self.cleaned_data['action']
+        return queryset
+

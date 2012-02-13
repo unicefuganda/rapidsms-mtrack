@@ -1,0 +1,49 @@
+<script language="javascript" src="{{ MEDIA_URL }}mtrack/javascripts/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}generic/javascripts/highcharts.js"></script>
+<div id='chart_div'></div>
+<script defer="defer" type="text/javascript">
+	function generate_pie_chart(renderTo,text,series){
+		var chart;
+		chart = new Highcharts.Chart({
+			chart: {
+                        'renderTo': renderTo,
+                        'plotBackgroundColor': null,
+                        'plotBorderWidth': null,
+                        'plotShadow': false
+                    },
+                    title: {
+                        text: 'Stock Levels',
+                    },
+                    tooltip: {
+                        formatter: function(){
+                            return '<b>'+ this.point.name + '<b>: ' + this.percentage + '%';
+                        }
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                    
+			 				},
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+						 type: 'pie',
+						 name: 'Stock Pie Chart',
+						 data:[
+							{'y':{{ response_dict.series.red }},'color':"#AA4643",'name':"Out of Stock"},
+						 	{'y':{{ response_dict.series.yellow }},'color':"#FFFF00",'name':"Below Min"},
+						 	{'y':{{ response_dict.series.green }}, 'color': '#00FF00', 'selected': 'true', 'name': 'Available', 'sliced': 'true'},
+						 	{'y':{{ response_dict.series.nodata }},'color':"#4673A7",'name':"No Data"}
+						 ]                 	
+                    }]
+		});
+		return chart;
+	}
+	$(document).ready(function(){
+		var pchart = generate_pie_chart('chart_div', "{{ response_dict.text|safe }}", "{{ response_dict.series|safe }}");
+	})
+</script>

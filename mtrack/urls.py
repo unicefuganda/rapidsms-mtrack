@@ -1,4 +1,4 @@
-from .forms import ReplyTextForm, MassTextForm, AskAQuestionForm, ApproveForm, RejectForm
+from .forms import ReplyTextForm, MassTextForm, AskAQuestionForm, ApproveForm, RejectForm, StatusFilterForm
 from django.conf.urls.defaults import patterns, url, include
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
@@ -8,14 +8,14 @@ from mtrack.models import AnonymousReport
 from mtrack.reports import ManagementReport
 from mtrack.utils import get_dashboard_messages, get_facility_reports_for_view, \
     get_all_facility_reports_for_view
-from mtrack.views.anonymous_reports import edit_report as edit_anonymous_report, delete_report, create_excel
+from mtrack.views.anonymous_reports import edit_anonymous_report, delete_report, create_excel
 from mtrack.views.dashboard import admin, approve
 from mtrack.views.reports import edit_report
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
 
 from django.views.generic import ListView
-from mtrack.views.visuals import stock_level_viz
+from mtrack.views.visuals import stock_level_viz, stock_level_piechart
 
 
 urlpatterns = patterns('',
@@ -40,29 +40,33 @@ urlpatterns = patterns('',
         'model':AnonymousReport,
         # primitive filtering by actions
         #TODO subclass SimpleSorter to sort actions
-        'queryset': AnonymousReport.objects.all().order_by('action', '-date'), #action --> analogous to status of report      
+        'queryset': AnonymousReport.objects.all(), #action --> analogous to status of report      
         'objects_per_page':25,
         'base_template':'mtrack/partials/anonymous_base.html',
         'partial_row':'mtrack/partials/anon_row.html',
+        'partial_header':'mtrack/partials/partial_header.html',
         'selectable':True,
         'results_title' : 'Anonymous Reports',
+        #'filter_forms':[StatusFilterForm],
         'action_forms':[ReplyTextForm], #, AskAQuestionForm],
         'columns':[('Facility', True, 'health_facility', SimpleSorter(),),
             ('District', True, 'district', SimpleSorter(),),
             ('Date', True, 'date', SimpleSorter(),),
             ('Reports', True, 'messages', None,),
-            ('Status', True, 'actions', SimpleSorter(),),
+            ('Topic', True, 'topic', SimpleSorter(),),
+            ('Status', True, 'action', SimpleSorter(),),
             ('Comments', True, 'comments', SimpleSorter(),),
             ('Responses', True, 'responses', None,),
             ('', False, '', None,)], \
         'results_title':'Anonymous reports',
+        #'sort_column':'date',
     }, name='dashboard-anonymous-messagelog'),
 
     url(r'^anonymousreports/(\d+)/edit/', edit_anonymous_report, name='edit-report'),
     url(r'^anonymousreports/(\d+)/delete/', delete_report, name='delete-report'),
     url(r'^anonymousreports/(?P<pk>\d+)/show', generic_row, {'model':AnonymousReport, 'partial_row':'mtrack/partials/anon_row.html'}),
     url(r'^stocklevelviz/$', stock_level_viz, name='stock-viz'),
-
+    url(r'^stocklevelpie/$', stock_level_piechart, name='stock-pie'),
 
 
 
@@ -95,6 +99,7 @@ urlpatterns = patterns('',
         'columns':[('Facility', True, 'message__connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()), \
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),), \
                    ('Report', True, 'raw', SimpleSorter(),), \
+                   ('Week#', False, '', None,),
                    ('Date', True, 'created', SimpleSorter(),), \
                    ('Approved', True, 'approved', SimpleSorter(),), \
                    ('', False, '', None,)], \
@@ -111,6 +116,7 @@ urlpatterns = patterns('',
         'columns':[('Facility', True, 'message__connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()),
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),),
                    ('Report', True, 'raw', SimpleSorter(),),
+                   ('Week #', False, '', None,),
                    ('Date', True, 'created', SimpleSorter(),), \
                    ('Approved', True, 'approved', SimpleSorter(),), \
                    ('', False, '', None,)], \

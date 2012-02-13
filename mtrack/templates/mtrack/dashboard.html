@@ -52,13 +52,14 @@ This first dashboard view - with alerts and reports to approve - is currently us
 		    <br clear="both"/>
 		    <a href="{% url cvs-map %}">go to map &raquo;</a>
 		    <br/>-->
-			<h2>Stock Levels Map</h2>
+			<h2 id="map-h2">Stock Levels Map</h2>
 			<div id='map_canvas' class="init"></div>
 		</div>
     </div>
     <div class="col-2">
     	<div class="module">
 			<h2>Stock Pie Chart</h2>
+			<div id='chart_div' class='init'></div>
 		</div>
     </div>
 </div>
@@ -69,6 +70,7 @@ This first dashboard view - with alerts and reports to approve - is currently us
 	    $('#admin').load('{% url dashboard-admin %}');
 	    $('#message').load('{% url dashboard-messagelog %}');
 	    $('#map_canvas').load('{% url stock-viz %}');
+	    $('#chart_div').load('{% url stock-pie %}');
 	    //$('#contacts').load('{% url dashboard-contacts %}');
 	    //init_map('stock-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
 	    // init_map('epi-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
