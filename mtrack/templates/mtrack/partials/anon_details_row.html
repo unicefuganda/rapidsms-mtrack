@@ -1,0 +1,88 @@
+{% load stats_extras %}
+<table width="100%">
+<tr>
+	<td width="30%">Facility</td>
+	<td>
+        {% if object.health_facility %}
+            <span style="font-size: 0.8em;">{{ object.health_facility }}</span>
+        {% else %}
+            <span style="font-size:0.8em;">missing</span>
+        {% endif %}
+    </td>
+ </tr>
+ <tr>
+ 	<td>District</td>
+    <td>
+        {% if object.district %}
+            <span style="font-size: 0.8em;">{{ object.district }}</span>
+        {% else %}
+        <span style="font-size:0.8em;">missing</span>
+        {% endif %}
+    </td>
+</tr>
+<tr>
+	<td>Date</td>
+    <td width="60px;">
+        <span style="font-size: 0.8em;">{{ object.date|date }}</span>
+    </td>
+</tr>
+<tr>
+	<td>Reports</td>
+    <td>
+        <span>
+            <ul>
+                {% for msg in object.messages.all.distinct %}
+                <li style="font-size:11px;">
+                &gt;&gt;{{ msg.text }}
+                </li>
+                {% endfor %}
+            </ul>
+
+        </span>
+    </td>
+</tr>
+<tr>
+	<td>Topic</td>
+    <td>
+    	{{ object.topic }}
+    </td>
+</tr>
+<tr>
+	<td>Action</td>
+    <td>
+		{{ object.get_action_display }}
+	</td>
+</tr>
+<tr>
+	<td>Action Center</td>
+	<td>
+		{{ object.action_center }}
+	</td>
+</tr>
+<tr>
+	<td>Comments</td>
+    <td>
+    	{% if object.comments %}
+        <span style="font-size:0.9em; color:green;">{{ object.comments }}</span>
+        {% else %}
+        <span style="font-size:0.8em; color:blue;">No comments</span>
+        {% endif %}
+    </td>
+</tr>
+<tr>
+	<td>Responses</td>
+    <td>
+          <ul>
+                {% for msg in object.messages.all %}
+                    {% for resp in msg.responses.all %}
+                    <li>
+                    <span style="font-size:11px;">
+                        &lt;&lt;{{ resp.text}}
+                    </span>
+                    </li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+    </td>
+</tr>
+</table>

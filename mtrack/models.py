@@ -24,6 +24,11 @@ TOPICS = (
           ('Stock Out', 'Stock Out'),
           ('Unknown', 'Unknown'),
         )
+ACTION_CENTERS = (
+                  ('MOH', 'MOH'),
+                  ('MU', 'MU'),
+                  ('NMS', 'NMS'),
+                  )
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
     messages = models.ManyToManyField(Message, null=True, default=None)
@@ -33,6 +38,7 @@ class AnonymousReport(models.Model):
     health_facility = models.ForeignKey(HealthFacility, null=True)
     action = models.CharField(max_length=2, choices=ACTIONS, default='Op') #is this the right way??
     topic = models.CharField(max_length=32, default='Unknown', choices=TOPICS, null=True)
+    action_center = models.CharField(max_length=32, default='', choices=ACTION_CENTERS, null=True)
     def __unicode__(self):
         return self.connection.identity
 

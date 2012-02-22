@@ -44,7 +44,7 @@ class Command(BaseCommand):
                                 Q(attribute__slug='act_eps', value_int__lte=750, submission__connection__contact__healthproviderbase__facility__type__name='hospital') | \
                                 Q(attribute__slug='act_fps', value_int__lte=750, submission__connection__contact__healthproviderbase__facility__type__name='hospital'))
         for y in yl:
-            if y.submissin.connection:
+            if y.submission.connection:
                 if y.submission.connection.contact.reporting_location.type.name == 'district':
                     district_pk = y.submission.connection.contact.reporting_location.name
                 else:

@@ -8,7 +8,7 @@ from mtrack.models import AnonymousReport
 from mtrack.reports import ManagementReport
 from mtrack.utils import get_dashboard_messages, get_facility_reports_for_view, \
     get_all_facility_reports_for_view
-from mtrack.views.anonymous_reports import edit_anonymous_report, delete_report, create_excel
+from mtrack.views.anonymous_reports import edit_anonymous_report, detail_anonymous_report, delete_report, create_excel
 from mtrack.views.dashboard import admin, approve
 from mtrack.views.reports import edit_report
 from rapidsms_httprouter.models import Message
@@ -55,6 +55,7 @@ urlpatterns = patterns('',
             ('Reports', True, 'messages', None,),
             ('Topic', True, 'topic', SimpleSorter(),),
             ('Status', True, 'action', SimpleSorter(),),
+            ('A Center', True, 'action_center', SimpleSorter(),),
             ('Comments', True, 'comments', SimpleSorter(),),
             ('Responses', True, 'responses', None,),
             ('', False, '', None,)], \
@@ -63,6 +64,7 @@ urlpatterns = patterns('',
     }, name='dashboard-anonymous-messagelog'),
 
     url(r'^anonymousreports/(\d+)/edit/', edit_anonymous_report, name='edit-report'),
+    url(r'^anonymousreports/(\d+)/detail/', detail_anonymous_report, name='detail-report'),
     url(r'^anonymousreports/(\d+)/delete/', delete_report, name='delete-report'),
     url(r'^anonymousreports/(?P<pk>\d+)/show', generic_row, {'model':AnonymousReport, 'partial_row':'mtrack/partials/anon_row.html'}),
     url(r'^stocklevelviz/$', stock_level_viz, name='stock-viz'),

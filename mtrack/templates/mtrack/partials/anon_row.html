@@ -23,24 +23,32 @@
             <ul>
                 {% for msg in object.messages.all.distinct %}
                 <li>
-                &gt;&gt;{{ msg.text }}
+                &gt;&gt;
+                {% if msg.text|length >= 40 %}
+                	{{ msg.text|slice:":40" }}...
+                {% else %}
+                	{{ msg.text }}
+                {% endif %}
                 </li>
                 {% endfor %}
             </ul>
 
         </span>
     </td>
-    <td>
+    <td style="font-size:10px;">
     	{{ object.topic }}
     </td>
-    <td>
+    <td style="font-size:10px;">
 		{{ object.get_action_display }}
+	</td>
+	<td style="font-size:10px;">
+		{{ object.action_center }}
 	</td>
     <td>
     	{% if object.comments %}
         <span style="font-size:0.9em; color:green;">{{ object.comments }}</span>
         {% else %}
-        <span style="font-size:0.8em; color:blue;">There are no comments</span>
+        <span style="font-size:0.8em; color:blue;">No comments</span>
         {% endif %}
     </td>
     <td>
@@ -49,23 +57,29 @@
                     {% for resp in msg.responses.all %}
                     <li>
                     <span style="font-size:0.8em;">
-                        &lt;&lt;{{ resp.text }}
+                        &lt;&lt;{{ resp.text|slice:":25" }}...
                     </span>
                     </li>
                     {% endfor %}
                 {% endfor %}
             </ul>
     </td>
-    <td class="button_col">
+    <td class="button_col" id="id_{{ object.pk }}">
         <div class="buttons">
         	{% if perms.mtrack.delete_anonymousreport %}
-            <a href="javascript:void(0)" onClick="deleteAnonymousReport(this, {{ object.pk }}, 'a report on {{ object.health_facility }}', '{% url mtrack.views.anonymous_reports.delete_report object.pk %}')">
+            <a href="javascript:void(0)" title="Delete" onClick="deleteAnonymousReport(this, {{ object.pk }}, 'a report on {{ object.health_facility }}', '{% url mtrack.views.anonymous_reports.delete_report object.pk %}')">
                 <img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/>
             </a>
             {% endif %}
             {% if perms.mtrack.change_anonymousreport %}
-            <a href="javascript:void(0)" onclick="editAnonymousReport(this, {{ object.pk }})">
+            <!--<a href="javascript:void(0)" rel="facebox" onclick="editAnonymousReport(this, {{ object.pk }})">
                 <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png"/>
+            </a>-->
+            <a href="javascript:void(0)" onclick="edit_elem(this)" id="{{ object.pk }}" title="Edit">
+            	<img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png"/>
+            </a>
+            <a href="javascript:void(0)" onclick="detail_elem(this)" id="x_{{ object.pk }}" title="Details">
+            	<img src="{{ MEDIA_URL }}mtrack/images/info.png">
             </a>
             {% endif %}
         </div>

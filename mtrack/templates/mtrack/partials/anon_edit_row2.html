@@ -1,0 +1,121 @@
+{% load stats_extras %}
+<style type="text/css">
+	select,textarea {
+		border:1px solid #CCC;
+		background-color: #FFFFFF;
+		font-size: 90%;
+		}
+		.button{
+        background-color: #eeeeee;
+        border: 1px solid #666666;
+        padding: 2px 3px;
+        -moz-border-clip: border;
+        -moz-background-inline-policy: continuous;
+        -moz-background-origin: padding;
+        -moz-border-radius: 5px;
+		}
+			
+</style>
+<table>
+<tr>
+<td>Facility:</td>
+<td>
+	{% if facilities %}
+	<select name='health_facility'>
+		<option value=''>-----</option>
+		
+		{% for f in facilities %}
+			<option value='{{ f.id }}' {% if f.id  == pk %} selected='selected' {% endif %}>{{ f.name }}</option>
+		{% endfor %}
+	</select>
+	{% endif %}
+
+    {% if report_form.health_facility.errors %}
+        <br clear="left"/>
+        {{ report_form.health_facility.errors }}
+    {% endif %}
+</td>
+</tr>
+<tr>
+<td>District:</td>
+<td>
+    {{ report_form.district }}
+    {% if report_form.district.errors %}
+        <br clear="left"/>
+        {{ report_form.district.errors }}
+    {% endif %}
+</td>
+</tr>
+<tr>
+<td>Date:</td>
+<td>{{ anonymous_report.date }}</td>
+</tr>
+<tr>
+<td>Report:</td>
+<td>
+   <ul>
+   {% for msg in anonymous_report.messages.all %}
+    <span>
+    <li style="font-size: 11px;">{{ msg.text }}</li>
+    </span>
+   {% endfor %}
+   </ul>
+</td>
+</tr>
+<tr>
+<td>Topic</td>
+<td>
+	{{ report_form.topic }}
+</td>
+</tr>
+<tr>
+<td>Action</td>
+<td>
+	{{ report_form.action }}
+</td>
+</tr>
+<tr>
+	<td>Action Center</td>
+	<td>{{ report_form.action_center }}</td>
+</tr>
+<tr>
+<td>Comments</td>
+<td>
+    {{ report_form.comments }}
+    {% if report_form.comments.errors %}
+        <br clear="left"/>
+        {{ report_form.comments.errors }}
+    {% endif %}
+</td>
+</tr>
+<tr>
+<td>Response</td>
+<td>
+    <ul>
+        {% for msg in anonymous_report.messages.all %}
+        	{% for resp in msg.responses.all %}
+        		<li style="font-size: 11px;">&lt;&lt; {{ resp.text }}</li>
+        	{% endfor %}
+        {% endfor %}
+    </ul>
+
+</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td class="button_col">
+    <div class="buttons">
+        <a href="javascript:void(0)" style="text-decoration:none"
+           onclick="disablePopup()">
+            <!--<img src="{{ MEDIA_URL }}rapidsms/icons/silk/decline.png"/>-->
+            <input type="button" class="button" value="Cancel"/>
+        </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="javascript:void(0)" style="text-decoration:none"
+           onclick="submitForm(this, '../anonymousreports/{{ anonymous_report.pk }}/edit/', $('#id_{{ anonymous_report.pk }}').parents('tr'))">
+            <input type="button" class="button" value="Edit"/>
+        </a>
+    </div>
+</td>
+</tr>
+</table>
