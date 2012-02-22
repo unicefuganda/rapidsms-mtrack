@@ -3,6 +3,7 @@ Load utils: good for setting up a demo environment,
 first setup of production environment, and automated testing
 """
 
+import logging
 import os
 import random
 import sys
@@ -15,6 +16,7 @@ from logistics.models import SupplyPoint, SupplyPointType, \
 from logistics.util import config
 from healthmodels.models import HealthFacility, HealthFacilityType
 from rapidsms.models import Contact
+from rapidsms_xforms.models import XFormSubmission
 
 def mtrack_init():
     from logistics import loader as logi_loader
@@ -100,31 +102,43 @@ def add_supply_points_to_facilities(log_to_console=False):
     facilities = HealthFacility.objects.all().order_by('name')
     for f in facilities:
         if f.supply_point is None:
-            f.supply_point = create_supply_point_from_facility(f)
+            # technically the below line isn't needed since 
+            # it gets called in the facility 'save' signal anyways
+            # we do it anyways so that we have better error reporting
+            try:
+                f.supply_point = create_supply_point_from_facility(f)
+            except ValueError:
+                print "  ERROR: facility %s %s has no location" % (f.name, f.pk)
+                continue
             f.save()
             if log_to_console:
                 print "  %s supply point created" % f.name
+    # verify that this all worked
+    no_sdp_count = HealthFacility.objects.filter(supply_point=None).count()
+    if no_sdp_count > 0:
+        print "%s supply points still missing!" % no_sdp_count
+ 
 
 def create_supply_point_from_facility(f):
+    """ this can't live inside of 'facility' since supply points from logistics
+    can be decoupled from facilities from mtrack """
     try:
-        type_, created = SupplyPointType.objects.get_or_create(code=f.type.slug)
+        f.type
     except HealthFacilityType.DoesNotExist:
-        # TODO: LOG AN ERROR?
-        type_, created = SupplyPointType.objects.get_or_create(code='UNKNOWN')
-    default_loc = Location.tree.root_nodes()[0]
+        # db is still being initialized. 
+        # we skip this step for now and return to it in mtrack_verify
+        return None
     try:
         sp = SupplyPoint.objects.get(code=f.code)
     except SupplyPoint.DoesNotExist:
-        sp = SupplyPoint(code=f.code, type= type_)
+        sp = SupplyPoint(code=f.code)
         sp.name = f.name
         sp.active = True
         # what is this?
+        default_loc = Location.tree.root_nodes()[0]
         sp.defaults = {'location':default_loc}
-    try:
-        sp.location = get_location_from_facility(f)
-    except ValueError:
-        # supply points require a location
-        return None
+    sp.set_type_from_string(f.type.slug)
+    sp.location = get_location_from_facility(f)
     sp.save()
     return sp
 
@@ -359,3 +373,66 @@ def init_dho_users():
             u = User.objects.create_user(l.name.upper(), 'mtrac@gmail.com', password)
             print "%s\t%s" % (l.name.upper(), password)
             Contact.objects.create(user=u, reporting_location=l, name='%s DHO User' % l.name)
+            
+def process_xforms():
+    from signals import process_xform
+    from logistics.models import ProductReport
+    submissions = XFormSubmission.objects.all().order_by('pk')
+    count = 0
+    ignored_count = 0
+    error_count = 0
+    print "%s existing submissions." % submissions.count()
+    for submit in submissions:
+        # only process submissions that don't already have a product report associated
+        if ProductReport.objects.filter(message=submit.message).count() == 0:
+            print "  Submission %s to be processed." % submit.pk
+            try:
+                process_xform(submit)
+                count = count + 1
+                print "  Submission %s processed." % submit.pk
+            except:
+                print "  Submission %s had errors." % submit.pk
+                print "    %s" % submit.message
+                error_count = error_count + 1
+        else:
+            print "  Submission %s ignored." % submit.pk
+            ignored_count = ignored_count + 1
+        pass
+    print "%s new submissions processed." % count
+    print "%s submissions ignored." % ignored_count
+    print "%s submissions had errors." % error_count
+    return
+
+def verify_supplypoint_type_names():
+    spts = SupplyPointType.objects.all()
+    for spt in spts:
+        if spt.name == '' or spt.name is None:
+            spt.name = spt.code
+            spt.save()
+    
+def fix_codes_to_be_well_formed():
+    """ having spaces in codes breaks all sorts of views.
+    it's also just bad practice """
+    from logistics import loader as logi_loader
+    def _fix_codes(kls):
+        # we need to store detected dupes in memory because after the dupes are fixed
+        # our queryset becomes stale
+        dupes_detected = []
+        locs = kls.objects.all()
+        for loc in locs:
+            good_code = logi_loader._generate_location_code(loc.code, lower=False, check_existing=False)
+            dupes = kls.objects.filter(code=good_code).exclude(pk=loc.pk)
+            if dupes.count() > 0 and good_code not in dupes_detected:
+                dupes_detected.append(good_code)
+                print "ERROR: Location %s (pk:%s) shares a duplicate code (%s) with other locations. FIXING..." % (loc.name, loc.pk, good_code)
+                for dupe in dupes:
+                    nondupe_code = logi_loader._generate_location_code(good_code, lower=False, check_existing=True, kls=kls)
+                    print " duplicate: %s (pk: %s) (code: %s)" % (dupe.name, dupe.pk, dupe.code)
+                    print " -> changing code %s to code %s" % (dupe.code, nondupe_code)
+                    dupe.code = nondupe_code
+                    dupe.save()
+            if loc.code != good_code:
+                loc.code = good_code
+                loc.save()
+    _fix_codes(Location)
+    _fix_codes(HealthFacility)
