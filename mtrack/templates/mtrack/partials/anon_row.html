@@ -78,10 +78,10 @@
             <a href="javascript:void(0)" onclick="edit_elem(this)" id="{{ object.pk }}" title="Edit">
             	<img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png"/>
             </a>
+            {% endif %}
             <a href="javascript:void(0)" onclick="detail_elem(this)" id="x_{{ object.pk }}" title="Details">
             	<img src="{{ MEDIA_URL }}mtrack/images/info.png">
-            </a>
-            {% endif %}
+            </a> 
         </div>
     </td>
 
