@@ -4,9 +4,12 @@ from mtrack.models import AnonymousReport
 from rapidsms.models import Connection
 from rapidsms.apps.base import AppBase
 from rapidsms_httprouter.models import Message
+from uganda_common.utils import handle_dongle_sms
 
 class App(AppBase):
     def handle(self, message):
+        if handle_dongle_sms(message):
+                    return True
         if message.connection.backend.name == getattr(settings, 'HOTLINE_BACKEND', 'console'):
             #anonymous_report = AnonymousReport.objects.create(connection=message.connection, message=message.db_message)
             #anonymous_report.save()
@@ -28,11 +31,6 @@ class App(AppBase):
                 except IndexError:
                     pass
             else:
-                if message.connection.identity in getattr(settings, 'MODEM_NUMBERS', ['256777773260', '256752145316', '256711957281', '256790403038', '256701205129']):
-                    Message.objects.create(direction="O", text=message.db_message,
-                                           status='Q', connection=message.connection,
-                                           in_response_to=message.db_message)
-                    return True
                 anonymous_report = AnonymousReport.objects.create(connection=message.connection)
                 anonymous_report.messages.add(message.db_message)
                 anonymous_report.save()
