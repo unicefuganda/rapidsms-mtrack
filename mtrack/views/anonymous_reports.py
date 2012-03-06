@@ -7,6 +7,8 @@ from django.template import RequestContext
 from django.views.generic.base import TemplateView
 import xlwt
 from mtrack.utils import *
+from time import strftime
+import datetime
 from healthmodels.models.HealthFacility import HealthFacilityBase
 @login_required
 def delete_report(request, report_pk):
@@ -75,6 +77,7 @@ def create_excel(request):
     #data_set = [[ar.health_facility, ar.district, ar.date, ar.messages.values()[0], ar.action, ar.comments] for ar in AnonymousReport.objects.all()]
     write_xls(sheet_name="Anonymous Reports", headings=headings, data=data_set, book=book)
     response = HttpResponse(mimetype="application/vnd.ms-excel")
-    response["Content-Disposition"] = 'attachment; filename=anonymous_report.xls'
+    fname_prefix = datetime.date.today().strftime('%Y%m%d') + "-" + strftime('%H%M%S')
+    response["Content-Disposition"] = 'attachment; filename=%s_anonymous_report.xls' % fname_prefix
     book.save(response)
     return response
