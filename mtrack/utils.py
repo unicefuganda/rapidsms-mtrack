@@ -275,7 +275,7 @@ def get_facilities():
     return query_to_dicts("SELECT a.id, a.name||' '|| b.name  as name FROM"
                    " healthmodels_healthfacilitybase a, healthmodels_healthfacilitytypebase b "
                    " WHERE a.type_id = b.id ORDER BY a.name;")
-def get_anonymous_reports(request):
+def get_anonymous_reports(request=None):
     location = get_location_for_user(request.user)
     districts = Location.objects.filter(type__name='district').values_list('name', flat=True)
     if location.name in districts:

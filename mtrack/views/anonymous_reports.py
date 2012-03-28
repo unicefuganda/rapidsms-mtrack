@@ -10,6 +10,7 @@ from mtrack.utils import *
 from time import strftime
 import datetime
 from healthmodels.models.HealthFacility import HealthFacilityBase
+
 @login_required
 def delete_report(request, report_pk):
     report = get_object_or_404(AnonymousReport, pk=report_pk)
@@ -58,7 +59,7 @@ def create_excel(request):
     book = xlwt.Workbook(encoding="utf8")
     headings = ["Facility", "District", "Date", "Reports", "Status", "Action Center", "Comments"]
     data_set = []
-    for ar in AnonymousReport.objects.all():
+    for ar in get_anonymous_reports(request):
         try:
             if not ar.comments:
                 ar.comments = "Missing"
