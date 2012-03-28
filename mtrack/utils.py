@@ -7,6 +7,8 @@ from rapidsms.contrib.locations.models import Location
 from rapidsms_xforms.models import XFormSubmission
 from uganda_common.utils import get_location_for_user
 from django.db import connection
+from ussd.models import Session
+import time
 
 XFORMS = [
     'anonymous' #anonymous report collecting
@@ -33,6 +35,9 @@ def last_reporting_period_number():
     if start_of_year.weekday() != 0:
         toret += 1
     return toret
+def current_reporting_week_number():
+    #if Monday is first day of Week
+    return int(time.strftime('%W'))
 
 def total_facilities(location, count=True):
     """
@@ -112,9 +117,35 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
 
     return toret
 
+def get_ussd_facility_reports(location, count=False, date_range=last_reporting_period(todate=True), approved=None):
+    facilities = total_facilities(location, count=False)
+    staff = get_staff_for_facility(facilities)
+    toret = XFormSubmission.objects.exclude(connection__contact=None)\
+        .exclude(connection__contact__healthproviderbase__healthprovider__facility=None)\
+        .filter(\
+        #connection__contact__in=staff, \
+        pk__in=Session.objects.exclude(submissions=None).values_list('submissions', flat=True), \
+        has_errors=False).order_by('-created')
+    if date_range:
+        toret = toret.filter(created__range=date_range)
+    if approved is not None:
+        toret = toret.filter(approved=approved)
+    d = []
+    for x in toret:
+        if x.connection.contact.healthproviderbase.healthprovider.facility <> None:
+            d.append(x.pk)
+    toret = XFormSubmission.objects.filter(pk__in=d)
+    if count:
+        return toret.count()
+    return toret
+
 def get_all_facility_reports_for_view(request=None):
     location = get_location_for_user(request.user)
     return get_facility_reports(location, count=False, date_range=None)
+
+def get_all_ussd_facility_reports_for_view(request=None):
+    location = get_location_for_user(request.user)
+    return get_ussd_facility_reports(location, count=False, date_range=None)
 
 def get_facility_reports_for_view(request=None):
     location = get_location_for_user(request.user)
@@ -155,7 +186,7 @@ def total_registered_facilities(location):
 def reporting_vhts(location):
     vhts = total_vhts(location, count=False)
     return XFormSubmission.objects.filter(message__connection__contact__in=vhts)\
-        .filter(created__range=last_reporting_period())\
+        .filter(created__range=last_reporting_period(period=0, weekday=0))\
         .filter(has_errors=False)\
         .values('message__connection__contact')\
         .count()

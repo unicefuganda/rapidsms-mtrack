@@ -1,5 +1,5 @@
 {% load humanize %}
 <br/>
 For this reporting period:<br/>
-<a href="{% url cvs-contact %}">{{ good_vhts }} out of {{ total_vhts }} VHTs have reported for the {{ reporting_period|ordinal }} Week</a><br/>
-<a href="{% url cvs-facility %}">{{ good_facilities }} out of {{ total_facilities }} Health Facilities have reported for the {{ reporting_period|ordinal }} Week</a>
+<a href="{% url cvs-contact %}">{{ good_vhts }} out of {{ total_vhts }} VHTs have reported for the {{ current_week|ordinal }} Week</a><br/>
+<a href="{% url cvs-facility %}">{{ good_facilities }} out of {{ total_facilities }} Health Facilities have reported for the {{ current_week|ordinal }} Week</a>

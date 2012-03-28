@@ -1,7 +1,7 @@
 {% load humanize %}
-{{ total_reports }} Report{{ total_reports|pluralize }} waiting for approval
+{{ total_reports }} Report{{ total_reports|pluralize }} waiting for approval (Week {{ reporting_period }} to date)
 <br/>
-{{ reports }} Report{{ reports|pluralize }} to Approve for {{ reporting_period|ordinal }} Week Reporting Period.
+{{ reports }} Report{{ reports|pluralize }} to Approve for {{ current_week|ordinal }} Week Reporting Period.
 <a href="{% url approve %}">Approve Reports &raquo;</a>
 <br/>
 <a href="{% url facility-reports %}">View Reports Archive &raquo;</a>
