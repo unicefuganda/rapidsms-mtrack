@@ -7,7 +7,7 @@ from generic.views import generic, generic_row
 from mtrack.models import AnonymousReport
 from mtrack.reports import ManagementReport
 from mtrack.utils import get_dashboard_messages, get_facility_reports_for_view, \
-    get_all_facility_reports_for_view
+    get_all_facility_reports_for_view, get_all_ussd_facility_reports_for_view, get_anonymous_reports
 from mtrack.views.anonymous_reports import edit_anonymous_report, detail_anonymous_report, delete_report, create_excel
 from mtrack.views.dashboard import admin, approve
 from mtrack.views.reports import edit_report
@@ -40,7 +40,7 @@ urlpatterns = patterns('',
         'model':AnonymousReport,
         # primitive filtering by actions
         #TODO subclass SimpleSorter to sort actions
-        'queryset': AnonymousReport.objects.all(), #action --> analogous to status of report      
+        'queryset': get_anonymous_reports, #action --> analogous to status of report      
         'objects_per_page':25,
         'base_template':'mtrack/partials/anonymous_base.html',
         'partial_row':'mtrack/partials/anon_row.html',
@@ -105,7 +105,7 @@ urlpatterns = patterns('',
                    ('Date', True, 'created', SimpleSorter(),), \
                    ('Approved', True, 'approved', SimpleSorter(),), \
                    ('', False, '', None,)], \
-        'sort_column':'message__connection__contact__healthproviderbase__healthprovider__facility__name', \
+        'sort_column':'connection__contact__healthproviderbase__healthprovider__facility__name', \
     }, name='approve'),
 
     url(r'^hc/reports/$', generic, { \
@@ -122,9 +122,24 @@ urlpatterns = patterns('',
                    ('Date', True, 'created', SimpleSorter(),), \
                    ('Approved', True, 'approved', SimpleSorter(),), \
                    ('', False, '', None,)], \
-        'sort_column':'message__connection__contact__healthproviderbase__healthprovider__facility__name', \
+        'sort_column':'connection__contact__healthproviderbase__healthprovider__facility__name', \
     }, name='facility-reports'),
-
+    url(r'^ussd/reports/$', generic, { \
+        'model': XFormSubmission, \
+        'queryset': get_all_ussd_facility_reports_for_view, \
+        'objects_per_page':25, \
+        'base_template': 'mtrack/mtrackt_generic_base.html', \
+        'partial_row': 'mtrack/partials/report_ussd_row.html', \
+        'results_title': 'Reports', \
+        'columns': [('Facility', True, 'connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()),
+                    ('Reporter', True, 'connection__contact__name', SimpleSorter(),),
+                    ('Report', False, '', None,), \
+                    ('Week #', False, '', None,), \
+                    ('Date', True, 'created', SimpleSorter(),), \
+                    ('Approved', False, '', None,), \
+                    ('', False, '', None,)], \
+        'sort_column': 'connection__contact__healthproviderbase__healthprovider__facility__name'
+    }, name='ussd-facility-reports'),
     url(r"^xforms/submissions/(\d+)/edit/$", login_required(edit_report)),
 
     (r'^mtrack/mgt/stats/', include(ManagementReport().as_urlpatterns(name='mtrack-mgt-stats'))),
