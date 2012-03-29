@@ -24,8 +24,8 @@ def approve(request):
     location = get_location_for_user(request.user)
 
     return render_to_response('mtrack/partials/dashboard_approve.html', {
-            'reports':get_facility_reports(location, date_range=last_reporting_period(weekday=0, period=0), count=True, approved=False),
-            'total_reports':get_facility_reports(location, date_range=last_reporting_period(weekday=0, todate=True), count=True, approved=False),
+            'reports':get_facility_reports(location, date_range=last_reporting_period(period=0), count=True, approved=False),
+            'total_reports':get_facility_reports(location, date_range=last_reporting_period(todate=True), count=True, approved=False),
             'reporting_period': last_reporting_period_number(),
             'current_week': current_reporting_week_number()
         },

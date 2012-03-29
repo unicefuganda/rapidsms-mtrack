@@ -10,12 +10,12 @@ from django.db import connection
 from ussd.models import Session
 import time
 from mtrack.models import AnonymousReport
-
+from django.conf import settings
 XFORMS = [
     'anonymous' #anonymous report collecting
 ]
 
-def last_reporting_period(period=1, weekday=3, todate=False):
+def last_reporting_period(period=1, weekday=getattr(settings, 'FIRSTDAY_OF_REPORTING_WEEK', 3), todate=False):
     """
     Find a date range that spans from the most recent Wednesday (exactly a week ago if
     today is Wednesday) to the beginning of Thursday, one week prior
@@ -26,10 +26,10 @@ def last_reporting_period(period=1, weekday=3, todate=False):
     d = datetime.datetime(d.year, d.month, d.day)
     # find the past day with weekday() of 3
     last_thursday = d - datetime.timedelta((((7 - weekday) + d.weekday()) % 7)) - datetime.timedelta((period - 1) * 7)
-    return (last_thursday - datetime.timedelta(7), d if todate else last_thursday,)
+    return (last_thursday - datetime.timedelta(7), datetime.datetime.now() if todate else last_thursday,)
 
 def last_reporting_period_number():
-    first_monday = last_reporting_period(weekday=0, period=1)[0]
+    first_monday = last_reporting_period(weekday=getattr(settings, 'FIRSTDAY_OF_REPORTING_WEEK', 3), period=1)[0]
     start_of_year = datetime.datetime(first_monday.year, 1, 1, 0, 0, 0)
     td = first_monday - start_of_year
     toret = int(td.days / 7)
@@ -39,6 +39,9 @@ def last_reporting_period_number():
 def current_reporting_week_number():
     #if Monday is first day of Week
     return int(time.strftime('%W'))
+
+def current_week_reporting_range():
+    return last_reporting_period(period=0)
 
 def total_facilities(location, count=True):
     """
@@ -102,8 +105,9 @@ def get_last_reporting_date(facility):
 
     return None
 
-def get_facility_reports(location, count=False, date_range=last_reporting_period(todate=True), approved=None):
+def get_facility_reports(location, count=False, date_range=last_reporting_period(period=1, todate=True), approved=None):
     facilities = total_facilities(location, count=False)
+    print date_range
     staff = get_staff_for_facility(facilities)
     toret = XFormSubmission.objects.filter(\
         connection__contact__in=staff, \
@@ -114,8 +118,8 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
         toret = toret.filter(approved=approved)
 
     if count:
+        print toret.values('created', 'id')
         return toret.count()
-
     return toret
 
 def get_ussd_facility_reports(location, count=False, date_range=last_reporting_period(todate=True), approved=None):
@@ -150,6 +154,7 @@ def get_all_ussd_facility_reports_for_view(request=None):
 
 def get_facility_reports_for_view(request=None):
     location = get_location_for_user(request.user)
+    print location
     return get_facility_reports(location, count=False, approved=False)
 
 def get_district_for_facility(hc):
@@ -187,7 +192,7 @@ def total_registered_facilities(location):
 def reporting_vhts(location):
     vhts = total_vhts(location, count=False)
     return XFormSubmission.objects.filter(message__connection__contact__in=vhts)\
-        .filter(created__range=last_reporting_period(period=0, weekday=0))\
+        .filter(created__range=last_reporting_period(period=0))\
         .filter(has_errors=False)\
         .values('message__connection__contact')\
         .count()
