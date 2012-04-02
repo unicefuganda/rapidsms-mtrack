@@ -29,7 +29,7 @@ def last_reporting_period(period=1, weekday=getattr(settings, 'FIRSTDAY_OF_REPOR
     return (last_thursday - datetime.timedelta(7), datetime.datetime.now() if todate else last_thursday,)
 
 def last_reporting_period_number():
-    first_monday = last_reporting_period(weekday=getattr(settings, 'FIRSTDAY_OF_REPORTING_WEEK', 3), period=1)[0]
+    first_monday = last_reporting_period(weekday=0, period=1)[0]
     start_of_year = datetime.datetime(first_monday.year, 1, 1, 0, 0, 0)
     td = first_monday - start_of_year
     toret = int(td.days / 7)
