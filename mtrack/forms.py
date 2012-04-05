@@ -38,12 +38,8 @@ class FacilityForm(forms.Form):
     code = forms.CharField(max_length=50, required=False)
     type = forms.ModelChoiceField(queryset=HealthFacilityType.objects.all(), required=True)
     catchment_areas = forms.ModelMultipleChoiceField(queryset=Location.objects.all(), required=False)
-    facility_district = forms.ModelChoiceField(queryset=Location.objects.filter(type__name='district').order_by('name'), empty_label='----', required=False, \
-                                      widget=forms.Select({'onchange':'update_facility_district(this)'}))
-
-
-
     def __init__(self, *args, **kwargs):
+        self.username = kwargs.pop('username', '')
         self.facility = kwargs.pop('instance')
         if not 'data' in kwargs:
             initial = { \
@@ -57,7 +53,14 @@ class FacilityForm(forms.Form):
                 initial.update({'facility_district':district})
             kwargs.update({'initial':initial})
         forms.Form.__init__(self, *args, **kwargs)
-
+        self.fields['facility_district'] = forms.ModelChoiceField(queryset=self.get_districts_for_form(self.username), empty_label='----', required=False, \
+                                      widget=forms.Select({'onchange':'update_facility_district(this)'}))
+    def get_districts_for_form(self, user):
+        loc = Location.objects.filter(name=str(user).capitalize(), type__name='district')
+        if loc:
+            return loc
+        else:
+            return Location.objects.filter(type__name='district').order_by('name')
     def save(self):
         cleaned_data = self.cleaned_data
         self.facility.name = cleaned_data.get('name')
