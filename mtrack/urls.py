@@ -128,7 +128,7 @@ urlpatterns = patterns('',
         'model': XFormSubmission, \
         'queryset': get_all_ussd_facility_reports_for_view, \
         'objects_per_page':25, \
-        'base_template': 'mtrack/mtrackt_generic_base.html', \
+        'base_template': 'mtrack/mtrack_generic_base.html', \
         'partial_row': 'mtrack/partials/report_ussd_row.html', \
         'results_title': 'Reports', \
         'columns': [('Facility', True, 'connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()),
