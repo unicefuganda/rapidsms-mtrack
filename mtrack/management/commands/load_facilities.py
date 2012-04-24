@@ -100,7 +100,7 @@ class Command(BaseCommand):
             f = HealthFacility.objects.create(name=facility_data['facility'], type=ftype,
                     location=facility_point, code=facility_code)
         else:
-            f = HealthFacility.objects.get(name=facility_data['facility'], type=ftype, code=facility_code)
+            f = HealthFacility.objects.create(name=facility_data['facility'], type=ftype, code=facility_code)
 
 
         f.district = district.name
