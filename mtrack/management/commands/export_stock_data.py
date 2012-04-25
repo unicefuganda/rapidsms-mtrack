@@ -21,8 +21,14 @@ class Command(BaseCommand):
                 if l.submission.connection.contact.reporting_location.type.name == 'district':
                     district_pk = l.submission.connection.contact.reporting_location.name
                 else:
-                    district_pk = l.submission.connection.contact.reporting_location.get_ancestors().\
-                filter(type__slug='district')[0].name
+                    if l.submission.connection.contact.reporting_location.type == 'country':
+                        continue
+                    _district = l.submission.connection.contact.reporting_location.get_ancestors().\
+                            filter(type='district')
+                    if len(_district):
+                        district_pk = _district[0].name
+                    else: continue
+
                 districts[district_pk][0] = 'red'
                 districts[district_pk][1] = districts[district_pk][1] + 1
         yl = XFormSubmissionValue.objects.filter(submission__has_errors=False, \
@@ -48,8 +54,13 @@ class Command(BaseCommand):
                 if y.submission.connection.contact.reporting_location.type.name == 'district':
                     district_pk = y.submission.connection.contact.reporting_location.name
                 else:
-                    district_pk = y.submission.connection.contact.reporting_location.get_ancestors().\
-                filter(type__slug='district')[0].name
+                    if y.submission.connection.contact.reporting_location.type == 'country':
+                        continue
+                    _district = y.submission.connection.contact.reporting_location.get_ancestors().\
+                            filter(type='district')
+                    if len(_district):
+                        district_pk = _district[0].name
+                    else: continue
                 if districts[district_pk][0] <> 'red':
                     districts[district_pk][0] = 'yellow'
                     districts[district_pk][1] = districts[district_pk][1] + 1
@@ -60,7 +71,13 @@ class Command(BaseCommand):
                 if g.submission.connection.contact.reporting_location.type.name == 'district':
                     district_pk = g.submission.connection.contact.reporting_location.name
                 else:
-                    district_pk = g.submission.connection.contact.reporting_location.get_ancestors().filter(type__slug='district')[0].name
+                    if g.submission.connection.contact.reporting_location.type == 'country':
+                        continue
+                    _district = g.submission.connection.contact.reporting_location.get_ancestors().filter(type='district')
+                    if len(_district):
+                        district_pk = _district[0].name
+                    else: continue
+
                 if districts[district_pk][0] not in ['red', 'yellow']:
                     districts[district_pk][0] = 'green'
                     districts[district_pk][1] = districts[district_pk][1] + 1
