@@ -44,14 +44,10 @@ This first dashboard view - with alerts and reports to approve - is currently us
 		<br/>
 	</div>
 <div class="clear-hack"></div>
+<!--
 <div class="two-columns">
  	<div class="col-1">
 	    <div class="module">
-			<!-- <h2>Disease/Nutrition</h2>
-			<div id="epi-map" class="map init"></div>
-		    <br clear="both"/>
-		    <a href="{% url cvs-map %}">go to map &raquo;</a>
-		    <br/>-->
 			<h2 id="map-h2">Stock Levels Map</h2>
 			<div id='map_canvas' class="init"></div>
 		</div>
@@ -63,14 +59,15 @@ This first dashboard view - with alerts and reports to approve - is currently us
 		</div>
     </div>
 </div>
+-->
 	<script type="text/javascript">
 	$(document).ready(function() {
 		$('#alerts').load('{% url dashboard-alerts %}');
 	    $('#approve').load('{% url dashboard-approve %}');
 	    $('#admin').load('{% url dashboard-admin %}');
 	    $('#message').load('{% url dashboard-messagelog %}');
-	    $('#map_canvas').load('{% url stock-viz %}');
-	    $('#chart_div').load('{% url stock-pie %}');
+	    // $('#map_canvas').load('{% url stock-viz %}');
+	    // $('#chart_div').load('{% url stock-pie %}');
 	    //$('#contacts').load('{% url dashboard-contacts %}');
 	    //init_map('stock-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
 	    // init_map('epi-map', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
