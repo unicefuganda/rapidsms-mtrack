@@ -13,7 +13,7 @@ from mtrack.views.dashboard import admin, approve
 from mtrack.views.reports import edit_report
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
-
+from django.views.decorators.cache import cache_page
 from django.views.generic import ListView
 from mtrack.views.visuals import stock_level_viz, stock_level_piechart
 
@@ -36,7 +36,7 @@ urlpatterns = patterns('',
     #FIXTHIS anonymous messages
     # login required added
     url(r'^anonymousreports/excelreport/$', create_excel),
-    url(r'^anonymousreports/$', login_required(generic), {
+    url(r'^anonymousreports/$', login_required(cache_page(generic, 60 * 15)), {
         'model':AnonymousReport,
         # primitive filtering by actions
         #TODO subclass SimpleSorter to sort actions
