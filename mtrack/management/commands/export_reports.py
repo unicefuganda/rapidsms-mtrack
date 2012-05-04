@@ -164,7 +164,7 @@ for r in res:
         fname = "reports.xls"
     else:
         fname = "reports_%s.xls"%district
-    fpath = "/var/www/prod/mtrack/mtrack_project/rapidsms_mtrack/mtrack/static/spreadsheets/"
+    fpath = "/var/www/prod/mtrack/mtrack_project/rapidsms_mtrack/mtrack/static/spreadsheets/"+fname
     #fpath = "/tmp/"+fname
     book.save(fpath)
 #now close connection
