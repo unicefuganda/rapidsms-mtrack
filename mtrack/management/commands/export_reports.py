@@ -1,48 +1,171 @@
-from django.core.management.base import BaseCommand
-import traceback
+#!/var/www/env/prod/bin/python
+# -*- coding: utf-8 -*-
+import psycopg2
+import psycopg2.extras
+import sys
 import os
-from script.models import ScriptSession
-from mtrack.settings import MTRACK_ROOT
-from rapidsms.models import Contact
-from django.utils.datastructures import SortedDict
-from healthmodels.models import HealthProvider
-from rapidsms_httprouter.models import Message
-from django.db.models import Count
-from poll.models import Poll
 import datetime
-from uganda_common.utils import ExcelResponse
-from cvs.templatetags.stats_extras import get_district
-from rapidsms_xforms.models import XFormSubmission, XFormField
+import getopt
 
+from tempfile import TemporaryFile
+from time import strftime
+from xlwt import Workbook
 
-class Command(BaseCommand):
+dbname = "mtrack"
+dbuser = "postgres"
+dbpasswd = "postgres"
+dbhost = "dbserver"
 
-    def handle(self, **options):
-        try:
-            excel_file_path = os.path.join(os.path.join(os.path.join(MTRACK_ROOT, 'static'), 'spreadsheets'), 'reports.xls')
-            reports = XFormSubmission.objects.exclude(connection=None).filter(xform__keyword__in=['com', 'mal', 'rutf', 'epi', 'home', 'birth', 'muac', 'opd', 'test', 'treat', 'rdt', 'act', 'qun', 'cases', 'death'])
-            export_data_list = []
-            for r in reports:
-                print "adding %d" % r.pk
-                export_data = SortedDict()
-                export_data['report_id'] = r.pk
-                export_data['report'] = r.xform.name
-                export_data['date'] = str(r.created)
-                export_data['reporter'] = r.connection.contact.name if r.connection.contact else 'None'
-                export_data['reporter_id'] = r.connection.contact.pk if r.connection.contact else 'None'
-                export_data['phone'] = r.connection.identity
-                district = str(get_district(r.connection.contact.reporting_location) if r.connection.contact else 'None')
+cmd = sys.argv[1:]
+opts, args = getopt.getopt(cmd, 's:e:d:l:ha',['star-date','end-date', 'district','district-list','all'])
 
-                export_data['district'] = district
-                export_data['facility'] = str(r.connection.contact.healthproviderbase.facility) if (r.connection.contact and r.connection.contact.healthproviderbase) else 'None'
-                export_data['village'] = str(r.connection.contact.village or r.connection.contact.reporting_location) if r.connection.contact else 'None'
-                export_data['valid'] = (r.has_errors and "No") or "Yes"
-                for f in XFormField.objects.order_by('slug'):
-                    export_data["%s:%s" % (f.xform.name, f.description)] = getattr(r.eav, f.slug) or 'None'
+conn = psycopg2.connect("dbname="+dbname+" host= "+dbhost+" user="+dbuser+" password="+dbpasswd)
 
-                export_data_list.append(export_data)
+cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+#cur = conn.cursor()
+def usage():
+    return """
+usage: python excel_reports.py [-s <start-date>] [-e <end-date>] [-d <district-name>] [-l <district-list>] [-a]
+    -a Generate excel for all districts
 
-            ExcelResponse(export_data_list, output_name=excel_file_path, write_to_file=True)
-            print "finished!"
-        except Exception, exc:
-            print traceback.format_exc(exc)
+    -d Generate excel for district passed under this option
+
+    -e start date for report
+
+    -h Show this message
+
+    -l list of districts for which to generate excel exports
+
+    -s end date for report
+
+    Without any options passed, a report is generated for each district
+    """
+
+sql_2 = ""
+district = ""
+GEN_ALL = False
+for option, parameter in opts:
+    if option == '-o':
+        fname = "%s"%(parameter)
+    if option == '-s':
+        sql_2 += "date >= '%s' AND "%(parameter)
+    if option == '-e':
+        sql_2 += "date <= '%s' AND "%(parameter)
+    if option == '-d':
+        sql_2 += "district = '%s' AND "%(parameter)
+        district = parameter
+    if option == '-a':
+        GEN_ALL = True
+        sql_2 += "district ILIKE '%%' AND "
+    if option == '-l':
+        district = parameter
+    if option == '-h':
+        print usage()
+        sys.exit(1)
+sql_2 += " TRUE"
+
+#headings = {'slug':['prefered_name', order]}
+headings = {'report_id':{'header':'report_id', 'order':0},
+            'report': {'header':'report','order':1},
+            'date': {'header':'date','order':2},
+            'reporter':{'header':'reporter','order':3},
+            'reporter_id': {'header':'reporter_id','order':4},
+            'phone':{'header':'phone', 'order':5},
+            'district':{'header':'district','order':6},
+            'facility':{'header':'facility','order':7},
+            'village':{'header':'village','order':8},
+            'valid':{'header':'valid','order':9},
+        }
+
+INITIAL_KEYS = ['report_id', 'report', 'date', 'reporter', 'reporter_id', 'phone', 'district', 'facility', 'village', 'valid']
+KEYS_FOR_VALUES = [] + INITIAL_KEYS
+#get all the other headings
+offset = 9
+cur.execute("SELECT name, description, slug FROM xformfields_view")
+res = cur.fetchall()
+for r in res:
+    offset += 1
+    d={}
+    d['header'] = '%(name)s:%(description)s'%(r)
+    d['order'] = offset
+    slug = '%(slug)s'%r
+    headings[slug] = d
+    if slug not in KEYS_FOR_VALUES:
+        KEYS_FOR_VALUES.append(slug)
+
+#preload the data
+print "Generating preliminary data....."
+cur.execute("SELECT report_id, report, to_char(date, 'yyyy-mm-dd HH24:MI:SS') as date, reporter, reporter_id, phone, district, facility, village, valid FROM xform_submissions_view WHERE %s"%sql_2)
+data = cur.fetchall()
+row_len = len(data)
+
+inner_sql = ("SELECT submission, name, slug, value FROM submissions_values_view")
+VALUES_DICT = {}
+print "Loading report values........"
+cur.execute(inner_sql)
+values = cur.fetchall()
+for v in values:
+    if v['submission'] not in VALUES_DICT:
+        VALUES_DICT[v['submission']] = [v]
+    else:
+        VALUES_DICT[v['submission']].append(v)
+print "Finished loading report values........"
+#Get all the districts
+
+cur.execute("SELECT name from locations_location WHERE type_id = 'district' ORDER BY name")
+res = cur.fetchall()
+if district:
+    #with this you can pass comma separated districts
+    res = [{'name':d} for d in district.split(',')]
+    #res = [{'name':district}]
+if GEN_ALL:
+    district = ""
+    res = [{'name':'all'}]
+
+for r in res:
+    district = r['name']
+    print "start generating for %s"%('all districts' if district =='all' else district)
+    book = Workbook(encoding='utf-8')
+    sheet1 = book.add_sheet('Sheet 1')
+
+    headers_len = len(KEYS_FOR_VALUES)
+    intial_headers_len = len(INITIAL_KEYS)
+    i = 0
+    for k in KEYS_FOR_VALUES:
+        sheet1.write(0,i,headings[k]['header'])
+        sheet1.col(i).width = 4050
+        i+=1
+
+    s = 0
+    for i in xrange(row_len):
+        #continue immediately if not for the required district
+        if GEN_ALL:
+            pass
+        else:
+            if data[i]['district'] <> district:
+                continue
+        s +=1
+        row = sheet1.row(s)
+        #print data[i]
+        for k in xrange(intial_headers_len):
+            row.write(k,data[i][k])
+        report_id = data[i]['report_id']
+        if report_id in VALUES_DICT:
+            for val in VALUES_DICT[data[i]['report_id']]:
+                #print val[0]
+                #print val
+                idx = KEYS_FOR_VALUES.index(val[2])
+                row.write(idx, '%s'%val[3])
+    print "Done with Everything for %s........."%('all districts' if district == 'all' else district)
+
+    sheet1.flush_row_data()
+    #fname = "mtrack-"+datetime.date.today().strftime('%Y%m%d')+"-"+strftime('%H%M%S')+".xls"
+    if district == 'all':
+        fname = "reports.xls"
+    else:
+        fname = "reports_%s.xls"%district
+    fpath = "/var/www/prod/mtrack/mtrack_project/rapidsms_mtrack/mtrack/static/spreadsheets/"
+    #fpath = "/tmp/"+fname
+    book.save(fpath)
+#now close connection
+conn.close()
