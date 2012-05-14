@@ -108,13 +108,14 @@ urlpatterns = patterns('',
         'sort_column':'connection__contact__healthproviderbase__healthprovider__facility__name', \
     }, name='approve'),
 
-    url(r'^hc/reports/$', generic, { \
+    url(r'^hc/reports/$', login_required(generic), { \
         'model':XFormSubmission, \
         'queryset':get_all_facility_reports_for_view, \
         'objects_per_page':25, \
         'base_template':'mtrack/mtrack_generic_base.html', \
         'partial_row':'mtrack/partials/report_row.html', \
         'results_title':'Reports', \
+        'action_forms':[ApproveForm, RejectForm], \
         'columns':[('Facility', True, 'message__connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()),
                    ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),),
                    ('Report', True, 'raw', SimpleSorter(),),
