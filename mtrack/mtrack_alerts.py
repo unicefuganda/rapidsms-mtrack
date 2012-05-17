@@ -94,9 +94,9 @@ class NotifiableDiseaseThresholdAlert(NotificationType):
 
 def get_facility_indicator_notification(metric, info, debug=False):
     if DEBUG_ALERTS:
-        reporting_range = (datetime(2011, 1, 1, 0, 0, 0), datetime.now())
+        reporting_range = (datetime(2012, 5, 1, 0, 0, 0), datetime.now())
     else:
-        reporting_range = (datetime.now() - datetime.timedelta(minutes=15), datetime.now())
+        reporting_range = (datetime.now() - timedelta(minutes=15), datetime.now())
     res = {}
     subs = XFormSubmissionValue.objects.filter(submission__has_errors=False,
             submission__created__range=reporting_range, value_int__gt=info['threshold'],
@@ -140,9 +140,9 @@ def get_facility_indicator_notification(metric, info, debug=False):
 
 def notifiable_disease_test2():
     if DEBUG_ALERTS:
-        reporting_period = (datetime(2011, 1, 1, 0, 0, 0), datetime.now())
+        reporting_period = (datetime(2012, 5, 1, 0, 0, 0), datetime.now())
     else:
-        reporting_period = (datetime.now() - datetime.timedelta(minutes=15), datetime.now())
+        reporting_period = (datetime.now() - timedelta(minutes=15), datetime.now())
     for metric, info in CASES_METRICS.iteritems():
         #todo: is the end date inclusive or exclusive?
         data = get_facility_indicator_notification(metric, info, False)
