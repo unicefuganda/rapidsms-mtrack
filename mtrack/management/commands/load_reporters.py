@@ -15,7 +15,7 @@ class Command(BaseCommand):
         if (len(args) < 1):
             print "Please specify file with reporters"
             return
-        self.order = getattr(settings, '', {
+        self.order = getattr(settings, 'REPORTER_EXCEL_FIELDS', {
                 'name':0, 'phone':1,
                 'district':2, 'role':3,
                 'facility':4, 'facility_type':5,
@@ -45,16 +45,21 @@ class Command(BaseCommand):
             if not d[self.order['name']]:
                 continue
             print d
-            _name = d[self.order['name']]
+            _name = d[self.order['name']].strip()
             _phone = '%s' % d[self.order['phone']]
-            _district = d[self.order['district']]
-            _role = d[self.order['role']]
-            _fac = d[self.order['facility']]
+            _district = d[self.order['district']].strip()
+            _role = d[self.order['role']].strip()
+            _fac = d[self.order['facility']].strip()
             _fac_type = d[self.order['facility_type']]
-            _village = d[self.order['village']]
-            _village_type = d[self.order['village_type']]
+            _village = d[self.order['village']].strip()
+            _village_type = d[self.order['village_type']].strip()
             _pvht = d[self.order['pvht']]
-            _phone = _phone.split('e')[0].replace('.', '')
+            _phone = _phone.split('e')[0].split('.')[0].replace('-','')
+            nums = _phone.split('/')
+            _phone2 = ''
+            if len(nums) > 1:
+                _phone = nums[0]
+                _phone2 = nums[1]
 
             #print _name, _phone, _role
             district = find_closest_match(_district, Location.objects.filter(type='district'))
@@ -69,10 +74,20 @@ class Command(BaseCommand):
             if _name:
                 _name = ' '.join([n.capitalize() for n in _name.lower().split()])
             msisdn, backend = assign_backend(_phone)
+            print msisdn
+
+            if _phone2:
+                msisdn2, backend2 = assign_backend(_phone2)
+
+            connection2 = None
             try:
                 connection = Connection.objects.get(identity=msisdn, backend=backend)
+                if _phone2:
+                    connection2 = Connection.objects.get(identity=msisdn2, backend=backend2)
             except Connection.DoesNotExist:
                 connection = Connection.objects.create(identity=msisdn, backend=backend)
+                if _phone2:
+                    connection2 = Connection.objects.create(identity=msisdn2, backend=backend2)
             except Connection.MultipleObjectsReturned:
                 connection = Connection.objects.filter(identity=msisdn, backend=backend)[0]
 
@@ -108,4 +123,6 @@ class Command(BaseCommand):
             for role in roles:
                 contact.groups.add(role)
 
+            if connection2:
+                contact.connection_set.add(connection2)
             contact.save()

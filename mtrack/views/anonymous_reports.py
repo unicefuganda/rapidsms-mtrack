@@ -57,7 +57,7 @@ def detail_anonymous_report(request, anonymous_report_pk):
 @login_required
 def create_excel(request):
     book = xlwt.Workbook(encoding="utf8")
-    headings = ["Facility", "District", "Date", "Reports", "Status", "Action Center", "Comments"]
+    headings = ["Facility", "District", "Date", "Reports", "Status", "Topic", "Action Center", "Comments"]
     data_set = []
     for ar in get_anonymous_reports(request):
         try:
@@ -65,14 +65,16 @@ def create_excel(request):
                 ar.comments = "Missing"
             if not ar.action_center:
                 ar.action_center = "MOH"
+            if not ar.topic:
+                ar.topic = "Unknown"
             if not ar.health_facility and not ar.district:
-                data_set.append(["Missing", "Missing", ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.action_center, ar.comments])
+                data_set.append(["Missing", "Missing", ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.topic, ar.action_center, ar.comments])
             if not ar.health_facility:
-                data_set.append(["Missing", ar.district.__unicode__(), ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.action_center, ar.comments])
+                data_set.append(["Missing", ar.district.__unicode__(), ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.topic, ar.action_center, ar.comments])
             if not ar.district:
-                data_set.append([ar.health_facility.__unicode__(), "Missing", ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.action_center, ar.comments])
+                data_set.append([ar.health_facility.__unicode__(), "Missing", ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.topic, ar.action_center, ar.comments])
             else:
-                data_set.append([ar.health_facility.__unicode__(), ar.district.__unicode__(), ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.action_center, ar.comments])
+                data_set.append([ar.health_facility.__unicode__(), ar.district.__unicode__(), ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.topic, ar.action_center, ar.comments])
         except:
             pass
     #data_set = [[ar.health_facility, ar.district, ar.date, ar.messages.values()[0], ar.action, ar.comments] for ar in AnonymousReport.objects.all()]
