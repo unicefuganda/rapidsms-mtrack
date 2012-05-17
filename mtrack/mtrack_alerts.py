@@ -9,7 +9,7 @@ from rapidsms_xforms.models import XFormSubmission, XFormSubmissionValue
 from healthmodels.models.HealthProvider import HealthProvider
 from django.conf import settings
 
-DEBUG_ALERTS = getattr(settings, 'DEBUG_ALERTS', True)
+DEBUG_ALERTS = getattr(settings, 'DEBUG_ALERTS', False)
 def mk_notifiable_disease_alert(disease, alert_type, reporting_period, loc, district_data):
     notif = Notification(alert_type=alert_type)
     rr = "%s_%s" % (reporting_period[0].date().strftime('%F'), reporting_period[0].strftime('%H:%M-') + reporting_period[1].strftime('%H:%M'))
