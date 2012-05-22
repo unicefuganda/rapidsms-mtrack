@@ -119,7 +119,7 @@ if district:
     res = [{'name':d} for d in district.split(',')]
     #res = [{'name':district}]
 if GEN_ALL:
-    district = ""
+    district = "all"
     res = [{'name':'all'}]
 
 for r in res:
