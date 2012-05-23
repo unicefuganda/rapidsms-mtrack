@@ -12,7 +12,7 @@ from django.conf import settings
 DEBUG_ALERTS = getattr(settings, 'DEBUG_ALERTS', False)
 def mk_notifiable_disease_alert(disease, alert_type, reporting_period, loc, district_data):
     notif = Notification(alert_type=alert_type)
-    rr = "%s_%s" % (reporting_period[0].date().strftime('%F'), reporting_period[0].strftime('%H:%M-') + reporting_period[1].strftime('%H:%M'))
+    rr = "%s_%s" % (reporting_period[0].date().strftime('%F'), reporting_period[0].strftime('%H') + reporting_period[1].strftime('%H'))
     notif.uid = 'disease_%s_%s_%s' % (disease, rr, loc.code)
     txt = "Urgent - "
     has_cases = False
