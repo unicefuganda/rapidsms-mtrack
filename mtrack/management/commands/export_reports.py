@@ -75,12 +75,14 @@ headings = {'report_id':{'header':'report_id', 'order':0},
             'facility':{'header':'facility','order':7},
             'village':{'header':'village','order':8},
             'valid':{'header':'valid','order':9},
+            'approved':{'header':'approved','order':10},
         }
 
-INITIAL_KEYS = ['report_id', 'report', 'date', 'reporter', 'reporter_id', 'phone', 'district', 'facility', 'village', 'valid']
+INITIAL_KEYS = ['report_id', 'report', 'date', 'reporter', 'reporter_id', 'phone',
+                'district', 'facility', 'village', 'valid','approved']
 KEYS_FOR_VALUES = [] + INITIAL_KEYS
 #get all the other headings
-offset = 9
+offset = 10
 cur.execute("SELECT name, description, slug FROM xformfields_view")
 res = cur.fetchall()
 for r in res:
@@ -95,7 +97,7 @@ for r in res:
 
 #preload the data
 print "Generating preliminary data....."
-cur.execute("SELECT report_id, report, to_char(date, 'yyyy-mm-dd HH24:MI:SS') as date, reporter, reporter_id, phone, district, facility, village, valid FROM xform_submissions_view WHERE %s"%sql_2)
+cur.execute("SELECT report_id, report, to_char(date, 'yyyy-mm-dd HH24:MI:SS') as date, reporter, reporter_id, phone, district, facility, village, valid, approved FROM xform_submissions_view WHERE %s"%sql_2)
 data = cur.fetchall()
 row_len = len(data)
 
