@@ -15,14 +15,22 @@ ACTIONS = (
     #('Ot', 'Other critical')
 )
 TOPICS = (
+          ('Absenteeism', 'Absenteeism'),
           ('Drug Theft', 'Drug Theft'),
+          ('Extortion', 'Extortion'),
+          ('Fraud', 'Fraud'),
           ('General Complaint', 'General Complaint'),
           ('General Inquiry', 'General Inquiry'),
           ('Good Service', 'Good Service'),
+          ('Ignore/Delete', 'Ignore/Delete'),
+          ('Illegal schools', 'Illegal Schools'),
           ('Impersonation', 'Impersonation'),
+          ('Malpractice', 'Malpractice'),
+          ('Negligence', 'Negligence'),
           ('Other Critical', 'Other Critical'),
           ('Stock Out', 'Stock Out'),
           ('Unknown', 'Unknown'),
+          ('Working hours of HCs', 'Working hours of HCs'),
         )
 ACTION_CENTERS = (
                   ('MOH', 'MOH'),

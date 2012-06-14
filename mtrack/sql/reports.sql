@@ -97,7 +97,8 @@ SELECT
         -- ELSE 'None'
         ELSE ''
     END AS village,
-    CASE WHEN a.has_errors IS TRUE THEN 'Yes' ELSE 'No' END AS valid
+    CASE WHEN a.has_errors IS TRUE THEN 'No' ELSE 'Yes' END AS valid,
+    CASE WHEN a.approved IS TRUE THEN 'Yes' ELSE 'No' END AS approved
 FROM rapidsms_xforms_xformsubmission a, rapidsms_xforms_xform b, rapidsms_connection c, rapidsms_contact d
 WHERE
     a.xform_id = b.id
