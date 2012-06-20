@@ -36,7 +36,7 @@ urlpatterns = patterns('',
     #FIXTHIS anonymous messages
     # login required added
     url(r'^anonymousreports/excelreport/$', create_excel),
-    url(r'^anonymousreports/$', login_required(cache_page(generic, 60 * 15)), {
+    url(r'^anonymousreports/$', login_required(generic), {
         'model':AnonymousReport,
         # primitive filtering by actions
         #TODO subclass SimpleSorter to sort actions
