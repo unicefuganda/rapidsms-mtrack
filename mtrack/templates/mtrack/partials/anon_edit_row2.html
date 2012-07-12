@@ -89,6 +89,16 @@
 </td>
 </tr>
 <tr>
+<td>Action Taken</td>
+<td>
+    {{ report_form.action_taken }}
+    {% if report_form.action_taken.errors %}
+        <br clear="left"/>
+        {{ report_form.action_taken.errors }}
+    {% endif %}
+</td>
+</tr>
+<tr>
 <td>Response</td>
 <td>
     <ul>

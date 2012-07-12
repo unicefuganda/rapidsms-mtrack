@@ -47,6 +47,7 @@ class AnonymousReport(models.Model):
     action = models.CharField(max_length=2, choices=ACTIONS, default='Op') #is this the right way??
     topic = models.CharField(max_length=32, default='Unknown', choices=TOPICS, null=True)
     action_center = models.CharField(max_length=32, default='', choices=ACTION_CENTERS, null=True)
+    action_taken = models.TextField(null=True)
     def __unicode__(self):
         return self.connection.identity
 

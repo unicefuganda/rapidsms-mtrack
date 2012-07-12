@@ -32,6 +32,7 @@ def edit_anonymous_report(request, anonymous_report_pk):
                 'comments' : anonymous_report.comments,
                 'topic': anonymous_report.topic,
                 'action_center':anonymous_report.action_center,
+                'action_taken':anonymous_report.action_taken
             }
         ), 'facilities':get_facilities(), 'pk':getattr(anonymous_report.health_facility, 'pk', '')}, context_instance=RequestContext(request))
 

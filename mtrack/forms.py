@@ -81,7 +81,8 @@ class EditAnonymousReportForm(forms.ModelForm):
         model = AnonymousReport
         exclude = ('connection', 'messages', 'date')
         widgets = {
-                   'comments': forms.Textarea(attrs={'cols':25, 'rows':5}),
+                   'comments': forms.Textarea(attrs={'cols':25, 'rows':3}),
+                   'action_taken': forms.Textarea(attrs={'cols':25, 'rows':3}),
                    }
 
     def __init__(self, *args, **kwargs):
@@ -200,4 +201,10 @@ class StatusFilterForm(FilterForm):
     def filter(self, request, queryset):
         action = self.cleaned_data['action']
         return queryset
+#Lets Add some data Entry Forms here
+
+#class DataEntryForm(forms.Form):
+#    district = forms.ModelChoiceField()
+#    facility = forms.ModelChoiceField()
+#    reporter = forms.ModelChoiceField()
 

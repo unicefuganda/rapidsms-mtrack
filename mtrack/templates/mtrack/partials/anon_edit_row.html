@@ -58,7 +58,13 @@
         {{ report_form.comments.errors }}
     {% endif %}
 </td>
-
+<td>
+    {{ report_form.action_taken }}
+    {% if report_form.action_taken.errors %}
+        <br clear="left"/>
+        {{ report_form.action_taken.errors }}
+    {% endif %}
+</td>
 <td>
     <ul>
         {% for resp in anonymous_report.message.responses.values %}

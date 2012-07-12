@@ -70,6 +70,16 @@
     </td>
 </tr>
 <tr>
+	<td>Action Taken</td>
+    <td>
+    	{% if object.action_taken %}
+        <span style="font-size:0.9em; color:green;">{{ object.action_taken }}</span>
+        {% else %}
+        <span style="font-size:0.8em; color:blue;">No Action Taken</span>
+        {% endif %}
+    </td>
+</tr>
+<tr>
 	<td>Responses</td>
     <td>
           <ul>
