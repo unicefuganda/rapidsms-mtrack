@@ -44,6 +44,9 @@
 	<td style="font-size:10px;">
 		{{ object.action_center }}
 	</td>
+	<td style="font-size:10px;">
+		{{ object.action_taken }}
+	</td>
     <td>
     	{% if object.comments %}
         <span style="font-size:0.9em; color:green;">{{ object.comments }}</span>
@@ -51,19 +54,21 @@
         <span style="font-size:0.8em; color:blue;">No comments</span>
         {% endif %}
     </td>
+    <!-- 
     <td>
           <ul>
-                {% for msg in object.messages.all %}
-                    {% for resp in msg.responses.all %}
+                {# {% for msg in object.messages.all %} #}
+                   {# {% for resp in msg.responses.all %} #}
                     <li>
                     <span style="font-size:0.8em;">
-                        &lt;&lt;{{ resp.text|slice:":25" }}...
+                        &lt;&lt;{# {{ resp.text|slice:":25" }} #}...
                     </span>
                     </li>
-                    {% endfor %}
-                {% endfor %}
+                   {# {% endfor %} #}
+                {#{% endfor %} #}
             </ul>
     </td>
+    -->
     <td class="button_col" id="id_{{ object.pk }}">
         <div class="buttons">
         	{% if perms.mtrack.delete_anonymousreport %}
