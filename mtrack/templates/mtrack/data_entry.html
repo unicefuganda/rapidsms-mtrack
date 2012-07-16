@@ -1,0 +1,71 @@
+{% extends 'mtrack/mtrack_generic_base.html' %}
+{% block javascripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/dataentry.js"></script>
+{% endblock %}
+{% block stylesheets %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}mtrack/stylesheets/dataentry.css"/>
+{% endblock %}
+{% block content %}
+<div class="module">
+	<h2>Data Entry</h2>
+	<form name="dataForm" id="dataForm" action="" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	<div id="ddowns">
+		<table>
+			<tr>
+				<td>District</td>
+				<td>
+					<select name="district" id="district" class="ftext">
+						<option value="0">Select District</option>
+						{% for l in districts %}
+							<option value="{{ l.id }}">{{l.name}}</option>
+						{% endfor %}
+					</select>
+				</td>
+				<td>Facility</td>
+				<td>
+					<select name="facility" id="facility" class="ftext">
+						<option value="0">Select Facility</option>
+						{% for l in facilities %}
+							<option value="{{ l.id }}">{{l.name}} {{l.type__slug}}</option>
+						{% endfor %}
+					</select>
+				</td>
+				<td>Reporter</td>
+				<td>
+					<select name="reporter" id="reporter" class="ftext">
+						<option value="0">Select Reporter</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>XForm</td>
+				<td>
+					<select name="xform" id="xform" class="ftext">
+						<option value="0">Select XForm</option>
+						{% for l in xforms %}
+							<option value="{{ l.id }}">{{l.name }} ({{ l.keyword }})</option>
+						{% endfor %}
+					</select>
+				</td>
+				<td colspan="4"></td>			
+			</tr>
+		</table>
+	</div>
+	<br clear="both"/>
+	<div id="ffields">
+		<table id="xff_table" class="list2">
+		</table>
+		<br/>
+		<div id="fsubmit">
+			<a onclick="$('#dataForm').submit();" href="javascript:void(0);">
+    		<img src="{{ MEDIA_URL }}rapidsms_xforms/icons/silk/disk.png" alt=""/> 
+    		Save Form
+  			</a>
+		</div>
+	</div>
+	</form>
+</div>
+{% endblock %}
