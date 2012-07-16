@@ -16,7 +16,7 @@ from rapidsms_xforms.models import XFormSubmission
 from django.views.decorators.cache import cache_page
 from django.views.generic import ListView
 from mtrack.views.visuals import stock_level_viz, stock_level_piechart
-
+from mtrack.views.dataentry import data_entry, ajax_portal
 
 urlpatterns = patterns('',
 #    url(r'^facility/(?P<code>\w+)/config/?$',
@@ -56,8 +56,8 @@ urlpatterns = patterns('',
             ('Topic', True, 'topic', SimpleSorter(),),
             ('Status', True, 'action', SimpleSorter(),),
             ('A Center', True, 'action_center', SimpleSorter(),),
-            ('Comments', True, 'comments', SimpleSorter(),),
-            ('Responses', True, 'responses', None,),
+            ('A Taken', True, 'action_taken', SimpleSorter(),),
+            ('Comments', True, 'comments', None,),
             ('', False, '', None,)], \
         'results_title':'Anonymous reports',
         #'sort_column':'date',
@@ -142,6 +142,8 @@ urlpatterns = patterns('',
         'sort_column': 'connection__contact__healthproviderbase__healthprovider__facility__name'
     }, name='ussd-facility-reports'),
     url(r"^xforms/submissions/(\d+)/edit/$", login_required(edit_report)),
+    url(r"^dataentry/$", data_entry),
+    url(r"^ajax_portal/$", ajax_portal),
 
     (r'^mtrack/mgt/stats/', include(ManagementReport().as_urlpatterns(name='mtrack-mgt-stats'))),
     url(r'^mtrack/logistics/?$',
