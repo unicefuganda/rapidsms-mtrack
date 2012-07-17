@@ -8,6 +8,7 @@ from rapidsms_xforms.views import make_submission_form
 from rapidsms_httprouter.models import Message
 from django.http import HttpResponse
 from django.utils import simplejson
+from django.conf import settings
 import datetime
 
 def data_entry(request):
@@ -54,6 +55,12 @@ def data_entry(request):
     return render_to_response('mtrack/data_entry.html', {'districts': districts,
                                                          'facilities': facilities,
                                                          'xforms': xforms,
+                                                         'hmis_reports': getattr(settings, "HMIS_REPORTS",
+                                                             [
+                                                                 {'name':'HMIS 033B Report',
+                                                                     'keywords':'act,opd,com,test,treat,rdt,qun,epi,rutf,cases,death'
+                                                                    }
+                                                                 ])
                                                          },
                               context_instance=RequestContext(request))
 
@@ -75,7 +82,7 @@ def ajax_portal(request):
         fields = xform.fields.all().order_by('order').values('name', 'command', 'field_type')
         response = list(fields)
     elif xtype == 'report':
-        qq = xid.replace('[', '').replace(']', '').split(',')
+        qq = xid.split(',')
         response = list(XForm.objects.filter(keyword__in=qq).values('id', 'name', 'keyword').order_by('name'))
     else:
         response = []

@@ -49,7 +49,9 @@
 					<select name="rtype" id="rtype" class="ftext">
 						<option value="0">Select Report Type</option>
 						<!-- Add other options here manually -->
-						<option value="[act,opd,com,test,treat,rdt,qun,epi,rutf,cases,death]">HMIS 033B Report</option>
+						{% for l in hmis_reports %}
+							<option value="{{ l.keywords }}">{{ l.name }}</option>
+						{% endfor %}
 					</select>
 				</td>
 				<td>Report:</td>
