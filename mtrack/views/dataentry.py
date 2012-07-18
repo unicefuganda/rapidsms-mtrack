@@ -13,7 +13,12 @@ import datetime
 
 def data_entry(request):
     #consider a list
-    districts = Location.objects.filter(type__name='district').values('id', 'name').order_by('name')
+    locs = Location.objects.filter(type__name='district').values_list('name',flat='TRUE')
+    locs = [l.upper() for l in locs]
+    if request.user.username in locs:
+        districts = Location.objects.filter(type__name='district', name=request.user.username.capitalize()).values('id','name')
+    else:
+        districts = Location.objects.filter(type__name='district').values('id', 'name').order_by('name')
     #facilities = HealthFacility.objects.all().values('id', 'name', 'type__slug').order_by('name')
     facilities = [(0, 'Select Facility')]
     reporters = [(0, 'Select Reporter')]
