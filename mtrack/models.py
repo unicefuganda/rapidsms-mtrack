@@ -3,6 +3,7 @@ from healthmodels.models.HealthFacility import HealthFacility
 from rapidsms.contrib.locations.models import Location
 from rapidsms.models import Connection
 from rapidsms_httprouter.models import Message
+from rapidsms_xforms.models import XFormSubmission
 
 ACTIONS = (
     ('Op', 'Open'),
@@ -59,4 +60,13 @@ class AnonymousReport(models.Model):
 #    anonymous_reports = models.ManyToManyField(AnonymousReport, null=True, default=None)
 #    date = models.DateTimeField(auto_now_add=True)
 
+#Use this model to store extra info on submission esp those created from dashboard
+class XFormSubmissionExtras(models.Model):
+    submission = models.ForeignKey(XFormSubmission)
+    is_late_report = models.BooleanField(default=False)
+    submitted_by = models.TextField(null=True)
+    cdate = models.DateTimeField(auto_now_add=True) #since we fake submission.created
+
+    class Meta:
+        db_table = 'rapidsms_xforms_xformsubmissionextras'
 import signals

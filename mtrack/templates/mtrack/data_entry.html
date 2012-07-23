@@ -18,6 +18,12 @@
 	<div id="ddowns">
 		<table>
 			<tr>
+				<td style="vertical-align:middle">Is late Report?:</td>
+				<td style="vertical-align:top"><input type="checkbox" name="islate"/></td>
+				<td>Submitted By:</td>
+				<td><input type="text" name="submitted_by" id="submitted_by" class="itext required"/></td>
+			</tr>
+			<tr>
 				<td>District:</td>
 				<td>
 					<select name="district" id="district" class="ftext">
@@ -63,8 +69,16 @@
 						{% endfor %}
 					</select>
 				</td>
-				<td>Date:</td>
-				<td><input name='rdate' id='rdate' readonly="true" class="itext required" type='text'/></td>			
+				<td>Reporting week:</td>
+				<!--<td><input name='rdate' id='rdate' readonly="true" class="itext required" type='text'/></td>-->
+				<td>
+					<select name="rweek" id="rweek" class="ftext required">
+						<option value="">Select Reporting Week</option>
+						{% for w in weeks %}
+							<option value="{{w.week}}">W{{ w.week}}{{ w.range }}</option>
+						{% endfor%}
+					</select>
+				</td>			
 			</tr>
 		</table>
 	</div>
