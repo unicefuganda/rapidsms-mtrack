@@ -16,7 +16,7 @@ class App(AppBase):
             # if anonymous report gets in and its time stamp is within the limit of 1hr
             # add this report to an existing AnonymousReportBatch object
             end_epoch = datetime.datetime.now()
-            epoch = end_epoch - datetime.timedelta(seconds=3600)
+            epoch = end_epoch - datetime.timedelta(seconds=3600*24*3)
             if AnonymousReport.objects.filter(date__gte=epoch, connection__in=Connection.objects.filter(id=message.connection.id)).exists():
                 try:
                     anonymous_report = AnonymousReport.objects.filter(date__gte=epoch, connection__in=Connection.objects.filter(id=message.connection.id))[0]
