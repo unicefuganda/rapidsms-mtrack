@@ -79,7 +79,7 @@ def data_entry(request):
                 submission.message = MsgObj
                 submission.created = rdate
                 XFormSubmissionExtras.objects.create(submission=submission,
-                        submitted_by=submitted_by, is_late_report=is_late)
+                        submitted_by=submitted_by+":"+request.user.username, is_late_report=is_late)
             submission.save()
     else:
         pass
