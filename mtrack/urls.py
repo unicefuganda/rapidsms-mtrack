@@ -17,6 +17,7 @@ from django.views.decorators.cache import cache_page
 from django.views.generic import ListView
 from mtrack.views.visuals import stock_level_viz, stock_level_piechart
 from mtrack.views.dataentry import data_entry, ajax_portal
+from mtrack.views.facility_locations import facility_cas, ajax_portal2
 
 urlpatterns = patterns('',
 #    url(r'^facility/(?P<code>\w+)/config/?$',
@@ -40,7 +41,7 @@ urlpatterns = patterns('',
         'model':AnonymousReport,
         # primitive filtering by actions
         #TODO subclass SimpleSorter to sort actions
-        'queryset': get_anonymous_reports, #action --> analogous to status of report      
+        'queryset': get_anonymous_reports, #action --> analogous to status of report
         'objects_per_page':25,
         'base_template':'mtrack/partials/anonymous_base.html',
         'partial_row':'mtrack/partials/anon_row.html',
@@ -143,7 +144,9 @@ urlpatterns = patterns('',
     }, name='ussd-facility-reports'),
     url(r"^xforms/submissions/(\d+)/edit/$", login_required(edit_report)),
     url(r"^dataentry/$", login_required(data_entry)),
+    url(r"^facility_cas/$", login_required(facility_cas)),
     url(r"^ajax_portal/$", ajax_portal),
+    url(r"^ajax_portal2/$", ajax_portal2),
 
     (r'^mtrack/mgt/stats/', include(ManagementReport().as_urlpatterns(name='mtrack-mgt-stats'))),
     url(r'^mtrack/logistics/?$',

@@ -1,0 +1,52 @@
+{% extends 'mtrack/mtrack_generic_base.html' %}
+{% block stylesheets %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}mtrack/stylesheets/dataentry.css"/>
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}mtrack/stylesheets/ui/ui.all.css"/>
+{% endblock %}
+{% block javascripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/facility_locs.js"></script>
+{% endblock %}
+{% block content %}
+<div class="module">
+	<h2>Facility Catchment Areas</h2>
+	<form name="dataForm" id="dataForm" action="" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	<div id="ddowns">
+		<table>
+			<tr>
+				<td>District:</td>
+				<td>
+					<select name="district" id="district" class="ftext">
+						<option value="0">Select District</option>
+						{% for l in districts %}
+							<option value="{{ l.id }}">{{l.name}}</option>
+						{% endfor %}
+					</select>
+				</td>
+				<td>Facility:</td>
+				<td>
+					<select name="facility" id="facility" class="ftext">
+						<option value="0">Select Facility</option>
+						{% for l in facilities %}
+							<option value="{{ l.id }}">{{l.name}} {{l.type__slug}}</option>
+						{% endfor %}
+					</select>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<br clear="both"/>
+	<div id="ffields">
+		<table id="xff_table" class="list2">
+		</table>
+		<br/>
+		<div id="fsubmit">
+			<div class="buttons">
+  			</div>
+		</div>
+	</div>
+	</form>
+</div>
+{% endblock %}
