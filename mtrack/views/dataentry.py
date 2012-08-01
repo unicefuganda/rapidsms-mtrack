@@ -36,14 +36,13 @@ def data_entry(request):
         _range = last_reporting_period(period=(cur_week_num-n))
         d['range'] = ' (%s - %s)' %(_range[0].strftime('%Y-%m-%d'), _range[1].strftime('%Y-%m-%d'))
         week_ranges.append(d)
-    print "range ===>", last_reporting_period(period=cur_week_num-int('29'))
     #xforms = XForm.objects.all().values('id', 'name', 'keyword').order_by('name')
     if request.method == 'POST':
         xform = request.POST['xform']
         reporterid = request.POST['reporter']
         reporter = HealthProvider.objects.get(pk=reporterid)
         the_xform = XForm.on_site.get(pk=xform)
-        is_late = request.POST['islate']
+        is_late = getattr(request.POST,'islate',False)
         rweek = request.POST['rweek']
         submitted_by = request.POST['submitted_by']
 
