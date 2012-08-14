@@ -47,7 +47,7 @@ $delim$
         LOOP
             RETURN r;
         END LOOP;
-        RETURN 'None';
+        RETURN '';
     END;
 $delim$ LANGUAGE 'plpgsql';
 
@@ -58,7 +58,7 @@ $delim$
     BEGIN
         SELECT INTO xname name FROM locations_location WHERE id = loc_id;
         IF xname IS NULL THEN
-            RETURN 'None';
+            RETURN '';
         END IF;
         RETURN xname;
     END;
@@ -76,7 +76,7 @@ $delim$
             a.id =(SELECT facility_id FROM healthmodels_healthproviderbase WHERE contact_ptr_id = contact_id)
             AND a.type_id = b.id;
         IF xname IS NULL THEN
-            RETURN 'None';
+            RETURN '';
         END IF;
         RETURN xname;
     END;
@@ -86,7 +86,7 @@ $delim$ LANGUAGE 'plpgsql';
 DROP VIEW IF EXISTS xform_submissions_view;
 CREATE VIEW xform_submissions_view AS
 SELECT
-    a.id AS report_id, b.name AS report, a.created AS "date",
+    a.id AS report_id, b.name AS report, b.keyword, a.created AS "date",
     d.name AS reporter, d.id AS reporter_id, c.identity AS phone,
     get_district(d.reporting_location_id) as district,
     get_contact_facility(d.id) AS facility,
@@ -104,7 +104,7 @@ WHERE
     a.xform_id = b.id
     AND a.connection_id IS NOT NULL
     AND b.keyword
-        IN ('com', 'mal', 'rutf', 'epi', 'home', 'birth', 'muac', 'opd', 'test', 'treat', 'rdt', 'act', 'qun', 'cases', 'death')
+        IN ('com', 'mal', 'rutf', 'epi', 'home', 'birth', 'muac', 'opd', 'test', 'treat', 'rdt', 'act', 'qun', 'cases', 'death','doc', 'med')
     AND (a.connection_id = c.id AND c.contact_id = d.id)
     ORDER BY a.created DESC;
 
@@ -112,7 +112,7 @@ WHERE
 DROP VIEW IF EXISTS xformfields_view;
 CREATE VIEW xformfields_view AS
 SELECT
-    b.name, c.description, c.slug
+    b.name, b.keyword, c.description, c.slug
 FROM
     rapidsms_xforms_xformfield a, rapidsms_xforms_xform b, eav_attribute c
 WHERE
