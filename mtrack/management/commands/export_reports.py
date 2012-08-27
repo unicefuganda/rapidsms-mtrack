@@ -47,7 +47,7 @@ usage: python excel_reports.py [-s <start-date>] [-e <end-date>] [-d <district-n
     """
 
 rtype = '033b'
-report_keywords_where_clause = {'033b':"keyword IN('cases','deaths','opd','test','treat','act','mal','rdt','rutf','epi','qun') AND ",
+report_keywords_where_clause = {'033b':"keyword IN('cases','death','opd','test','treat','act','mal','rdt','rutf','epi','qun') AND ",
                         'vht': "keyword IN ('med','doc', 'com') AND "}
 default_kw_clause = "keyword IN('cases','deaths','opd','test','treat','act','mal','rdt','rutf','epi','qun') AND "
 
