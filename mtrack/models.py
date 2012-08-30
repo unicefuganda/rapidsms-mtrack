@@ -4,6 +4,7 @@ from rapidsms.contrib.locations.models import Location
 from rapidsms.models import Connection
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
+from datetime import datetime
 
 ACTIONS = (
     ('Op', 'Open'),
@@ -69,4 +70,41 @@ class XFormSubmissionExtras(models.Model):
 
     class Meta:
         db_table = 'rapidsms_xforms_xformsubmissionextras'
+
+class Schedules(models.Model):
+    created_by = models.TextField(default='')
+    start_date = models.DateField()
+    end_date = models.DateField(blank=True, null=True)
+    start_time = models.TimeField(blank=True, null=True)
+    message_type = models.TextField()
+    message = models.TextField()
+    recur_frequency = models.IntegerField(default=0)
+    recur_interval = models.TextField(default='none')
+    recur_day = models.TextField(default='')
+    recur_weeknumber = models.IntegerField(blank=True, null=True)
+    enabled = models.BooleanField(default=True)
+    class Meta:
+        db_table = u'schedules'
+    @property
+    def extras(self):
+        if self.scheduleextras_set.count() > 0:
+            return self.scheduleextras_set.all()[0]
+        return None
+
+class ScheduleExtras(models.Model):
+    schedule = models.ForeignKey(Schedules)
+    recipient_location_type = models.TextField(blank=True, null=True)
+    recipient_location = models.TextField(blank=True, null=True)
+    allowed_recipients = models.TextField(default='all')
+    recipient_group_type = models.TextField(blank=True, null=True)
+    group_ref = models.TextField(blank=True, null=True)
+    missing_reports = models.TextField(default='')
+    expected_reporter = models.TextField(default='HC')
+    is_message_temp = models.BooleanField(default=False)
+    message_args = models.TextField(default='')
+    return_code = models.TextField(default='')
+    cdate = models.DateTimeField(default=datetime.now())
+    class Meta:
+        db_table = u'schedule_extras'
+
 import signals

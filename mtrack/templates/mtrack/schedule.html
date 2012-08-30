@@ -1,0 +1,230 @@
+{% extends 'mtrack/mtrack_generic_base.html' %}
+{% block stylesheets %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}mtrack/stylesheets/dataentry.css"/>
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}mtrack/stylesheets/ui/ui.all.css"/>
+{% endblock %}
+{% block javascripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/ui.datepicker.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/schedule.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/jquery.validate.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="module">
+    <div class="newitem2">
+    </div>
+    <form name="schedform" id="schedform" method="post" action="">
+        <div class="">
+            <h2>Location Configuration</h2>
+            <table class="">
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <label for="loc_type">Location(Type):</label>
+                                    <select name="loc_type" id="loc_type" class="ftext">
+                                        <option value="all" selected>All Districts</option>
+                                        <option value="particular">Particular District</option>
+                                        <option value="list">List of Districts</option>
+                                    </select>
+                                </td>
+
+                                <td>Location/List:</td>
+                                <td style="vertical-align:top">
+                                    <select name="location" id="location" class="ftext">
+                                        <option value="All">all districts</option>
+                                        {% for l in districts %}
+							                <option value="{{ l.name }}">{{l.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <textarea name="location2" id="location2" class="itext"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <h2>Recipient Configuration</h2>
+            <table class="">
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    Users Type/Mode:
+                                    <select name="rtype" id="rtype" class="ftext">
+                                        <option value="live" selected>Live Mode</option>
+                                        <option value="training">Training Mode</option>
+                                        <option value="all">All Users</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    Reporter Group:
+                                    <select name="gtype" id="gtype" class="ftext">
+                                        <option value="all" selected>All</option>
+                                        <option value="list">List of groups</option>
+                                        <option value="particular">Particular group</option>
+                                    </select>
+                                </td>
+                                <td>Recipients:</td>
+                                <td style="vertical-align:top">
+                                    <select name="grp" id="grp" class="ftext">
+                                        <option value="">Select Group</option>
+                                        {% for l in groups %}
+							                <option value="{{ l.name }}">{{l.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <textarea name="grp2" id="grp2" class="itext"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <h2>Missing Report Configuration</h2>
+            <table class="">
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    XForm Selection:
+                                    <select name="xformtype" id="xformtype" class="ftext">
+                                        <option value="particular" selected>Particular XForm</option>
+                                        <option value="list">List of Xforms</option>
+                                    </select>
+                                </td>
+                                <td>Xform(s):</td>
+                                <td>
+                                    <select name="xform" id="xform" class="ftext">
+                                        <option value="">Select XForm</option>
+                                        {% for l in xforms %}
+							                <option value="{{ l.keyword }}">{{l.name }} ({{ l.keyword }})</option>
+						                {% endfor %}
+                                    </select>
+                                    <textarea name="xform2" id="xform2" class="itext"></textarea>
+                                </td>
+                                <td>Expected Reporter:</td>
+                                <td>
+                                    <select name="reporter" id="reporter" class="ftext required">
+                                        <option value="">Select Group</option>
+                                        {% for l in groups %}
+							                <option value="{{ l.name }}">{{l.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <h2>Reminder Configuration</h2>
+            <table class="list2">
+                <tr>
+                    <td>
+                        <h3>Manage Reminder</h3>
+                        <table>
+                            <tr>
+                                <td>Message Setup:</td>
+                                <td>
+                                    <select name="setup" id="setup" class="ftext">
+                                        <option value="basic">Basic</option>
+                                        <option value="temp">Has arguments</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Time:</td>
+                                <td>
+                                    Hour:<select name="hrs" id="hrs" style="min-width:18px" class="ftext">
+                                            {% for h in hrs %}
+                                                <option value={{ h }}>{{ h }}</option>
+                                            {% endfor%}
+                                        </select>
+                                        &nbsp;Minute:<select name="mins" id="mins" style="min-width:18px" class="ftext">
+                                            {% for m in mins%}
+                                                <option value={{ m }}>{{ m }}</option>
+                                            {% endfor %}
+                                        </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Start Date:</td>
+                                <td><input type="text" name="sdate" id="sdate" readonly class="itext required"/></td>
+                            </tr>
+
+                            <tr>
+                                <td>Message:</td>
+                                <td>
+                                    <textarea name="msg" id="msg" cols="30" rows="7" class="ftext required"></textarea>
+                                </td>
+                            </tr>
+                            <tr><td></td>
+                                <td><input name="ccount" readonly size="3" id="ccount" class="itext"/>&nbsp; Character Count</td>
+                            </tr>
+                            <tr id="row-handlers">
+                                <td>Handlers:</td>
+                                <td>
+                                    <select name="handler" id="handler" class="ftext">
+                                        <option value="">Select Handler</option>
+                                        <option value="non_reporting_facility">Non Reporting Facility</option>
+                                        <option value="dht_summary">DHT 033B Reporting Summary</option>
+                                        <option value="vht_summary">VHT Summary</option>
+                                        <option value="stockouts_facility">Stocked-out Facilities</option>
+                                        <option value="stockouts_vht">VHTs sending Stockouts</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr id="row-args"><td>Arguments:</td><td><input name="args" id="args" class="itext"/></td></tr>
+                        </table>
+                    </td>
+                    <td>
+                        <h3>Repeat Intervals</h3>
+                    <table>
+                        <tr><td>End Date:</td>
+                            <td><input type="text" readonly name="edate" id="edate" class="itext"/></td>
+                        </tr>
+                        <tr>
+                            <td>Interval:</td>
+                            <td>
+                                <select name="interval" id="interval" class="ftext">
+                                    <option value="none">No Repeat</option>
+                                    <option value="day">Daily</option>
+                                    <option value="week">Weekly</option>
+                                    <option value="month">Monthly</option>
+                                </select>
+                                <div id="week_num" style="position: relative; visibility: hidden; overflow: show; display: none;">
+                                    <br/>
+                                    <select name="week_number" class="textbox">
+                                        <option value="1">First Days</option>
+                                        <option value="2">Second Days</option>
+                                        <option value="3">Third Days</option>
+                                        <option value="4">Fourth Days</option>
+                                        <option value="last">Last Days</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr id="dinter"><td colspan="2">
+                            Mon&nbsp;<input type="checkbox" name="repeat_day" id="repeat_day1" value="mon" />&nbsp;
+                            Tue&nbsp;<input type="checkbox" name="repeat_day" id="repeat_day2" value="tue" />
+                            Wed&nbsp;<input type="checkbox" name="repeat_day" id="repeat_day3" value="wed" />
+                            Thu&nbsp;<input type="checkbox" name="repeat_day" id="repeat_day4" value="thu" />
+                            Fri&nbsp;<input type="checkbox" name="repeat_day" id="repeat_day5" value="fri" />
+                            Sat&nbsp;<input type="checkbox" name="repeat_day" id="repeat_day6" value="sat" />
+                            Sun&nbsp;<input type="checkbox" name="repeat_day" id="repeat_day7" value="sun" />
+                        </td></tr>
+                </table>
+                    </td>
+                </tr>
+            </table>
+            <div style="margin: 0 auto; width: 100%;text-align:center;">
+                <input type="submit" name="sbmt" id="sbmt" value="Create Reminder" class="button"/>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -18,6 +18,7 @@ from django.views.generic import ListView
 from mtrack.views.visuals import stock_level_viz, stock_level_piechart
 from mtrack.views.dataentry import data_entry, ajax_portal
 from mtrack.views.facility_locations import facility_cas, ajax_portal2
+from mtrack.views.schedules import broadcasts
 
 urlpatterns = patterns('',
 #    url(r'^facility/(?P<code>\w+)/config/?$',
@@ -147,6 +148,7 @@ urlpatterns = patterns('',
     url(r"^facility_cas/$", login_required(facility_cas)),
     url(r"^ajax_portal/$", ajax_portal),
     url(r"^ajax_portal2/$", ajax_portal2),
+    url(r"schedules/$", login_required(broadcasts)),
 
     (r'^mtrack/mgt/stats/', include(ManagementReport().as_urlpatterns(name='mtrack-mgt-stats'))),
     url(r'^mtrack/logistics/?$',
