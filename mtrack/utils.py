@@ -108,7 +108,7 @@ def get_last_reporting_date(facility):
 
 def get_facility_reports(location, count=False, date_range=last_reporting_period(period=1, todate=True), approved=None):
     facilities = total_facilities(location, count=False)
-    print date_range
+    #print date_range
     staff = get_staff_for_facility(facilities)
     toret = XFormSubmission.objects.filter(\
         connection__contact__in=staff, \
@@ -119,7 +119,7 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
         toret = toret.filter(approved=approved)
 
     if count:
-        print toret.values('created', 'id')
+        #print toret.values('created', 'id')
         return toret.count()
     return toret
 
@@ -155,7 +155,7 @@ def get_all_ussd_facility_reports_for_view(request=None):
 
 def get_facility_reports_for_view(request=None):
     location = get_location_for_user(request.user)
-    print location
+    #print location
     return get_facility_reports(location, count=False, approved=False)
 
 def get_district_for_facility(hc):
