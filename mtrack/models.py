@@ -107,4 +107,26 @@ class ScheduleExtras(models.Model):
     class Meta:
         db_table = u'schedule_extras'
 
-import signals
+class HealthFacilityExtras(models.Model):
+    health_facility = models.ForeignKey(HealthFacility, unique=True)
+    total_reports = models.IntegerField(default=0)
+    total_reporters = models.IntegerField(default=0)
+    catchment_areas_list = models.TextField(default='')
+    class Meta:
+        db_table = 'healthmodels_healthfacilityextras'
+
+#The Health Facilities view used to speed up the facility page
+class Facilities(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
+    district = models.TextField()
+    owner = models.TextField()
+    authority = models.TextField()
+    last_reporting_date = models.DateField(null=True)
+    total_reports = models.IntegerField()
+    total_reporters = models.IntegerField()
+    catchment_areas = models.TextField()
+    class Meta:
+        managed = False
+        db_table = 'facilities'

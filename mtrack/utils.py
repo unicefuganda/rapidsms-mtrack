@@ -9,7 +9,7 @@ from uganda_common.utils import get_location_for_user
 from django.db import connection
 from ussd.models import Session
 import time
-from mtrack.models import AnonymousReport
+from mtrack.models import AnonymousReport, Facilities
 from django.conf import settings
 XFORMS = [
     'anonymous' #anonymous report collecting
@@ -54,14 +54,17 @@ def total_facilities(location, count=True):
     if not location:
         location = Location.tree.root_nodes()[0]
     locations = location.get_descendants(include_self=True).all()
-    facilities = HealthFacility.objects.filter(catchment_areas__in=locations).distinct()
+    #facilities = HealthFacility.objects.filter(catchment_areas__in=locations).select_related().distinct()
+    facilities = Facilities.objects.filter(id__in=HealthFacility.\
+                                           objects.filter(catchment_areas__in=locations).\
+                                           values_list('id', flat=True))
     if count:
         return facilities.count()
 
     return facilities
 
 def get_facilites_for_view(request=None):
-    location = get_location_for_user(request.user)
+    location = get_location_for_user(getattr(request, 'user', None))
     return total_facilities(location, count=False)
 
 def total_vhts(location, count=True):
