@@ -17,7 +17,7 @@ class FacilityResponseForm(forms.Form):
         else:
             forms.Form.__init__(self, **kwargs)
 
-    value = forms.ModelChoiceField(queryset=HealthFacility.objects.order_by('name'))
+    value = forms.ModelChoiceField(queryset=HealthFacility.objects.select_related('type').order_by('name'))
 
 class DistrictResponseForm(forms.Form):
     def __init__(self, data=None, **kwargs):
@@ -88,7 +88,7 @@ class EditAnonymousReportForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EditAnonymousReportForm, self).__init__(*args, **kwargs)
         self.fields['district'].queryset = Location.objects.filter(type__name="district").order_by("name")
-        self.fields['health_facility'].queryset = HealthFacility.objects.all().order_by('name')
+        self.fields['health_facility'].queryset = HealthFacility.objects.all().select_related('type__name').order_by('name')
         # make this non-required
         for key, field in self.fields.iteritems():
             self.fields[key].required = False

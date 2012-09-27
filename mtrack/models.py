@@ -1,5 +1,6 @@
 from django.db import models
 from healthmodels.models.HealthFacility import HealthFacility
+from healthmodels.models.HealthProvider import HealthProvider
 from rapidsms.contrib.locations.models import Location
 from rapidsms.models import Connection
 from rapidsms_httprouter.models import Message
@@ -130,3 +131,32 @@ class Facilities(models.Model):
     class Meta:
         managed = False
         db_table = 'facilities'
+
+class HealthProviderExtras(models.Model):
+    health_provider = models.ForeignKey(HealthProvider, unique=True)
+    total_reports = models.IntegerField(default=0)
+    district = models.TextField()
+    class Meta:
+        db_table = 'healthmodels_healthproviderextras'
+
+#HealthProviders view that helps to load user's page faster
+class Reporters(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=100)
+    active = models.BooleanField(default=False)
+    village_name = models.CharField(max_length=100)
+    reporting_location = models.IntegerField(default=0)
+    default_connection = models.TextField(default='')
+    connections = models.TextField(default='')
+    groups = models.TextField(default='')
+    district = models.TextField(default='')
+    total_reports = models.IntegerField(default=0)
+    facility_id = models.IntegerField(null=True)
+    facility = models.TextField(default='')
+    last_reporting_date = models.DateField(null=True)
+    loc_name = models.CharField(max_length=100, default='') # reporting_location name
+
+    class Meta:
+        managed = False
+        db_table = 'reporters'
+
