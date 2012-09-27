@@ -16,6 +16,54 @@ CREATE OR REPLACE FUNCTION get_facility_str(facility_id INT) RETURNS TEXT AS $de
     END;
 $delim$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION get_default_connection(_contact_id INT,return_conid BOOLEAN) RETURNS TEXT AS
+$delim$
+    DECLARE
+    r TEXT;
+    p TEXT;
+    BEGIN
+        SELECT identity,id INTO r,p FROM rapidsms_connection WHERE contact_id = _contact_id LIMIT 1;
+        IF NOT FOUND THEN
+            RETURN '';
+        ELSE
+            IF return_conid IS TRUE THEN
+                RETURN r || ',' || p ;
+            ELSE
+                RETURN r;
+            END IF;
+        END IF;
+    END;
+$delim$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION contact_connections(_contact_id INT) RETURNS TEXT AS
+$delim$
+    DECLARE
+    r TEXT;
+    p TEXT;
+    BEGIN
+        r := '';
+        FOR p IN SELECT identity FROM rapidsms_connection WHERE contact_id = _contact_id LOOP
+            r := r || p || ',';
+        END LOOP;
+        RETURN rtrim(r,',');
+    END;
+$delim$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_reporter_groups(_contact_id INT) RETURNS TEXT AS
+$delim$
+    DECLARE
+    r TEXT;
+    p TEXT;
+    BEGIN
+        r := '';
+        FOR p IN SELECT name FROM auth_group WHERE id IN (SELECT group_id FROM rapidsms_contact_groups WHERE contact_id = _contact_id) LOOP
+            r := r || p || ',';
+        END LOOP;
+        RETURN rtrim(r,',');
+    END;
+$delim$ LANGUAGE plpgsql;
+
+
 CREATE VIEW reporters AS
     SELECT r.id, r.name as name, r.active, r.village_name, r.reporting_location_id as reporting_location,
         get_default_connection(r.id, TRUE) AS default_connection,
