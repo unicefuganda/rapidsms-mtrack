@@ -42,6 +42,8 @@ def init_test_user():
     from rapidsms.models import Backend, Connection
     from healthmodels.models import HealthProvider
     hp = HealthProvider.objects.create(name='David McCann')
+    hp.active = True
+    hp.save()
     b = Backend.objects.create(name='test')
     c = Connection.objects.create(identity='8675309', backend=b)
     c.contact = hp
