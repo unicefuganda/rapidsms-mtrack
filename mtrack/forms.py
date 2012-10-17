@@ -1,17 +1,18 @@
 from django import forms
-from django.db import transaction
+from django.conf import settings
+from django.contrib.sites.models import Site
+from django.db import transaction, connection
 from healthmodels.models.HealthFacility import HealthFacility, HealthFacilityType
 from rapidsms.contrib.locations.models import Location
 from rapidsms_httprouter.models import Message
-from poll.models import Poll
+from poll.models import Poll, gettext_db
 from .models import AnonymousReport
 from generic.forms import ActionForm, FilterForm
 from contact.forms import SMSInput
-from .utils import get_district_for_facility, get_facilities
+from .utils import get_district_for_facility
 
 class FacilityResponseForm(forms.Form):
     def __init__(self, data=None, **kwargs):
-        response = kwargs.pop('response')
         if data:
             forms.Form.__init__(self, data, **kwargs)
         else:
@@ -21,7 +22,6 @@ class FacilityResponseForm(forms.Form):
 
 class DistrictResponseForm(forms.Form):
     def __init__(self, data=None, **kwargs):
-        response = kwargs.pop('response')
         if data:
             forms.Form.__init__(self, data, **kwargs)
         else:
@@ -99,7 +99,7 @@ class ReplyTextForm(ActionForm):
 
     def perform(self, request, results):
         if results is None or len(results) == 0:
-            return ('A message must have one or more recipients!', 'error')
+            return 'A message must have one or more recipients!', 'error'
         if request.user and request.user.has_perm('contact.can_message'):
             text = self.cleaned_data['text']
             for anonymous_report in results:
@@ -115,9 +115,9 @@ class ReplyTextForm(ActionForm):
                 except IndexError:
                     print "no messages got into the anonymous report"
                     pass
-            return ("%d messages sent successfully" % results.count(), 'success')
+            return "%d messages sent successfully" % results.count(), 'success'
         else:
-            return ("You don't have permission to send messages!", "error")
+            return "You don't have permission to send messages!", "error"
 
 class MassTextForm(ActionForm):
     pass
@@ -160,40 +160,40 @@ class AskAQuestionForm(ActionForm):
     action_label = "Poll reporters"
     def perform(self, request, results):
         if results is None or len(results):
-            return ('A question to reporters must have one or more recipients', 'error')
+            return 'A question to reporters must have one or more recipients', 'error'
         if request.user and request.user.has_perm('contact.can_message'):
             text = self.cleaned_data['text']
             for anonymous_reporter in results:
                 Message.objects.create(direction="O", text=text, connection=anonymous_reporter.connection, status="Q", in_response_to=anonymous_reporter.message)
                 # create a poll to specific user, any response will be shown to mtrac user
                 Poll.objects.create()
-            return ("%d messages sent successfully" % results.count(), 'success')
+            return "%d messages sent successfully" % results.count(), 'success'
         else:
-            return ("You don't have permission to send messages!", "error")
+            return "You don't have permission to send messages!", "error"
 
 
 class ApproveForm(ActionForm):
     action_label = 'Approve Selected'
     def perform(self, request, results):
         if results is None or len(results) == 0:
-            return ('You must approve one or more reports', 'error')
+            return 'You must approve one or more reports', 'error'
         if request.user and request.user.has_perm('rapidsms_xforms.can_approve'):
             count = results.count()
             results.update(approved=True)
-            return ("%d reports approved successfully" % count, 'success')
+            return "%d reports approved successfully" % count, 'success'
         else:
-            return ("You don't have permission to approve reports!", "error")
+            return "You don't have permission to approve reports!", "error"
 
 class RejectForm(ActionForm):
     action_label = 'Reject Selected'
     def perform(self, request, results):
         if results is None or len(results) == 0:
-            return ('You must reject one or more reports', 'error')
+            return 'You must reject one or more reports', 'error'
         if request.user and request.user.has_perm('rapidsms_xforms.can_approve'):
             results.update(has_errors=True)
-            return ("%d reports rejected successfully" % results.count(), 'success')
+            return "%d reports rejected successfully" % results.count(), 'success'
         else:
-            return ("You don't have permission to reject reports", "error")
+            return "You don't have permission to reject reports", "error"
 class StatusFilterForm(FilterForm):
     action = forms.ChoiceField(choices=(('Open', 'Open'),), required=False)
     #def __init__(self, data=None, **kwargs):

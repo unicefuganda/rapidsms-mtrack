@@ -1,11 +1,9 @@
-from alerts import Alert
-from alerts.models import Notification, NotificationComment, NotificationType
+from alerts.models import Notification, NotificationType
 from rapidsms.contrib.locations.models import Location
 from rapidsms.models import Contact
 from datetime import datetime, timedelta
-from uganda_common.utils import total_attribute_value
 from django.contrib.auth.models import User
-from rapidsms_xforms.models import XFormSubmission, XFormSubmissionValue
+from rapidsms_xforms.models import XFormSubmissionValue
 from healthmodels.models.HealthProvider import HealthProvider
 from django.conf import settings
 

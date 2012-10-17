@@ -8,7 +8,6 @@ from rapidsms_xforms.models import XFormSubmission
 from uganda_common.utils import get_location_for_user
 from django.db import connection
 from ussd.models import Session
-import time
 from mtrack.models import AnonymousReport, Facilities
 from django.conf import settings
 XFORMS = [
@@ -26,7 +25,7 @@ def last_reporting_period(period=1, weekday=getattr(settings, 'FIRSTDAY_OF_REPOR
     d = datetime.datetime(d.year, d.month, d.day)
     # find the past day with weekday() of 3
     last_thursday = d - datetime.timedelta((((7 - weekday) + d.weekday()) % 7)) - datetime.timedelta((period - 1) * 7)
-    return (last_thursday - datetime.timedelta(7), datetime.datetime.now() if todate else last_thursday,)
+    return last_thursday - datetime.timedelta(7), datetime.datetime.now() if todate else last_thursday,
 
 def last_reporting_period_number():
     first_monday = last_reporting_period(weekday=getattr(settings, 'FIRSTDAY_OF_REPORTING_WEEK', 3), period=1)[0]
@@ -127,8 +126,6 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
     return toret
 
 def get_ussd_facility_reports(location, count=False, date_range=last_reporting_period(todate=True), approved=None):
-    facilities = total_facilities(location, count=False)
-    staff = get_staff_for_facility(facilities)
     toret = XFormSubmission.objects.exclude(connection__contact=None)\
         .exclude(connection__contact__healthproviderbase__healthprovider__facility=None)\
         .filter(\

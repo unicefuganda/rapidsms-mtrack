@@ -1,9 +1,9 @@
 import logging
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import post_save
 from rapidsms_xforms.models import xform_received
-from healthmodels.models import HealthFacility, HealthFacilityType
+from healthmodels.models import HealthFacility
 from healthmodels.models.HealthFacility import HealthFacilityBase
-from logistics.models import SupplyPoint, SupplyPointType
+from logistics.models import SupplyPoint
 from mtrack.loader import create_supply_point_from_facility, get_location_from_facility
 
 stock_reports = ['act', 'qun', 'rdt']
