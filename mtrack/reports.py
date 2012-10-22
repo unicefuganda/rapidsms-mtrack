@@ -1,12 +1,9 @@
-from generic.reporting.views import ReportView
 from generic.reporting.reports import Column
-from uganda_common.reports import XFormAttributeColumn, XFormSubmissionColumn, QuotientColumn
-from uganda_common.views import XFormReport
-from cvs.utils import active_reporters, registered_reporters
+from uganda_common.reports import QuotientColumn
 from cvs.reports import ActiveReportersColumn, RegisteredReportersColumn
 from cvs.views.reports import CVSReportView
 from uganda_common.utils import reorganize_location
-from uganda_common.reports import QuotientColumn, DifferenceColumn
+from uganda_common.reports import DifferenceColumn
 from mtrack.utils import ALERTS_ACTIONED, ALERTS_CREATED, ALERTS_TOTAL, alerts_report, last_reporting_period
 
 class AlertReportsColumn(Column):

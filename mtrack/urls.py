@@ -1,4 +1,4 @@
-from .forms import ReplyTextForm, MassTextForm, AskAQuestionForm, ApproveForm, RejectForm, StatusFilterForm
+from .forms import ReplyTextForm, ApproveForm, RejectForm
 from django.conf.urls.defaults import patterns, url, include
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
@@ -13,8 +13,6 @@ from mtrack.views.dashboard import admin, approve
 from mtrack.views.reports import edit_report
 from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
-from django.views.decorators.cache import cache_page
-from django.views.generic import ListView
 from mtrack.views.visuals import stock_level_viz, stock_level_piechart
 from mtrack.views.dataentry import data_entry, ajax_portal
 from mtrack.views.facility_locations import facility_cas, ajax_portal2
@@ -60,8 +58,7 @@ urlpatterns = patterns('',
             ('A Center', True, 'action_center', SimpleSorter(),),
             ('A Taken', True, 'action_taken', SimpleSorter(),),
             ('Comments', True, 'comments', None,),
-            ('', False, '', None,)], \
-        'results_title':'Anonymous reports',
+            ('', False, '', None,)],
         #'sort_column':'date',
     }, name='dashboard-anonymous-messagelog'),
 

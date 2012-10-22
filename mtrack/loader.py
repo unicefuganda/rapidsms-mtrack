@@ -3,16 +3,10 @@ Load utils: good for setting up a demo environment,
 first setup of production environment, and automated testing
 """
 
-import logging
-import os
 import random
-import sys
-from django.conf import settings
 from django.contrib.auth.models import User
-from rapidsms.contrib.locations.models import LocationType, Location, Point
-from logistics.const import Reports
-from logistics.models import SupplyPoint, SupplyPointType, \
-    ProductReportType, ContactRole, Product, ProductType
+from rapidsms.contrib.locations.models import Location
+from logistics.models import SupplyPoint, SupplyPointType
 from logistics.util import config
 from healthmodels.models import HealthFacility, HealthFacilityType
 from rapidsms.models import Contact
@@ -42,6 +36,8 @@ def init_test_user():
     from rapidsms.models import Backend, Connection
     from healthmodels.models import HealthProvider
     hp = HealthProvider.objects.create(name='David McCann')
+    hp.active = True
+    hp.save()
     b = Backend.objects.create(name='test')
     c = Connection.objects.create(identity='8675309', backend=b)
     c.contact = hp
@@ -85,7 +81,7 @@ def init_test_facilities(log_to_console=False):
     sp.active = True
     sp.save()
     try:
-        hf = HealthFacility.objects.get(code='tf')
+        HealthFacility.objects.get(code='tf')
     except HealthFacility.DoesNotExist:
         hf_type = HealthFacilityType.objects.all()[0]
         hf = HealthFacility.objects.create(name='test facility',
@@ -96,9 +92,7 @@ def init_test_facilities(log_to_console=False):
             print "  Supply point %s created" % hf.name
 
 def add_supply_points_to_facilities(log_to_console=False):
-    from healthmodels.models import HealthFacility, HealthFacilityType
-    from logistics.models import SupplyPoint, SupplyPointType
-    from rapidsms.contrib.locations.models import Location
+    from healthmodels.models import HealthFacility
     facilities = HealthFacility.objects.all().order_by('name')
     for f in facilities:
         if f.supply_point is None:
@@ -388,15 +382,15 @@ def process_xforms():
             print "  Submission %s to be processed." % submit.pk
             try:
                 process_xform(submit)
-                count = count + 1
+                count += 1
                 print "  Submission %s processed." % submit.pk
             except:
                 print "  Submission %s had errors." % submit.pk
                 print "    %s" % submit.message
-                error_count = error_count + 1
+                error_count += 1
         else:
             print "  Submission %s ignored." % submit.pk
-            ignored_count = ignored_count + 1
+            ignored_count += 1
         pass
     print "%s new submissions processed." % count
     print "%s submissions ignored." % ignored_count
