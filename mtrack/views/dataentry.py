@@ -1,6 +1,6 @@
 import datetime
 from django.template import RequestContext
-from django.shortcuts import redirect, get_object_or_404, render_to_response
+from django.shortcuts import render_to_response
 from rapidsms.contrib.locations.models import Location
 from healthmodels.models.HealthFacility import HealthFacility
 from healthmodels.models.HealthProvider import HealthProvider
@@ -11,7 +11,7 @@ from django.http import HttpResponse
 from django.utils import simplejson
 from django.conf import settings
 from mtrack.models import XFormSubmissionExtras
-from mtrack.utils import current_week_reporting_range, current_reporting_week_number, last_reporting_period
+from mtrack.utils import current_reporting_week_number, last_reporting_period
 
 def data_entry(request):
     #consider a list

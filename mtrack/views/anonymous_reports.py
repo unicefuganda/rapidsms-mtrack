@@ -4,12 +4,10 @@ from django.http import HttpResponse
 from mtrack.models import AnonymousReport
 from mtrack.forms import EditAnonymousReportForm
 from django.template import RequestContext
-from django.views.generic.base import TemplateView
 import xlwt
 from mtrack.utils import *
 from time import strftime
 import datetime
-from healthmodels.models.HealthFacility import HealthFacilityBase
 
 @login_required
 def delete_report(request, report_pk):

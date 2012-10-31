@@ -88,12 +88,13 @@ class Schedules(models.Model):
         db_table = u'schedules'
     @property
     def extras(self):
-        if self.scheduleextras_set.count() > 0:
-            return self.scheduleextras_set.all()[0]
-        return None
+        return self.scheduleextras 
+
+    def __unicode__(self):
+        return self.message
 
 class ScheduleExtras(models.Model):
-    schedule = models.ForeignKey(Schedules)
+    schedule = models.OneToOneField(Schedules)
     recipient_location_type = models.TextField(blank=True, null=True)
     recipient_location = models.TextField(blank=True, null=True)
     allowed_recipients = models.TextField(default='all')
@@ -107,6 +108,9 @@ class ScheduleExtras(models.Model):
     cdate = models.DateTimeField(default=datetime.now())
     class Meta:
         db_table = u'schedule_extras'
+
+    def __unicode__(self):
+        return self.schedule.message
 
 class HealthFacilityExtras(models.Model):
     health_facility = models.ForeignKey(HealthFacility, unique=True)

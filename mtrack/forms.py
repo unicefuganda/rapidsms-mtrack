@@ -1,14 +1,17 @@
 from django import forms
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site
 from django.db import transaction, connection
+from django.forms.widgets import SelectMultiple, CheckboxSelectMultiple
 from healthmodels.models.HealthFacility import HealthFacility, HealthFacilityType
 from rapidsms.contrib.locations.models import Location
 from rapidsms_httprouter.models import Message
 from poll.models import Poll, gettext_db
-from .models import AnonymousReport
+from .models import AnonymousReport, Schedules, ScheduleExtras
 from generic.forms import ActionForm, FilterForm
 from contact.forms import SMSInput
+from rapidsms_xforms.models import XForm
 from .utils import get_district_for_facility
 
 class FacilityResponseForm(forms.Form):
@@ -208,3 +211,52 @@ class StatusFilterForm(FilterForm):
 #    facility = forms.ModelChoiceField()
 #    reporter = forms.ModelChoiceField()
 
+class ScheduleForm(forms.Form):
+    DISTRICT_CHOICES = Location.objects.filter(type__name='district').values_list('name','name').order_by('name')
+    GROUP_CHOICES  = tuple([(g.name,g.name) for g in Group.objects.all().order_by('name')])
+    MODE_CHOICES = (('live','Live Mode'),('training','Training Mode'),('all','All Users'))
+    HOUR_CHOICES = tuple([(h,h) for h in range(24)])
+    MINUTES_CHOICES = tuple([(m,m) for m in range(60)])
+    XFORM_CHOICES = tuple([(x['keyword'],'%s(%s)'%(x['name'],x['keyword'])) for x in XForm.objects.all().values('id', 'name', 'keyword').order_by('name')])
+    MONTH_INTERVAL_CHOICES = (('none','No Repeat'),('day','Daily'),('week','Weekly'),('month','Monthly'))
+    WEEK_INTERVAL_CHOICES = (('1','First Days'),('2','Second Days'),('3','Third Days'),('4','Fourth Days'),('last','Last Days'))
+    SETUP_CHOICES = (('basic','Basic'),('temp','Has Argument'))
+    DAY_INTERVAL_CHOICES = (('mon','Monday'),('tue','tue'),('wed','Wednesday'),('thur','Thursday'),('fri','Friday'),('sat','Saturday'),('sun','Sunday'))
+    setup = forms.CharField(widget=forms.Select(choices=SETUP_CHOICES,attrs={'class':'required'}))
+    locations = forms.  MultipleChoiceField(choices=DISTRICT_CHOICES)
+    group = forms.MultipleChoiceField(choices=GROUP_CHOICES)
+    reporter = forms.MultipleChoiceField(choices=GROUP_CHOICES)
+    xforms = forms.MultipleChoiceField(choices=XFORM_CHOICES)
+    start_date = forms.DateField(widget=forms.TextInput(attrs={'id':'sdate','readonly':'readonly','required':'required'}))
+    end_date = forms.DateField(widget=forms.TextInput(attrs={'id':'edate','readonly':'readonly'}),required=False)
+    interval = forms.CharField(widget=forms.Select(choices=MONTH_INTERVAL_CHOICES,attrs={'class':'ftext','id':'interval'}))
+    week_number = forms.CharField(widget=forms.Select(choices=WEEK_INTERVAL_CHOICES,attrs={'class':'textbox'}))
+    repeat_day = forms.MultipleChoiceField(widget=CheckboxSelectMultiple,choices=DAY_INTERVAL_CHOICES,required=False)
+    hour = forms.CharField(widget=forms.Select(choices=HOUR_CHOICES,attrs={'id':'hrs','style':'min-width:18px'}))
+    minutes = forms.CharField(widget=forms.Select(choices=MINUTES_CHOICES,attrs={'id':'mins','style':'min-width:18px'}))
+    message = forms.CharField(widget=forms.Textarea(attrs={'id':'msg','class':'required'}))
+    user_type = forms.CharField(widget=forms.Select(choices=MODE_CHOICES))
+
+    def clean(self):
+        cleaned_data = super(ScheduleForm,self).clean()
+        cleaned_data['start_time'] = '%s:%s'%(self.cleaned_data['hour'],self.cleaned_data['minutes'])
+        cleaned_data['msg_is_temp'] = False if self.cleaned_data['setup'] == 'basic' else True
+        cleaned_data['group'] = ",".join(cleaned_data['group'])
+        cleaned_data['reporter'] = ",".join(cleaned_data['reporter'])
+        cleaned_data['xforms'] = ",".join(cleaned_data['xforms'])
+        cleaned_data['locations'] = ",".join(cleaned_data['locations'])
+        cleaned_data['repeat_day'] = ",".join(cleaned_data['repeat_day'])
+        return cleaned_data
+
+
+    def save(self):
+        b = Schedules.objects.create(created_by='sam', start_date= self.cleaned_data['start_date'], end_date=self.cleaned_data['end_date'],
+            start_time= self.cleaned_data['start_time'], message_type=self.cleaned_data['setup'], message=self.cleaned_data['message'], recur_interval=self.cleaned_data['interval'],
+            recur_frequency=0, recur_day=self.cleaned_data['repeat_day'], recur_weeknumber = self.cleaned_data['week_number'])
+
+        c = ScheduleExtras.objects.create(schedule=b, recipient_location_type='',
+            recipient_location=self.cleaned_data['locations'], allowed_recipients='', recipient_group_type='',
+            missing_reports=self.cleaned_data['xforms'], expected_reporter=self.cleaned_data['reporter'], group_ref=self.cleaned_data['group'],
+            is_message_temp=self.cleaned_data['msg_is_temp'], message_args="", return_code="")
+
+        return b,c
