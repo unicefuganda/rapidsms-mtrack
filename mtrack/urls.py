@@ -145,7 +145,7 @@ urlpatterns = patterns('',
     url(r"^facility_cas/$", login_required(facility_cas)),
     url(r"^ajax_portal/$", ajax_portal),
     url(r"^ajax_portal2/$", ajax_portal2),
-    url(r"^schedules/$", login_required(broadcasts)),
+    url(r"^schedules/$", login_required(broadcasts),name='schedule_creator'),
 
     (r'^mtrack/mgt/stats/', include(ManagementReport().as_urlpatterns(name='mtrack-mgt-stats'))),
     url(r'^mtrack/logistics/?$',
