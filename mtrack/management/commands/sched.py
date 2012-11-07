@@ -74,6 +74,7 @@ class Command(BaseCommand):
                 facilities = HealthFacility.objects.filter(catchment_areas__in=district.\
                         get_descendants(include_self=True)).select_related('HealthFacilityTypeBase').\
                         distinct()
+                facilities = facilities.exclude(type__name='dho')
                 total_facilities = facilities.count()
                 reporting_facility_count = 0
                 non_reporting_facilities = []

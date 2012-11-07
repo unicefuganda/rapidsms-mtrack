@@ -9,6 +9,7 @@ from script.utils.handling import find_closest_match
 from django.contrib.auth.models import Group
 from uganda_common.utils import assign_backend
 from django.conf import settings
+from django.db import transaction
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -41,6 +42,7 @@ class Command(BaseCommand):
         #print l
         return l
 
+    @transaction.commit_manually
     def load_reporters(self, data):
         for d in data:
             if not d[self.order['name']] or not d[self.order['phone']]:
@@ -48,7 +50,7 @@ class Command(BaseCommand):
             print d
             _name = d[self.order['name']].strip()
             _phone = '%s' % d[self.order['phone']]
-            print "=====================>",_phone
+            print "=====================>", _phone
             _district = d[self.order['district']].strip()
             _role = d[self.order['role']].strip()
             _fac = d[self.order['facility']].strip()
@@ -56,7 +58,7 @@ class Command(BaseCommand):
             _village = d[self.order['village']].strip()
             _village_type = d[self.order['village_type']].strip()
             _pvht = d[self.order['pvht']]
-            _phone = _phone.split('e')[0].split('.')[0].replace('-','')
+            _phone = _phone.split('e')[0].split('.')[0].replace('-', '')
             nums = _phone.split('/')
             _phone2 = ''
             _village_name = d[self.order['village_name']].capitalize()
@@ -70,31 +72,33 @@ class Command(BaseCommand):
             district = find_closest_match(_district, Location.objects.filter(type='district'))
             #roles = list(Group.objects.filter(name__in=_role.split(',')))
 
-            try:
-                facility = find_closest_match(_fac, HealthFacility.objects.filter(type__name__in=[_fac_type]).\
-                        filter(catchment_areas__in=district.get_descendants(include_self=True)))
-            except HealthFacility.MultipleObjectsReturned:
-                xx = HealthFacility.objects.filter(name=_fac,type__name=_fac_type).\
-                        filter(catchment_areas__in=district.get_descendants(include_self=True))
-                facility = xx[0] if xx else ''
+            #try:
+            #    facility = find_closest_match(_fac, HealthFacility.objects.filter(type__name__in=[_fac_type]).\
+            #            filter(catchment_areas__in=district.get_descendants(include_self=True)))
+            #except HealthFacility.MultipleObjectsReturned:
+            #    xx = HealthFacility.objects.filter(name=_fac,type__name=_fac_type).\
+            #            filter(catchment_areas__in=district.get_descendants(include_self=True))
+            #    facility = xx[0] if xx else ''
+            facility = ''
             if not facility:
-                xx = HealthFacility.objects.filter(name=_fac,type__name=_fac_type).\
+                xx = HealthFacility.objects.filter(name="%s" % _fac, type__name=_fac_type).\
                         filter(catchment_areas__in=district.get_descendants(include_self=True))
                 facility = xx[0] if xx else ''
                 if not facility:
+                    print "WARNING: Facility Not Found (%s %s)" % (_fac, _fac_type)
                     continue
             village = None
             if _village:
                 if district:
                     #village = find_closest_match(_village, district.get_descendants(include_self=True).filter(type__in=[_village_type]))
                     village = district.get_descendants(include_self=True).filter(name=_village, type__name=_village_type)[0]
-                    print "***********",_village,"*********",village
+                    print "***********", _village, "*********", village
                 else:
                     village = find_closest_match(_village, Location.objects.filter(type__in=[_village_type]))
             if _name:
                 _name = ' '.join([n.capitalize() for n in _name.lower().split()])
             msisdn, backend = assign_backend(_phone)
-            print msisdn,village
+            print msisdn, village
 
             if _phone2:
                 msisdn2, backend2 = assign_backend(_phone2)
@@ -104,6 +108,7 @@ class Command(BaseCommand):
                 connection = Connection.objects.get(identity=msisdn, backend=backend)
             except Connection.DoesNotExist:
                 connection = Connection.objects.create(identity=msisdn, backend=backend)
+                transaction.commit()
             except Connection.MultipleObjectsReturned:
                 connection = Connection.objects.filter(identity=msisdn, backend=backend)[0]
             # a second phone number
@@ -123,6 +128,7 @@ class Command(BaseCommand):
                 already_exists = True
             except Contact.DoesNotExist, Contact.MultipleObectsReturned:
                 contact = HealthProvider.objects.create()
+                transaction.commit()
 
             connection.contact = contact
             connection.save()
@@ -131,7 +137,7 @@ class Command(BaseCommand):
 
             if facility:
                 contact.facility = facility
-
+                transaction.commit()
             if village:
                 contact.reporting_location = village
                 contact.village = village
@@ -143,8 +149,8 @@ class Command(BaseCommand):
                     contact.reporting_location = Location.tree.root_nodes()[0]
                 contact.village_name = _village_name or _village
                 contact.village = None
-
-            current_groups = list(contact.groups.all().values_list('name',flat=True))
+            transaction.commit()
+            current_groups = list(contact.groups.all().values_list('name', flat=True))
             new_roles = list(set(_role.split(',') + current_groups))
             roles = list(Group.objects.filter(name__in=new_roles))
 
@@ -155,3 +161,4 @@ class Command(BaseCommand):
             if connection2:
                 contact.connection_set.add(connection2)
             contact.save()
+            transaction.commit()
