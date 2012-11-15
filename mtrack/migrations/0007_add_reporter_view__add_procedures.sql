@@ -154,14 +154,14 @@ CREATE OR REPLACE FUNCTION update_total_reporters() RETURNS TRIGGER AS $delim$
         ELSIF TG_OP = 'UPDATE' THEN
             IF NEW.facility_id <> OLD.facility_id THEN
                 SELECT active INTO is_active FROM rapidsms_contact WHERE id = NEW.contact_ptr_id;
-                IF active IS TRUE THEN
+                IF is_active IS TRUE THEN
                     UPDATE healthmodels_healthfacilityextras SET total_reporters = total_reporters + 1
                         WHERE health_facility_id = NEW.facility_id AND NEW.facility_id IS NOT NULL;
                     UPDATE healthmodels_healthfacilityextras SET total_reporters = total_reporters - 1
                         WHERE health_facility_id = OLD.facility_id AND total_reports > 0 AND OLD.facility_id IS NOT NULL;
                 END IF;
             END IF;
-	    UPDATE healthmodels_healthproviderextras SET district = get_district(NEW.location_id) 
+	    UPDATE healthmodels_healthproviderextras SET district = get_district(NEW.location_id)
 	     	WHERE health_provider_id = NEW.contact_ptr_id;
             RETURN NEW;
         ELSE

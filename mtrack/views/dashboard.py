@@ -4,7 +4,8 @@
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from uganda_common.utils import get_location_for_user
-from mtrack.utils import reporting_facilities, reporting_vhts, last_reporting_period, total_registered_facilities, total_vhts, get_facility_reports, last_reporting_period_number, current_reporting_week_number
+from mtrack.utils import reporting_facilities, reporting_vhts, last_reporting_period, total_registered_facilities, total_vhts, get_facility_reports, \
+last_reporting_period_number, current_reporting_week_number, get_facility_reports2
 
 def admin(request):
     location = get_location_for_user(request.user)
@@ -24,8 +25,10 @@ def approve(request):
     location = get_location_for_user(request.user)
 
     return render_to_response('mtrack/partials/dashboard_approve.html', {
-            'reports':get_facility_reports(location, date_range=last_reporting_period(period=0), count=True, approved=False),
-            'total_reports':get_facility_reports(location, date_range=last_reporting_period(todate=True), count=True, approved=False),
+            #'reports':get_facility_reports(location, date_range=last_reporting_period(period=0), count=True, approved=False),
+            #'total_reports':get_facility_reports(location, date_range=last_reporting_period(todate=True), count=True, approved=False),
+            'reports':get_facility_reports2(location, date_range=last_reporting_period(period=0)),
+            'total_reports':get_facility_reports2(location, date_range=last_reporting_period(period=0), todate=True),
             'reporting_period': last_reporting_period_number(),
             'current_week': current_reporting_week_number()
         },

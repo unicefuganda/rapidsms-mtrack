@@ -88,7 +88,7 @@ class Schedules(models.Model):
         db_table = u'schedules'
     @property
     def extras(self):
-        return self.scheduleextras 
+        return self.scheduleextras
 
     def __unicode__(self):
         return self.message
@@ -159,8 +159,16 @@ class Reporters(models.Model):
     facility = models.TextField(default='')
     last_reporting_date = models.DateField(null=True)
     loc_name = models.CharField(max_length=100, default='') # reporting_location name
-
     class Meta:
         managed = False
         db_table = 'reporters'
+
+class ApproveSummary(models.Model):
+    location = models.IntegerField(null=True)
+    reports_crp = models.IntegerField(default=0)
+    reports_lrp_uptodate = models.IntegerField(default=0)
+    start_of_crp = models.DateField(null=True)
+    end_of_crp = models.DateField(null=True)
+    class Meta:
+        db_table = 'approve_summaries'
 

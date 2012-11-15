@@ -8,7 +8,7 @@ from rapidsms_xforms.models import XFormSubmission
 from uganda_common.utils import get_location_for_user
 from django.db import connection
 from ussd.models import Session
-from mtrack.models import AnonymousReport, Facilities
+from mtrack.models import AnonymousReport, Facilities, ApproveSummary
 from django.conf import settings
 XFORMS = [
     'anonymous' #anonymous report collecting
@@ -125,6 +125,14 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
         return toret.count()
     return toret
 
+def get_facility_reports2(location, date_range=last_reporting_period(period=0), todate=False):
+    toret = 0
+    result = ApproveSummary.objects.filter(location=location.id,
+                                  start_of_crp=date_range[0], end_of_crp=date_range[1])
+    if result:
+        return result[0].reports_lrp_uptodate if todate else result[0].reports_crp
+    return toret
+
 def get_ussd_facility_reports(location, count=False, date_range=last_reporting_period(todate=True), approved=None):
     toret = XFormSubmission.objects.exclude(connection__contact=None)\
         .exclude(connection__contact__healthproviderbase__healthprovider__facility=None)\
@@ -161,7 +169,7 @@ def get_facility_reports_for_view(request=None):
 def get_district_for_facility(hc):
     bounds = hc.catchment_areas.aggregate(Min('lft'), Max('rght'))
     l = Location.objects.filter(lft__lte=bounds['lft__min'], rght__gte=bounds['rght__max'], type__name='district')
-    if l.count():
+    if l:
         return l[0]
     return None
 
@@ -282,10 +290,10 @@ def get_facilities():
                    " healthmodels_healthfacilitybase a, healthmodels_healthfacilitytypebase b "
                    " WHERE a.type_id = b.id ORDER BY a.name;")
 def get_anonymous_reports(request=None):
-    location = get_location_for_user(request.user)
+    location = get_location_for_user(getattr(request, 'user', None))
     districts = Location.objects.filter(type__name='district').values_list('name', flat=True)
     if location.name in districts:
-        return AnonymousReport.objects.filter(district=location).order_by('-date')
+        return AnonymousReport.objects.filter(district=location).select_related('health_facility__type', 'district__name').order_by('-date')
     else:
-        return AnonymousReport.objects.all().order_by('-date')
+        return AnonymousReport.objects.all().select_related('health_facility__type', 'district__name').order_by('-date')
 

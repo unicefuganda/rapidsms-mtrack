@@ -11,24 +11,28 @@ def run_file(file_name):
     db.execute(query)
 
 class Migration(SchemaMigration):
+
     def forwards(self, orm):
-        db.execute("DROP VIEW IF EXISTS reporters;")
-        db.execute("DROP TRIGGER IF EXISTS update_total_reporters ON healthmodels_healthproviderbase")
-        db.execute("DROP TRIGGER IF EXISTS healthprovider_before_delete ON healthmodels_healthproviderbase")
-        db.execute("DROP TRIGGER IF EXISTS rapidsms_contact_after_update ON rapidsms_contact")
-        db.execute("DROP TRIGGER IF EXISTS healthfacilitybase_after_insert ON healthmodels_healthfacilitybase")
-        db.execute("DROP FUNCTION IF EXISTS update_total_reporters( )")
-        db.execute("DROP FUNCTION IF EXISTS healthprovider_before_delete( )")
-        db.execute("DROP FUNCTION IF EXISTS rapidsms_contact_after_update ( )")
-        db.execute("DROP FUNCTION IF EXISTS healthfacilitybase_after_insert( )")
-        #create views and triggers
-        run_file('0007_add_reporter_view__add_procedures.sql')
+
+        # Adding model 'ApproveSummary'
+        db.create_table('approve_summaries', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('location', self.gf('django.db.models.fields.IntegerField')(null=True)),
+            ('reports_crp', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('reports_lrp_uptodate', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('start_of_crp', self.gf('django.db.models.fields.DateField')(null=True)),
+            ('end_of_crp', self.gf('django.db.models.fields.DateField')(null=True)),
+        ))
+        db.send_create_signal('mtrack', ['ApproveSummary'])
+        db.execute("DROP VIEW IF EXISTS reports_view;")
+        run_file('0008_auto__add_approvesummary.sql')
+
     def backwards(self, orm):
-        db.execute("DROP VIEW reporters CASCADE;")
-        db.execute("DROP FUNCTION update_total_reporters( ) CASCADE;")
-        db.execute("DROP FUNCTION healthprovider_before_delete( ) CASCADE;")
-        db.execute("DROP FUNCTION rapidsms_contact_after_update ( ) CASCADE;")
-        db.execute("DROP FUNCTION healthfacilitybase_after_insert( ) CASCADE;")
+
+        # Deleting model 'ApproveSummary'
+        db.delete_table('approve_summaries')
+
+        db.execute("DROP VIEW reports_view CASCADE;")
 
     models = {
         'auth.group': {
@@ -255,6 +259,15 @@ class Migration(SchemaMigration):
             'messages': ('django.db.models.fields.related.ManyToManyField', [], {'default': 'None', 'to': "orm['rapidsms_httprouter.Message']", 'null': 'True', 'symmetrical': 'False'}),
             'topic': ('django.db.models.fields.CharField', [], {'default': "'Unknown'", 'max_length': '32', 'null': 'True'})
         },
+        'mtrack.approvesummary': {
+            'Meta': {'object_name': 'ApproveSummary', 'db_table': "'approve_summaries'"},
+            'end_of_crp': ('django.db.models.fields.DateField', [], {'null': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'location': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
+            'reports_crp': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'reports_lrp_uptodate': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'start_of_crp': ('django.db.models.fields.DateField', [], {'null': 'True'})
+        },
         'mtrack.facilities': {
             'Meta': {'object_name': 'Facilities', 'db_table': "'facilities'", 'managed': 'False'},
             'authority': ('django.db.models.fields.TextField', [], {}),
@@ -286,24 +299,24 @@ class Migration(SchemaMigration):
         'mtrack.reporters': {
             'Meta': {'object_name': 'Reporters', 'db_table': "'reporters'", 'managed': 'False'},
             'active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'village_name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'reporting_location': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'default_connection': ('django.db.models.fields.TextField', [], {'default': "''"}),
             'connections': ('django.db.models.fields.TextField', [], {'default': "''"}),
-            'groups': ('django.db.models.fields.TextField', [], {'default': "''"}),
+            'default_connection': ('django.db.models.fields.TextField', [], {'default': "''"}),
             'district': ('django.db.models.fields.TextField', [], {'default': "''"}),
-            'total_reports': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'facility_id': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
             'facility': ('django.db.models.fields.TextField', [], {'default': "''"}),
+            'facility_id': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
+            'groups': ('django.db.models.fields.TextField', [], {'default': "''"}),
+            'id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
             'last_reporting_date': ('django.db.models.fields.DateField', [], {'null': 'True'}),
-            'loc_name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+            'loc_name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'reporting_location': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'total_reports': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'village_name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'mtrack.scheduleextras': {
             'Meta': {'object_name': 'ScheduleExtras', 'db_table': "u'schedule_extras'"},
             'allowed_recipients': ('django.db.models.fields.TextField', [], {'default': "'all'"}),
-            'cdate': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 9, 18, 9, 54, 26, 394046)'}),
+            'cdate': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 11, 15, 11, 42, 13, 864324)'}),
             'expected_reporter': ('django.db.models.fields.TextField', [], {'default': "'HC'"}),
             'group_ref': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -314,7 +327,7 @@ class Migration(SchemaMigration):
             'recipient_location': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'recipient_location_type': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'return_code': ('django.db.models.fields.TextField', [], {'default': "''"}),
-            'schedule': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['mtrack.Schedules']"})
+            'schedule': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['mtrack.Schedules']", 'unique': 'True'})
         },
         'mtrack.schedules': {
             'Meta': {'object_name': 'Schedules', 'db_table': "u'schedules'"},
