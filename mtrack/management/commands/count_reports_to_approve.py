@@ -42,14 +42,14 @@ class Command(BaseCommand):
         else:
             extra_where_clause = " AND reporter_id IN (%s)" % ','.join(['%s' % i for i in staff] or ['0'])
 
-        sql_1 = ("SELECT count(distinct report_id) FROM xform_submissions_view3 "
+        sql_1 = ("SELECT count(distinct report_id) FROM reports_view "
                " WHERE has_errors = %s AND approved = %s AND date >= '%s' AND date <= '%s' %s")
         sql_1 = sql_1 % (False, False, lrp[0], lrp[1], extra_where_clause)
         cur.execute(sql_1)
         x = cur.fetchone()
         x = x[0] if x else 0
 
-        sql_2 = ("SELECT count(distinct report_id) FROM xform_submissions_view3 "
+        sql_2 = ("SELECT count(distinct report_id) FROM reports_view "
                " WHERE has_errors = %s AND approved = %s AND date >= '%s' AND date <= '%s' %s")
         sql_2 = sql_2 % (False, False, lrp_todate[0], lrp_todate[1], extra_where_clause)
         cur.execute(sql_2)
