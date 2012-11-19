@@ -13,8 +13,8 @@ class Command(BaseCommand):
         self.cursor = self.conn.cursor()
         locs = Location.objects.filter(type='district')
         print "Start populating........"
-        for l in locs:
-            self.get_facility_reports(l)
+        #for l in locs:
+        #    self.get_facility_reports(l)
         loc = Location.tree.root_nodes()[0]
         self.get_facility_reports(loc, root=True)
         print "Done populating........"
@@ -38,13 +38,16 @@ class Command(BaseCommand):
         lrp_todate = last_reporting_period(todate=True)
 
         if root:
-            extra_where_clause = " AND TRUE "
+            #extra_where_clause = " AND TRUE "
+            extra_where_clause = (" AND active = TRUE AND reporter_id IN (SELECT contact_id FROM rapidsms_contact_groups WHERE "
+            " group_id = (SELECT id FROM auth_group WHERE name='HC'))")
         else:
             extra_where_clause = " AND reporter_id IN (%s)" % ','.join(['%s' % i for i in staff] or ['0'])
 
         sql_1 = ("SELECT count(distinct report_id) FROM reports_view "
                " WHERE has_errors = %s AND approved = %s AND date >= '%s' AND date <= '%s' %s")
         sql_1 = sql_1 % (False, False, lrp[0], lrp[1], extra_where_clause)
+        print "SQL:1 =>", sql_1
         cur.execute(sql_1)
         x = cur.fetchone()
         x = x[0] if x else 0
@@ -52,6 +55,7 @@ class Command(BaseCommand):
         sql_2 = ("SELECT count(distinct report_id) FROM reports_view "
                " WHERE has_errors = %s AND approved = %s AND date >= '%s' AND date <= '%s' %s")
         sql_2 = sql_2 % (False, False, lrp_todate[0], lrp_todate[1], extra_where_clause)
+        print "SQL:2 =>", sql_2
         cur.execute(sql_2)
         y = cur.fetchone()
         y = y[0] if y else 0
