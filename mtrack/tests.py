@@ -1,13 +1,15 @@
 """
 Basic tests for mTrack
 """
-
+import datetime
 from django.test import TestCase
+from rapidsms.contrib.locations.models import Location
 from rapidsms.models import Contact
 from rapidsms_xforms.models import *
 from cvs.tests.util import fake_incoming
 from mtrack.loader import mtrack_init_demo
 from logistics.models import ProductReport
+from healthmodels.models import HealthFacility, HealthProvider
 
 class MTrackTests(TestCase):
     def setUp(self):
@@ -20,7 +22,6 @@ class MTrackTests(TestCase):
         self.assertEquals(sent.response, 'You are not associated with a facility. Please contact an administrator.')
 
     def testBasicSubmission(self):
-        from healthmodels.models import HealthFacility, HealthProvider
         # associate contact with a facility
         hp = HealthProvider.objects.create(pk=self.contact.pk, name='vht reporter')
         hp.facility = HealthFacility.objects.all()[0]
@@ -61,10 +62,8 @@ class MTrackTests(TestCase):
         self.assertEquals(hf.supply_point.location.name,'UG')
 
 
-
-#class TestWithSelenium(TestCase):
-#
-#    @classmethod
-#    def setUpClass(cls):
-#        cls.selenium = webdriver.WebDriver()
-#        super(TestWithSelenium, cls).setUpClass()
+class SchedTest(TestCase):
+    def setUp(self):
+        districts = [district.get_descendants(include_self=True) for district in list(Location.objects.filter(type='district'))]
+        facilities = HealthFacility.objects.filter(catchment_areas__in=districts).select_related('HealthFacilityTypeBase').\
+            distinct().exclude(type__name='dho')

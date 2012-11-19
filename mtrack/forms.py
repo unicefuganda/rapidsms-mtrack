@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site
 from django.db import transaction, connection
+from django.db.models import Q
 from django.forms.widgets import SelectMultiple, CheckboxSelectMultiple
 from healthmodels.models.HealthFacility import HealthFacility, HealthFacilityType
 from rapidsms.contrib.locations.models import Location
@@ -126,36 +127,36 @@ class MassTextForm(ActionForm):
     pass
 
 
-class PollNoContact(Poll):
-    """
-    Sending out a poll without a Contact object (i.e. anonymous users will previously not have registered to use
-    mtrac's other short code. This class contains a method that will create a poll to one or more users. Responses to
-    8200 shortcode in a short time will be tagged as replies to that poll.
-    """
-    @classmethod
-    @transaction.commit_on_success
-    def create_with_bulk(cls, name, type, question, connections, user):
-        # contacts in this case will loosely be connected to just the connection.
-        #contact_ids = [contact.id for contact in contacts]
-        # pass distinct connections
-        Message.mass_text(gettext_db(field=question), connections, status='L')
-        poll = Poll.objects.create(name=name, type=type, question=question, user=user)
-
-        # This is the fastest (pretty much only) was to get contacts and messages M2M into the
-        # DB fast enough at scale
-        cursor = connection.cursor()
-        for language in localized_messages.keys():
-            raw_sql = "insert into poll_poll_contacts (poll_id, contact_id) values %s" % ','.join(\
-                ["(%d, %d)" % (poll.pk, c.pk) for c in localized_messages.get(language)[1]])
-            cursor.execute(raw_sql)
-
-            raw_sql = "insert into poll_poll_messages (poll_id, message_id) values %s" % ','.join(\
-                ["(%d, %d)" % (poll.pk, m.pk) for m in localized_messages.get(language)[0]])
-            cursor.execute(raw_sql)
-
-        if 'django.contrib.sites' in settings.INSTALLED_APPS:
-            poll.sites.add(Site.objects.get_current())
-        return poll
+#class PollNoContact(Poll):
+#    """
+#    Sending out a poll without a Contact object (i.e. anonymous users will previously not have registered to use
+#    mtrac's other short code. This class contains a method that will create a poll to one or more users. Responses to
+#    8200 shortcode in a short time will be tagged as replies to that poll.
+#    """
+#    @classmethod
+#    @transaction.commit_on_success
+#    def create_with_bulk(cls, name, type, question, connections, user):
+#        # contacts in this case will loosely be connected to just the connection.
+#        #contact_ids = [contact.id for contact in contacts]
+#        # pass distinct connections
+#        Message.mass_text(gettext_db(field=question), connections, status='L')
+#        poll = Poll.objects.create(name=name, type=type, question=question, user=user)
+#
+#        # This is the fastest (pretty much only) was to get contacts and messages M2M into the
+#        # DB fast enough at scale
+#        cursor = connection.cursor()
+#        for language in localized_messages.keys():
+#            raw_sql = "insert into poll_poll_contacts (poll_id, contact_id) values %s" % ','.join(\
+#                ["(%d, %d)" % (poll.pk, c.pk) for c in localized_messages.get(language)[1]])
+#            cursor.execute(raw_sql)
+#
+#            raw_sql = "insert into poll_poll_messages (poll_id, message_id) values %s" % ','.join(\
+#                ["(%d, %d)" % (poll.pk, m.pk) for m in localized_messages.get(language)[0]])
+#            cursor.execute(raw_sql)
+#
+#        if 'django.contrib.sites' in settings.INSTALLED_APPS:
+#            poll.sites.add(Site.objects.get_current())
+#        return poll
 
 
 class AskAQuestionForm(ActionForm):
@@ -223,7 +224,7 @@ class ScheduleForm(forms.Form):
     SETUP_CHOICES = (('basic','Basic'),('temp','Has Argument'))
     DAY_INTERVAL_CHOICES = (('mon','Monday'),('tue','tue'),('wed','Wednesday'),('thur','Thursday'),('fri','Friday'),('sat','Saturday'),('sun','Sunday'))
     setup = forms.CharField(widget=forms.Select(choices=SETUP_CHOICES,attrs={'class':'required'}))
-    locations = forms.  MultipleChoiceField(choices=DISTRICT_CHOICES)
+    locations = forms.MultipleChoiceField(choices=DISTRICT_CHOICES)
     group = forms.MultipleChoiceField(choices=GROUP_CHOICES)
     reporter = forms.MultipleChoiceField(choices=GROUP_CHOICES)
     xforms = forms.MultipleChoiceField(choices=XFORM_CHOICES)
@@ -260,3 +261,33 @@ class ScheduleForm(forms.Form):
             is_message_temp=self.cleaned_data['msg_is_temp'], message_args="", return_code="")
 
         return b,c
+
+
+class DistictFilterForm(FilterForm):
+
+    """ filter cvs districs on their districts """
+
+    district2 = forms.MultipleChoiceField(label="District", choices=(('', '-----'), (-1,
+                                                                             'No District')) + tuple([(int(d.pk),
+                                                                                                       d.name) for d in
+                                                                                                      Location.objects.filter(type__slug='district'
+                                                                                                      ).order_by('name')]), required=False,
+        widget=forms.SelectMultiple({'onchange':'update_district2(this)',"style":"margin: 0; width: 170px;"}),help_text="Hold CTRL to select multiple")
+
+
+    def filter(self, request, queryset):
+
+        district_pk = self.cleaned_data['district2']
+        if '' in district_pk and len(district_pk)<2:
+            return queryset
+        elif "-1" in district_pk :
+            district_pk.remove("-1")
+            return queryset.filter(Q(district__in = Location.objects.filter(pk__in = district_pk).values_list('name',flat=True).distinct())
+                                   | Q(reporting_location__in=Location.objects.filter(type__in=['country', 'region'])))
+        else:
+            district = Location.objects.filter(pk__in=district_pk)
+            if district:
+                return queryset.filter(district__in= district.values_list('name',flat=True).distinct())
+                #return queryset.filter(reporting_location__in=district.get_descendants(include_self=True))
+            else:
+                return queryset
