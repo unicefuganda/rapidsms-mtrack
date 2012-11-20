@@ -1,8 +1,8 @@
 CREATE VIEW reports_view AS
 SELECT
     a.id AS report_id, b.name AS report, b.keyword, a.created AS "date",
-    d.name AS reporter, d.id AS reporter_id, c.identity AS phone,
-    d.reporting_location_id as district,
+    d.name AS reporter, d.id AS reporter_id, d.active, c.identity AS phone,
+    --get_district(d.reporting_location_id) as district,
     -- get_contact_facility(d.id) AS facility,
     a.has_errors,
     a.approved
