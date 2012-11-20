@@ -1,0 +1,45 @@
+{% extends 'generic/partials/partial_row.html' %}
+{% load stats_extras %}
+{% block remaining_row_content %}
+    <td>
+        {{ object.message }}
+    </td>
+    <td>
+        {{ object.start_date }}
+    </td>
+    {#<td>{{ object.end_date }}</td>#}
+    <td>
+        {#{{ object|get_facility_district }}#}
+        {{ object.end_date }}
+    </td>
+    <td>
+        {{ object.start_time }}
+    </td>
+    <td>
+       {% if object.enabled %}
+            yes
+        {% else %}
+            no
+       {% endif %}
+    </td>
+    <td id="row_{{ object.pk }}">
+        {% for l in object.extras.recipient_location|split:"," %}
+        	{{ l }},
+        {% endfor %}
+    </td>
+    <td id="row_{{ object.pk }}">
+        
+        {% for l in object.extras.group_ref|split:"," %}
+            {{ l }},
+        {% endfor %}
+        
+    </td>
+    
+    <td class="button_col">
+        <div class="buttons">
+            <a href="javascript:void(0)" onclick="deleteSchedule(this, {{ object.pk }})" title="Delete Schedule">
+                <img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png" />
+            </a>
+        </div>
+    </td>
+{% endblock %}

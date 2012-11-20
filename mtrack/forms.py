@@ -272,7 +272,7 @@ class DistictFilterForm(FilterForm):
                                                                                                        d.name) for d in
                                                                                                       Location.objects.filter(type__slug='district'
                                                                                                       ).order_by('name')]), required=False,
-        widget=forms.SelectMultiple({'onchange':'update_district2(this)',"style":"margin: 0; width: 170px;"}),help_text="Hold CTRL to select multiple")
+        widget=forms.SelectMultiple({'onchange':'update_district2(this)'}),help_text="Hold CTRL to select multiple")
 
 
     def filter(self, request, queryset):

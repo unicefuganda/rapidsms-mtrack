@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
 from generic.sorters import SimpleSorter
 from generic.views import generic, generic_row
-from mtrack.models import AnonymousReport
+from mtrack.models import AnonymousReport, Schedules
 from mtrack.reports import ManagementReport
 from mtrack.utils import get_dashboard_messages, get_facility_reports_for_view, \
     get_all_facility_reports_for_view, get_all_ussd_facility_reports_for_view, get_anonymous_reports
@@ -152,4 +152,24 @@ urlpatterns = patterns('',
         'logistics.views.aggregate',
         {'location_code':'western'},
         name="mtrack-logistics"),
+
+    url(r'^mtrack/schedule-list/$', login_required(generic), {
+    'model':Schedules,
+    'queryset':Schedules.objects.all(),
+    'objects_per_page':25,
+    'partial_row':'mtrack/schedule/schedule_row.html',
+    'base_template':'mtrack/schedule/schedule_base.html',
+    'results_title':'Reminder Schedules',
+    'sort_column':'start_date',
+    'sort_ascending':False,
+    'columns':[('Message', True, 'message', SimpleSorter()),
+               ('Start Date', True, 'start_date', SimpleSorter(),),
+               ('End Date', True, 'end_date', SimpleSorter(),),
+               ('Start Time', True, 'start_time', SimpleSorter(),),
+               ('Enabled', False, '', None,),
+               ('Recipient Locations', True, 'recipient_location', SimpleSorter(),),
+               ('Group References', True, 'group_ref', SimpleSorter(),),               
+               ('Delete', False, 'action', None,),
+               ],
+    }, name="reminder-schedules"),
 )
