@@ -37,8 +37,11 @@
     
     <td class="button_col">
         <div class="buttons">
-            <a href="javascript:void(0)" onclick="deleteSchedule(this, {{ object.pk }})" title="Delete Schedule">
+            <a href="javascript:void(0)" class="deleteSchedule" title="Delete Schedule" object_id="{{ object.id }}">
                 <img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png" />
+            </a><br/><br/>
+            <a href="{% url edit_schedule object.id %}" title="Edit Schedule">
+                <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png"/>
             </a>
         </div>
     </td>

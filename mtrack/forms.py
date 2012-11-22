@@ -251,16 +251,28 @@ class ScheduleForm(forms.Form):
 
 
     def save(self):
-        b = Schedules.objects.create(created_by='sam', start_date= self.cleaned_data['start_date'], end_date=self.cleaned_data['end_date'],
+        schedule = Schedules.objects.create(created_by='sam', start_date= self.cleaned_data['start_date'], end_date=self.cleaned_data['end_date'],
             start_time= self.cleaned_data['start_time'], message_type=self.cleaned_data['setup'], message=self.cleaned_data['message'], recur_interval=self.cleaned_data['interval'],
             recur_frequency=0, recur_day=self.cleaned_data['repeat_day'], recur_weeknumber = self.cleaned_data['week_number'])
 
-        c = ScheduleExtras.objects.create(schedule=b, recipient_location_type='',
+        extras = ScheduleExtras.objects.create(schedule=schedule, recipient_location_type='',
             recipient_location=self.cleaned_data['locations'], allowed_recipients='', recipient_group_type='',
             missing_reports=self.cleaned_data['xforms'], expected_reporter=self.cleaned_data['reporter'], group_ref=self.cleaned_data['group'],
             is_message_temp=self.cleaned_data['msg_is_temp'], message_args="", return_code="")
 
-        return b,c
+        return schedule,extras
+
+    def update(self,id):
+        schedule = Schedules.objects.filter(id=id).update(created_by='sam', start_date= self.cleaned_data['start_date'], end_date=self.cleaned_data['end_date'],
+            start_time= self.cleaned_data['start_time'], message_type=self.cleaned_data['setup'], message=self.cleaned_data['message'], recur_interval=self.cleaned_data['interval'],
+            recur_frequency=0, recur_day=self.cleaned_data['repeat_day'], recur_weeknumber = self.cleaned_data['week_number'])
+
+        extras = ScheduleExtras.objects.filter(schedule_id=id).update(schedule=schedule, recipient_location_type='',
+            recipient_location=self.cleaned_data['locations'], allowed_recipients='', recipient_group_type='',
+            missing_reports=self.cleaned_data['xforms'], expected_reporter=self.cleaned_data['reporter'], group_ref=self.cleaned_data['group'],
+            is_message_temp=self.cleaned_data['msg_is_temp'], message_args="", return_code="")
+
+        return schedule.get(0),extras.get(0)
 
 
 class DistictFilterForm(FilterForm):

@@ -1,6 +1,6 @@
 {% extends "generic/base.html" %}
 {% block title %}
-    Facilities - {{ block.super }}
+    Reminder Schedules - {{ block.super }}
 {% endblock %}
 {% block stylesheets %}
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}mtrack/stylesheets/layout.css" />
@@ -20,10 +20,13 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $(".deleteSchedule").click(function(){
-                $.post('/mtrack/deleteSchedule',function(data){
-                    $(this).parent().parent().remove();
-                });
+                var object_id = $(this).attr('object_id');
+                if (confirm("Do you really want to delete this reminder?")){
+                $.post('/mtrack/schedule/delete/'+object_id+'/');
+                $(this).parents('tr').remove();
+                }
             });
+
         });
     </script>
 {% endblock %}

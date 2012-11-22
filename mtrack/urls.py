@@ -172,4 +172,6 @@ urlpatterns = patterns('',
                ('Delete', False, 'action', None,),
                ],
     }, name="reminder-schedules"),
+    url(r'^mtrack/schedule/delete/(\d+)/$','mtrack.views.schedules.delete_schedule',name='delete_schedule'),
+    url(r'^mtrack/schedule/edit/(\d+)/$','mtrack.views.schedules.edit_schedule',name='edit_schedule'),
 )
