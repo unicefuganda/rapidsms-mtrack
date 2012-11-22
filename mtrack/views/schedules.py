@@ -30,7 +30,7 @@ def edit_schedule(request,id):
     if request.method == 'POST':
         form = ScheduleForm(request.POST)
         if form.is_valid():
-            form.update()
+            form.update(id)
             return HttpResponseRedirect(reverse('reminder-schedules'))
     return render_to_response('mtrack/schedule.html', {'form':form},context_instance=RequestContext(request))
 @require_POST
