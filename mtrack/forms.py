@@ -274,7 +274,7 @@ class ScheduleForm(forms.Form):
 
 
 
-class DistictFilterForm(FilterForm):
+class DistrictFilterForm(FilterForm):
 
     """ filter cvs districs on their districts """
 
@@ -302,3 +302,20 @@ class DistictFilterForm(FilterForm):
                 #return queryset.filter(reporting_location__in=district.get_descendants(include_self=True))
             else:
                 return queryset
+
+
+class RolesFilter(FilterForm):
+    role = forms.MultipleChoiceField(choices=(('', '----'),) + tuple(Group.objects.values_list('id','name').order_by('name')), required=False)
+
+    def filter(self, request, queryset):
+        #import pdb; pdb.set_trace()
+        group_pk = self.cleaned_data['role']
+        if '' in group_pk and len(group_pk)<2:
+            return queryset
+        else:
+            if '' in group_pk:group_pk.remove('')
+            groups = Group.objects.filter(id__in=group_pk).values_list('name',flat=True)
+            args = Q()
+            for group in groups:
+                args.add(Q(groups__contains=group),args.OR)
+            return queryset.filter(args).exclude(groups__contains='PVHT')
