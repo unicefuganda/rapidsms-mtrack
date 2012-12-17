@@ -219,8 +219,8 @@ CREATE OR REPLACE FUNCTION healthfacilitybase_after_insert() RETURNS TRIGGER AS
 $delim$
     DECLARE
     BEGIN
-        INSERT INTO healthmodels_healthfacilityextras(health_facility_id, total_reports, total_reporters)
-        VALUES (NEW.id, 0, 0);
+        INSERT INTO healthmodels_healthfacilityextras(health_facility_id, total_reports, total_reporters,catchment_areas_list)
+        VALUES (NEW.id, 0, 0,'');
         RETURN NEW;
     END;
 $delim$ LANGUAGE plpgsql;
