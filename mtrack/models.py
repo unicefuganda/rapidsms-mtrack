@@ -163,6 +163,9 @@ class Reporters(models.Model):
         managed = False
         db_table = 'reporters'
 
+    def __unicode__(self):
+        return self.name
+
 class ApproveSummary(models.Model):
     location = models.IntegerField(null=True)
     reports_crp = models.IntegerField(default=0)
