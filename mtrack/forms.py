@@ -344,8 +344,5 @@ class PhaseFilter(FilterForm):
     phase = forms.ChoiceField(choices=(("","-----"),('1','Phase I'),('2','Phase II'),('3','Phase III')),required=False)
 
     def filter(self, request, queryset):
-        #import pdb;pdb.set_trace()
-        if self.cleaned_data['phase'] == "":
-            return queryset
-        phase = self.phases[int(self.cleaned_data['phase'])-1]
-        return queryset.filter(district__in= phase)
+        if self.cleaned_data['phase'] == "":return queryset
+        return queryset.filter(district__in= self.phases[int(self.cleaned_data['phase'])-1])
