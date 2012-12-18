@@ -304,33 +304,8 @@ class DistrictFilterForm(FilterForm):
                 return queryset
 
 class RolesFilter(FilterForm):
-    role = forms.MultipleChoiceField(choices=(('', '----'),) + tuple(Group.objects.values_list('id','name').order_by('name')), required=False)
-
-    def filter(self, request, queryset):
-        #import pdb; pdb.set_trace()
-        group_pks = self.cleaned_data['role']
-        if '' in group_pks and len(group_pks)<2:
-            return queryset
-        else:
-            if '' in group_pks:group_pks.remove('')
-            groups = Group.objects.filter(id__in=group_pks).values_list('name',flat=True)
-            args = Q()
-            for group in groups:
-                args.add(Q(groups__contains=group),args.OR)
-            queryset = queryset.filter(args)
-            if u'VHT' in groups and not u'PVHT' in groups:
-                exclusions = []
-                for id, grp in queryset.values_list('id','groups'):
-                    grp_list = grp.split(',')
-                    if u'PVHT' in grp_list and not u'VHT' in grp_list:exclusions.append(id)
-                queryset = queryset.exclude(id__in=exclusions)
-            return queryset
-
-class RolesFilter(FilterForm):
     role = forms.MultipleChoiceField(choices=(('', '----'),) + tuple(Group.objects.values_list('id', 'name').order_by('name')), required=False)
-
     def filter(self, request, queryset):
-        # import pdb; pdb.set_trace()
         group_pks = self.cleaned_data['role']
         if '' in group_pks and len(group_pks) < 2:
             return queryset
