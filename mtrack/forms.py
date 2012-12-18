@@ -326,3 +326,30 @@ class RolesFilter(FilterForm):
                     if u'PVHT' in grp_list and not u'VHT' in grp_list:exclusions.append(id)
                 queryset = queryset.exclude(id__in=exclusions)
             return queryset
+
+
+class PhaseFilter(FilterForm):
+    PHASEI = [u'Kampala', u'Mukono', u'Buvuma', u'Buikwe', u'Kayunga', u'Mpigi', u'Wakiso',
+              u'Masaka', u'Kalangala', u'Bukomasimbi', u'Kalungu', u'Gomba', u'Kyankwanzi',
+              u'Mityana', u'Mubende', u'Kiboga', u'Nakaseke', u'Nakasongola', u'Luwero', u'Kamuli',
+              u'Buyende', u'Jinja', u'Mayuge', u'Iganga', u'Kaliro', u'Luuka', u'Butambala']
+
+    PHASEII = [u'Kyegegwa', u'Kyenjojo', u'Kibaale',
+               u'Kasese', u'Kamwenge', u'Ibanda', u'Hoima', u'Buliisa', u'Masindi', u'Kiryandongo',
+               u'Kabarole', u'Bundibugyo', u'Ntoroko', u'Ssembabule', u'Lyantonde', u'Lwengo', u'Rakai', u'Kiruhura',
+               u'Isingiro', u'Mbarara', u'Ntungamo', u'Bushenyi', u'Mitooma', u'Rubirizi', u'Sheema', u'Buhweju', u'Kanungu',
+               u'Rukungiri', u'Kabale', u'Kisoro']
+
+    PHASEIII = [u'Abim', u'Adjumani', u'Agago', u'Alebtong', u'Amolatar', u'Amuru', u'Apac',
+                u'Arua', u'Dokolo', u'Gulu', u'Kaabong', u'Kitgum', u'Koboko', u'Kole', u'Kotido',
+                u'Lamwo', u'Lira', u'Maracha', u'Moyo', u'Nebbi', u'Nwoya', u'Otuke', u'Oyam', u'Pader', u'Yumbe', u'Zombo']
+
+    phases = [PHASEI,PHASEII,PHASEIII]
+    phase = forms.ChoiceField(choices=(("","-----"),('1','Phase I'),('2','Phase II'),('3','Phase III')),required=False)
+
+    def filter(self, request, queryset):
+        #import pdb;pdb.set_trace()
+        if self.cleaned_data['phase'] == "":
+            return queryset
+        phase = self.phases[int(self.cleaned_data['phase'])-1]
+        return queryset.filter(district__in= phase)
