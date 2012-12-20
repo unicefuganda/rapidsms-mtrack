@@ -346,3 +346,20 @@ class PhaseFilter(FilterForm):
     def filter(self, request, queryset):
         if self.cleaned_data['phase'] == "":return queryset
         return queryset.filter(district__in= self.phases[int(self.cleaned_data['phase'])-1])
+
+
+class FacilityFilterForm(FilterForm):
+    """ filter form for cvs facilities """
+    facility = forms.ChoiceField(label="Facility", choices=(('', '-----'),),
+                                                            #(-1, 'Has No Facility'),) + tuple([(pk, '%s %s' % (name, type)) for pk, name, type in HealthFacility.objects.values_list('pk', 'name', 'type__name').order_by('type', 'name')]),
+        widget=forms.Select({'class':'ffacility'}))
+
+
+    def filter(self, request, queryset):
+        facility_pk = self.cleaned_data['facility']
+        if facility_pk == '':
+            return queryset
+        elif int(facility_pk) == -1:
+            return queryset.filter(facility=None)
+        else:
+            return queryset.filter(facility_id=facility_pk)
