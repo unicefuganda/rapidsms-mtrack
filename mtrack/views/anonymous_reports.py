@@ -69,7 +69,7 @@ def create_excel(request):
             if not ar.topic:
                 ar.topic = "Unknown"
             if not ar.health_facility and not ar.district:
-                data_set.append(["Missing", "Missing", ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.topic, ar.action_center, ar.comments])
+                data_set.append(["Missing", "Missing", ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.topic, ar.action_center, ar.action_taken, ar.comments])
             if not ar.health_facility:
                 data_set.append(["Missing", ar.district.__unicode__(), ar.date, ar.messages.values()[0]['text'], ar.get_action_display(), ar.topic, ar.action_center, ar.action_taken, ar.comments])
             if not ar.district:
