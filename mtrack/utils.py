@@ -8,10 +8,10 @@ from rapidsms_xforms.models import XFormSubmission
 from uganda_common.utils import get_location_for_user
 from django.db import connection
 from ussd.models import Session
-from mtrack.models import AnonymousReport, Facilities, ApproveSummary
+from mtrack.models import AnonymousReport, Facilities, ApproveSummary, XFormSubmissionExtras
 from django.conf import settings
 XFORMS = [
-    'anonymous' #anonymous report collecting
+    'anonymous'  # anonymous report collecting
 ]
 
 def last_reporting_period(period=1, weekday=getattr(settings, 'FIRSTDAY_OF_REPORTING_WEEK', 3), todate=False):
@@ -36,8 +36,8 @@ def last_reporting_period_number():
         toret += 1
     return toret
 def current_reporting_week_number():
-    #if Monday is first day of Week
-    #return int(time.strftime('%W'))
+    # if Monday is first day of Week
+    # return int(time.strftime('%W'))
     return last_reporting_period_number() + 1
 
 def current_week_reporting_range():
@@ -53,7 +53,7 @@ def total_facilities(location, count=True):
     if not location:
         location = Location.tree.root_nodes()[0]
     locations = location.get_descendants(include_self=True).all()
-    #facilities = HealthFacility.objects.filter(catchment_areas__in=locations).select_related().distinct()
+    # facilities = HealthFacility.objects.filter(catchment_areas__in=locations).select_related().distinct()
     facilities = Facilities.objects.filter(id__in=HealthFacility.\
                                            objects.filter(catchment_areas__in=locations).\
                                            values_list('id', flat=True))
@@ -108,20 +108,36 @@ def get_last_reporting_date(facility):
 
     return None
 
+# def get_facility_reports(location, count=False, date_range=last_reporting_period(period=1, todate=True), approved=None):
+#    facilities = total_facilities(location, count=False)
+#    # print date_range
+#    staff = get_staff_for_facility(facilities)
+#    toret = XFormSubmission.objects.filter(\
+#        connection__contact__in=staff, \
+#        has_errors=False).order_by('-created')
+#    if date_range:
+#        toret = toret.filter(created__range=date_range)
+#    if approved is not None:
+#        toret = toret.filter(approved=approved)
+#
+#    if count:
+#        # print toret.values('created', 'id')
+#        return toret.count()
+#    return toret
+
 def get_facility_reports(location, count=False, date_range=last_reporting_period(period=1, todate=True), approved=None):
     facilities = total_facilities(location, count=False)
-    #print date_range
-    staff = get_staff_for_facility(facilities)
-    toret = XFormSubmission.objects.filter(\
-        connection__contact__in=staff, \
-        has_errors=False).order_by('-created')
+    toret = XFormSubmission.objects.filter(pk__in=XFormSubmissionExtras.objects.filter(\
+            facility__in=facilities, reporter__groups__name='HC').\
+            values_list('submission', flat=True), has_errors=False).order_by('-created')
+
     if date_range:
         toret = toret.filter(created__range=date_range)
     if approved is not None:
         toret = toret.filter(approved=approved)
 
     if count:
-        #print toret.values('created', 'id')
+        # print toret.values('created', 'id')
         return toret.count()
     return toret
 
@@ -137,7 +153,7 @@ def get_ussd_facility_reports(location, count=False, date_range=last_reporting_p
     toret = XFormSubmission.objects.exclude(connection__contact=None)\
         .exclude(connection__contact__healthproviderbase__healthprovider__facility=None)\
         .filter(\
-        #connection__contact__in=staff, \
+        # connection__contact__in=staff, \
         pk__in=Session.objects.exclude(submissions=None).values_list('submissions', flat=True), \
         has_errors=False).order_by('-created')
     if date_range:
@@ -163,7 +179,7 @@ def get_all_ussd_facility_reports_for_view(request=None):
 
 def get_facility_reports_for_view(request=None):
     location = get_location_for_user(request.user)
-    #print location
+    # print location
     return get_facility_reports(location, count=False, approved=False)
 
 def get_district_for_facility(hc):
@@ -210,7 +226,7 @@ def reporting_vhts(location):
 def get_dashboard_messages(request=None):
     from cvs.utils import get_unsolicited_messages
     toret = get_unsolicited_messages(request=request)
-    # dashboard messages don't have columns, so can't 
+    # dashboard messages don't have columns, so can't
     # be sorted the regular way in generic
     return toret.order_by('-date')
 

@@ -1,8 +1,10 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
 {% load stats_extras %}
-    <td>{{ object.message.connection.contact.healthproviderbase.healthprovider.facility.name }}
-    {{ object.message.connection.contact.healthproviderbase.healthprovider.facility.type.name }} 
+{# <td>{{ object.message.connection.contact.healthproviderbase.healthprovider.facility.name }} #}
+    <td>{{ object|get_submission_facility }}
+        {# {{ object.message.connection.contact.healthproviderbase.healthprovider.facility.type.name }} #}
+        {{ object|get_submission_facility_type }}
     </td>
     <td>{{ object.message.connection.contact.name }}</td>
     <td>{{ object.raw }}
@@ -12,7 +14,7 @@
                 {{ v.attribute.description }}: {{ v.value_int }}
             </li>
         {% endfor %}
-        </ul>    
+        </ul>
     </td>
     <td>{{ object.created|reporting_week }}</td>
     <td>{{ object.created|date:"m/j/y G:i:s" }}</td>

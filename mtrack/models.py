@@ -1,6 +1,7 @@
 from django.db import models
-from healthmodels.models.HealthFacility import HealthFacility
-from healthmodels.models.HealthProvider import HealthProvider
+from healthmodels.models.HealthFacility import HealthFacility, \
+    HealthFacilityBase
+from healthmodels.models.HealthProvider import HealthProvider, HealthProviderBase
 from rapidsms.contrib.locations.models import Location
 from rapidsms.models import Connection
 from rapidsms_httprouter.models import Message
@@ -13,9 +14,9 @@ ACTIONS = (
     ('Es', 'Escalate'),
     ('Cl', 'Close'),
     ('Ig', 'Ignore'),
-    #('Na', 'No Action needed'),
-    #('S', 'Stock out'),
-    #('Ot', 'Other critical')
+    # ('Na', 'No Action needed'),
+    # ('S', 'Stock out'),
+    # ('Ot', 'Other critical')
 )
 TOPICS = (
           ('Absenteeism', 'Absenteeism'),
@@ -47,7 +48,7 @@ class AnonymousReport(models.Model):
     district = models.ForeignKey(Location, null=True)
     comments = models.TextField(null=True)
     health_facility = models.ForeignKey(HealthFacility, null=True)
-    action = models.CharField(max_length=2, choices=ACTIONS, default='Op') #is this the right way??
+    action = models.CharField(max_length=2, choices=ACTIONS, default='Op')  # is this the right way??
     topic = models.CharField(max_length=32, default='Unknown', choices=TOPICS, null=True)
     action_center = models.CharField(max_length=32, default='', choices=ACTION_CENTERS, null=True)
     action_taken = models.TextField(null=True)
@@ -57,17 +58,20 @@ class AnonymousReport(models.Model):
     class Meta:
         ordering = ['-date', 'action', 'topic']
 
-#class AnonymousReportBatch(models.Model):
+# class AnonymousReportBatch(models.Model):
 #    connection = models.ForeignKey(Connection)
 #    anonymous_reports = models.ManyToManyField(AnonymousReport, null=True, default=None)
 #    date = models.DateTimeField(auto_now_add=True)
 
-#Use this model to store extra info on submission esp those created from dashboard
+# Use this model to store extra info on submission esp those created from dashboard
 class XFormSubmissionExtras(models.Model):
-    submission = models.ForeignKey(XFormSubmission)
+    submission = models.ForeignKey(XFormSubmission, unique=True)
     is_late_report = models.BooleanField(default=False)
     submitted_by = models.TextField(null=True)
-    cdate = models.DateTimeField(auto_now_add=True) #since we fake submission.created
+    facility = models.ForeignKey(HealthFacilityBase, null=True, blank=True)
+    # is_hc = models.BooleanField(default=False)  # whether reporter was health care worker
+    reporter = models.ForeignKey(HealthProviderBase, null=True, blank=True)
+    cdate = models.DateTimeField(auto_now_add=True)  # since we fake submission.created
 
     class Meta:
         db_table = 'rapidsms_xforms_xformsubmissionextras'
@@ -120,7 +124,7 @@ class HealthFacilityExtras(models.Model):
     class Meta:
         db_table = 'healthmodels_healthfacilityextras'
 
-#The Health Facilities view used to speed up the facility page
+# The Health Facilities view used to speed up the facility page
 class Facilities(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -143,7 +147,7 @@ class HealthProviderExtras(models.Model):
     class Meta:
         db_table = 'healthmodels_healthproviderextras'
 
-#HealthProviders view that helps to load user's page faster
+# HealthProviders view that helps to load user's page faster
 class Reporters(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -158,7 +162,7 @@ class Reporters(models.Model):
     facility_id = models.IntegerField(null=True)
     facility = models.TextField(default='')
     last_reporting_date = models.DateField(null=True)
-    loc_name = models.CharField(max_length=100, default='') # reporting_location name
+    loc_name = models.CharField(max_length=100, default='')  # reporting_location name
     class Meta:
         managed = False
         db_table = 'reporters'
