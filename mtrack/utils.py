@@ -1,4 +1,5 @@
 import datetime
+import xlwt
 from alerts.models import Notification
 from django.contrib.auth.models import Group
 from django.db.models import Count, Max, Min
@@ -265,7 +266,23 @@ def alerts_report(location, date_range, type=ALERTS_TOTAL):
                    'T%d.rght >= locations_location.rght' % tnum, \
                    location_children_where]).extra(select=select).values(*values).annotate(value=Count(count_val))
 
-def write_xls(sheet_name=None, headings=None, data=None, book=None):
+
+def write_data_values_to_excel(data, rowx, sheet,cell_red_if_value):
+    mark_cell_as_red_style = xlwt.easyxf("pattern: fore_colour red, pattern solid;")
+    for row in data:
+        rowx += 1
+        for colx, value in enumerate(row):
+            style = xlwt.easyxf()
+            try:
+                value = value.strftime("%d/%m/%Y")
+            except:
+                pass
+            if value == cell_red_if_value:
+                style = mark_cell_as_red_style
+            sheet.write(rowx, colx, value, style)
+
+
+def write_xls(sheet_name=None, headings=None, data=None, book=None,cell_red_if_value=None):
     sheet = book.add_sheet(sheet_name)
     rowx = 0
     if not headings:
@@ -276,14 +293,8 @@ def write_xls(sheet_name=None, headings=None, data=None, book=None):
         sheet.set_panes_frozen(True)
         sheet.set_horz_split_pos(rowx + 1)
         sheet.set_remove_splits(True)
-    for row in data:
-        rowx += 1
-        for colx, value in enumerate(row):
-            try:
-                value = value.strftime("%d/%m/%Y")
-            except:
-                pass
-            sheet.write(rowx, colx, value)
+
+    write_data_values_to_excel(data, rowx, sheet,cell_red_if_value)
 
 def query_to_dicts(query_string, *query_args):
     """Run a simple query and produce a generator
