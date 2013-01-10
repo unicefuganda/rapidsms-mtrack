@@ -350,8 +350,19 @@ class PhaseFilter(FilterForm):
 
 class FacilityFilterForm(FilterForm):
     """ filter form for cvs facilities """
-    facility = forms.ChoiceField(label="Facility", choices=(('', '-----'),(-1, 'Has No Facility'),) + tuple([(pk, '%s %s' % (name, type)) for pk, name, type in HealthFacility.objects.values_list('pk', 'name', 'type').order_by('type', 'name')]),widget=forms.Select(attrs={'class':'ffacility'}))
-                                                            #(-1, 'Has No Facility'),) + tuple([(pk, '%s %s' % (name, type)) for pk, name, type in HealthFacility.objects.values_list('pk', 'name', 'type__name').order_by('type', 'name')]),
+    facility = forms.ChoiceField(label="Facility", choices=(('', '-----'),),widget=forms.Select(attrs={'class':'ffacility'}))
+                                                           #(-1, 'Has No Facility'),) + tuple([(pk, '%s %s' % (name, type)) for pk, name, type in HealthFacility.objects.values_list('pk', 'name', 'type__name').order_by('type', 'name')]),
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        facilities = list(HealthFacility.objects.values_list('pk',flat=True))
+        others = ["","-1"]
+        pk = self.data['facility']
+        if pk in others or int(pk) in facilities:
+            cleaned_data['facility'] = pk
+            self._errors = None
+        return cleaned_data
+
     def filter(self, request, queryset):
         #import pdb;pdb.set_trace()
         facility_pk = self.cleaned_data['facility']
