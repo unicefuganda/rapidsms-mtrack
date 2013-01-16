@@ -269,16 +269,17 @@ def alerts_report(location, date_range, type=ALERTS_TOTAL):
 
 def write_data_values_to_excel(data, rowx, sheet,cell_red_if_value):
     mark_cell_as_red_style = xlwt.easyxf("pattern: fore_colour red, pattern solid;")
+    style = xlwt.easyxf()
     for row in data:
         rowx += 1
         for colx, value in enumerate(row):
-            style = xlwt.easyxf()
             try:
                 value = value.strftime("%d/%m/%Y")
             except:
                 pass
             if value == cell_red_if_value:
-                style = mark_cell_as_red_style
+                sheet.write(rowx, colx, value, mark_cell_as_red_style)
+                continue
             sheet.write(rowx, colx, value, style)
 
 
