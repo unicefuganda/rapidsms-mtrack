@@ -116,3 +116,36 @@ CREATE OR REPLACE FUNCTION update_total_reporters() RETURNS TRIGGER AS $delim$
     END;
 $delim$ LANGUAGE plpgsql;
 
+-- Added function and view to cater for outputing correct stuff in excell export -remeber user switching facility
+CREATE OR REPLACE FUNCTION get_facility_district(fid INTEGER) RETURNS TEXT AS
+$delim$
+    DECLARE
+    ca INTEGER;
+    BEGIN
+        SELECT location_id INTO ca FROM healthmodels_healthfacilitybase_catchment_areas WHERE
+        healthfacilitybase_id = fid LIMIT 1;
+        RETURN get_district(ca);
+    END;
+$delim$ LANGUAGE plpgsql;
+
+DROP VIEW IF EXISTS xform_submissions_view_reviewed;
+CREATE VIEW xform_submissions_view_reviewed AS
+SELECT
+    a.id AS report_id, b.name AS report, b.keyword, a.created AS "date",
+    d.name AS reporter,
+    e.reporter_id AS reporter_id, c.identity AS phone,
+    get_facility_district(e.facility_id) AS district,
+    get_facility_str(e.facility_id) AS facility,
+    CASE WHEN a.has_errors IS TRUE THEN 'No' ELSE 'Yes' END AS valid,
+    CASE WHEN a.approved IS TRUE THEN 'Yes' ELSE 'No' END AS approved
+FROM rapidsms_xforms_xformsubmission a, rapidsms_xforms_xform b,
+    rapidsms_connection c, rapidsms_contact d, rapidsms_xforms_xformsubmissionextras e
+WHERE
+    a.xform_id = b.id
+    AND a.connection_id IS NOT NULL
+    AND e.submission_id = a.id
+    AND b.keyword
+        IN ('com', 'mal', 'rutf', 'epi', 'home', 'birth', 'muac', 'opd', 'test', 'treat', 'rdt', 'act', 'qun', 'cases',
+            'death','doc','med','sum', 'summary', 'vita', 'vacm', 'worm', 'anc', 'eid', 'dpt', 'redm', 'breg', 'tet')
+    AND (a.connection_id = c.id AND c.contact_id = d.id)
+    ORDER BY a.created DESC;

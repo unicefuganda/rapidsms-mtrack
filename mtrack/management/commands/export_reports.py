@@ -93,20 +93,20 @@ headings = {'report_id':{'header':'report_id', 'order':0},
             'phone':{'header':'phone', 'order':5},
             'district':{'header':'district', 'order':6},
             'facility':{'header':'facility', 'order':7},
-            'village':{'header':'village', 'order':8},
-            'valid':{'header':'valid', 'order':9},
-            'approved':{'header':'approved', 'order':10},
+            #'village':{'header':'village', 'order':8},
+            'valid':{'header':'valid', 'order':8},
+            'approved':{'header':'approved', 'order':9},
         }
 
 INITIAL_KEYS = ['report_id', 'report', 'date', 'reporter', 'reporter_id', 'phone',
-                'district', 'facility', 'village', 'valid', 'approved']
+                'district', 'facility', 'valid', 'approved'] #removed village
 
-offset = 10 #excel column offset
+offset = 9 #excel column offset
 if rtype == 'vht':
     headings.pop('approved')
     INITIAL_KEYS.pop(INITIAL_KEYS.index('approved'))
     default_pre_surfix = '_vht'
-    offset = 9
+    offset = 8
 KEYS_FOR_VALUES = [] + INITIAL_KEYS
 #get all the other headings
 cur.execute("SELECT name, description, slug FROM xformfields_view WHERE %s TRUE"%report_keywords_where_clause.get(rtype,
@@ -124,7 +124,7 @@ for r in res:
 
 #preload the data
 print "Generating preliminary data....."
-cur.execute("SELECT report_id, report, to_char(date, 'yyyy-mm-dd HH24:MI:SS') as date, reporter, reporter_id, phone, district, facility, village, valid, approved FROM xform_submissions_view WHERE %s" % sql_2)
+cur.execute("SELECT report_id, report, to_char(date, 'yyyy-mm-dd HH24:MI:SS') as date, reporter, reporter_id, phone, district, facility, valid, approved FROM xform_submissions_view_reviewed WHERE %s" % sql_2) # removed village
 data = cur.fetchall()[:65530]
 row_len = len(data)
 
