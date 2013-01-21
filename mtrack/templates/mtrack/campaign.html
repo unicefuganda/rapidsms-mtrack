@@ -3,6 +3,16 @@
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}generic/stylesheets/generic.css"/>
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}generic/stylesheets/map.css"/>
+    <style type="text/css">
+        .bedlinks li {
+            margin: 0;
+            padding-bottom: 10px;
+            background: url(pipe.gif) 0 .3em no-repeat;
+            list-style-type: none;
+            font-weight: bold;
+
+        }
+    </style>
 {% endblock %}
 {% block javascripts %}
     {{ block.super }}
@@ -20,11 +30,11 @@
 This first dashboard view - with alerts and reports to approve - is currently using test data. You will be notified when your content is available.
 <img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/> -->
     <div class="module">
-        <h2>Alerts</h2>
+        <h2>Campaign</h2>
         <div id="alerts">
-            <ul>
-                <li><a href="{% url fhd-stats %}">FHDs</a> </li>
-                <li><a href="{% url bednets %}">BED NETS</a></li>
+            <ul class="bedlinks">
+                <li><a href="{% url fhd-stats %}"><h3>FHDs</h3></a> </li>
+                <li><a href="{% url bednets %}"><h3>BEDNETS</h3></a></li>
             </ul>
         </div>
     </div>
