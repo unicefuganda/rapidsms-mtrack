@@ -33,7 +33,7 @@ class Command(BaseCommand):
         l = []
         #lets stick to sheet one only
         #num_of_sheets = wb.nsheets
-        num_of_sheets = 1
+        num_of_sheets = 4
         for i in xrange(num_of_sheets):
             sh = wb.sheet_by_index(i)
             for rownum in range(sh.nrows):
