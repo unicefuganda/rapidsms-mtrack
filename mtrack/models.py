@@ -140,6 +140,9 @@ class Facilities(models.Model):
         managed = False
         db_table = 'facilities'
 
+    def __unicode__(self):
+        return self.name
+
 class HealthProviderExtras(models.Model):
     health_provider = models.ForeignKey(HealthProvider, unique=True)
     total_reports = models.IntegerField(default=0)

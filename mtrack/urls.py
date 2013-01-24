@@ -97,8 +97,8 @@ urlpatterns = patterns('',
         'partial_row':'mtrack/partials/report_row.html', \
         'results_title':'Last Reporting Period Results', \
         'action_forms':[ApproveForm, RejectForm], \
-        'columns':[('Facility', True, 'message__connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()), \
-                   ('Reporter', True, 'message__connection__contact__name', SimpleSorter(),), \
+        'columns':[('Facility', True, 'connection__contact__healthproviderbase__healthprovider__facility__name', SimpleSorter()), \
+                   ('Reporter', True, 'connection__contact__name', SimpleSorter(),), \
                    ('Report', True, 'raw', SimpleSorter(),), \
                    ('Week#', False, '', None,),
                    ('Date', True, 'created', SimpleSorter(),), \

@@ -55,9 +55,7 @@ def total_facilities(location, count=True):
         location = Location.tree.root_nodes()[0]
     locations = location.get_descendants(include_self=True).all()
     # facilities = HealthFacility.objects.filter(catchment_areas__in=locations).select_related().distinct()
-    facilities = Facilities.objects.filter(id__in=HealthFacility.\
-                                           objects.filter(catchment_areas__in=locations).\
-                                           values_list('id', flat=True))
+    facilities = HealthFacility.objects.filter(catchment_areas__in=locations)
     if count:
         return facilities.count()
 
@@ -141,6 +139,9 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
         # print toret.values('created', 'id')
         return toret.count()
     return toret
+
+def temp_get_facility_reports(location, count=False, date_range=last_reporting_period(period=1, todate=True), approved=None):
+    facilities = total_facilities(location,count=False)
 
 def get_facility_reports2(location, date_range=last_reporting_period(period=0), todate=False):
     toret = 0
