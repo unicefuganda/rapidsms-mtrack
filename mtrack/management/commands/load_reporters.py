@@ -19,8 +19,8 @@ class Command(BaseCommand):
         self.order = getattr(settings, 'REPORTER_EXCEL_FIELDS', {
                 'name':0, 'phone':1,
                 'district':3, 'role':2,
-                'facility':4, 'facility_type':5,
-                'village':6, 'village_type':7, 'pvht':8, 'village_name':9,
+                'facility':5, 'facility_type':6,
+                'village':4, 'village_type':7, #'pvht':8, 'village_name':9,
                 })
 
 
@@ -39,13 +39,19 @@ class Command(BaseCommand):
             for rownum in range(sh.nrows):
                 vals = sh.row_values(rownum)
                 l.append(vals)
-        #print l
+        print l
         return l
 
     @transaction.commit_manually
     def load_reporters(self, data):
+        n = 0
+        transaction.commit()
         for d in data:
+            n+=1
+            print 'n = ',n
+            print 'back up'
             if not d[self.order['name']] or not d[self.order['phone']]:
+                print "no name"
                 continue
             print d
             _name = d[self.order['name']].strip()
@@ -54,14 +60,15 @@ class Command(BaseCommand):
             _district = d[self.order['district']].strip()
             _role = d[self.order['role']].strip()
             _fac = d[self.order['facility']].strip()
-            _fac_type = d[self.order['facility_type']]
+            _fac_type = d[self.order['facility_type']].replace(' ','').lower()
+            print _fac_type
             _village = d[self.order['village']].strip()
             _village_type = d[self.order['village_type']].strip()
-            _pvht = d[self.order['pvht']]
-            _phone = _phone.split('e')[0].split('.')[0].replace('-', '')
+#            _pvht = d[self.order['pvht']]
+            _phone = _phone.strip().replace('.','').split('e')[0].split('.')[0].replace('-', '')
             nums = _phone.split('/')
             _phone2 = ''
-            _village_name = d[self.order['village_name']].capitalize()
+#            _village_name = d[self.order['village_name']].capitalize()
             already_exists = False
             print nums
             if len(nums) > 1:
@@ -71,7 +78,10 @@ class Command(BaseCommand):
             print _name, _phone, _role
             district = find_closest_match(_district, Location.objects.filter(type='district'))
             #roles = list(Group.objects.filter(name__in=_role.split(',')))
-
+            print district
+            if not district:
+                transaction.commit()
+                continue
             #try:
             #    facility = find_closest_match(_fac, HealthFacility.objects.filter(type__name__in=[_fac_type]).\
             #            filter(catchment_areas__in=district.get_descendants(include_self=True)))
@@ -85,18 +95,20 @@ class Command(BaseCommand):
                         filter(catchment_areas__in=district.get_descendants(include_self=True))
                 facility = xx[0] if xx else ''
                 if not facility:
+                    facility = HealthFacility.objects.filter(name=_fac).filter(catchment_areas__in=district.get_descendants(include_self=True))
+                    if facility.exists(): facility = facility[0]
+                if not facility:
+                    transaction.commit()
                     print "WARNING: Facility Not Found (%s %s)" % (_fac, _fac_type)
                     continue
             village = None
             if _village:
                 if district:
-                    #village = find_closest_match(_village, district.get_descendants(include_self=True).filter(type__in=[_village_type]))
-                    village = district.get_descendants(include_self=True).filter(name=_village, type__name=_village_type)[0]
-                    print "***********", _village, "*********", village
-                else:
                     village = find_closest_match(_village, Location.objects.filter(type__in=[_village_type]))
-            if _name:
-                _name = ' '.join([n.capitalize() for n in _name.lower().split()])
+                    print 'at village'
+                    transaction.commit()
+#            if _name:
+#                _name = ' '.join([n.capitalize() for n in _name.lower().split()])
             msisdn, backend = assign_backend(_phone)
             print msisdn, village
 
@@ -117,7 +129,7 @@ class Command(BaseCommand):
                     connection2 = Connection.objects.get(identity=msisdn2, backend=backend2)
                 except Connection.DoesNotExist:
                     connection2 = Connection.objects.create(identity=msisdn2, backend=backend2)
-                except Connection.MultipleObectsReturned:
+                except Connection.MultipleObjectsReturned:
                     connection2 = Connection.objects.filter(identity=msisdn2, backend=backend2)[0]
 
             try:
@@ -126,7 +138,7 @@ class Command(BaseCommand):
                                       village=village, \
                                       village_name=_village)
                 already_exists = True
-            except Contact.DoesNotExist, Contact.MultipleObectsReturned:
+            except Contact.DoesNotExist, Contact.MultipleObjectsReturned:
                 contact = HealthProvider.objects.create()
                 transaction.commit()
 
@@ -141,13 +153,13 @@ class Command(BaseCommand):
             if village:
                 contact.reporting_location = village
                 contact.village = village
-                contact.village_name = _village_name or None
+                contact.village_name = None
             else:
                 if district:
                     contact.reporting_location = district
                 else:
                     contact.reporting_location = Location.tree.root_nodes()[0]
-                contact.village_name = _village_name or _village
+                contact.village_name = _village
                 contact.village = None
             transaction.commit()
             current_groups = list(contact.groups.all().values_list('name', flat=True))
@@ -162,3 +174,4 @@ class Command(BaseCommand):
                 contact.connection_set.add(connection2)
             contact.save()
             transaction.commit()
+            print contact.id

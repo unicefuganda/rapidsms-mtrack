@@ -126,9 +126,10 @@ def get_last_reporting_date(facility):
 
 def get_facility_reports(location, count=False, date_range=last_reporting_period(period=1, todate=True), approved=None):
     facilities = total_facilities(location, count=False)
-    toret = XFormSubmission.objects.filter(pk__in=XFormSubmissionExtras.objects.filter(\
-            facility__in=facilities, reporter__groups__name='HC').\
-            values_list('submission', flat=True), has_errors=False).order_by('-created')
+    toret = XFormSubmission.objects.filter(pk__in=XFormSubmissionExtras.objects.filter(
+            facility__in=facilities, reporter__groups__name='HC').
+            values_list('submission', flat=True), has_errors=False,
+        xform__keyword__in=['act', 'cases', 'death', 'opd', 'test', 'treat', 'rdt', 'qun']).order_by('-created')
 
     if date_range:
         toret = toret.filter(created__range=date_range)
@@ -139,9 +140,6 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
         # print toret.values('created', 'id')
         return toret.count()
     return toret
-
-def temp_get_facility_reports(location, count=False, date_range=last_reporting_period(period=1, todate=True), approved=None):
-    facilities = total_facilities(location,count=False)
 
 def get_facility_reports2(location, date_range=last_reporting_period(period=0), todate=False):
     toret = 0
