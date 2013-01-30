@@ -141,7 +141,7 @@ urlpatterns = patterns('',
         'sort_column': 'connection__contact__healthproviderbase__healthprovider__facility__name'
     }, name='ussd-facility-reports'),
     url(r"^xforms/submissions/(\d+)/edit/$", login_required(edit_report)),
-    url(r"^dataentry/$", login_required(data_entry)),
+    url(r"^dataentry/$", login_required(data_entry),name='dataentry'),
     url(r"^facility_cas/$", login_required(facility_cas)),
     url(r"^ajax_portal/$", ajax_portal),
     url(r"^ajax_portal2/$", ajax_portal2),

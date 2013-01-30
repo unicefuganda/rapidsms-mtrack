@@ -1,4 +1,5 @@
 import datetime
+from django.core import urlresolvers
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from rapidsms.contrib.locations.models import Location
@@ -7,7 +8,7 @@ from healthmodels.models.HealthProvider import HealthProvider
 from rapidsms_xforms.models import XForm, XFormSubmission
 from rapidsms_xforms.views import make_submission_form
 from rapidsms_httprouter.models import Message
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import simplejson
 from django.conf import settings
 from mtrack.models import XFormSubmissionExtras
@@ -80,6 +81,7 @@ def data_entry(request):
                 XFormSubmissionExtras.objects.create(submission=submission,
                         submitted_by=submitted_by+":"+request.user.username, is_late_report=is_late)
             submission.save()
+            return HttpResponseRedirect(urlresolvers.reverse('dataentry'))
     else:
         pass
     return render_to_response('mtrack/data_entry.html', {'districts': districts,

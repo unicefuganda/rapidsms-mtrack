@@ -19,8 +19,8 @@ class Command(BaseCommand):
         self.order = getattr(settings, 'REPORTER_EXCEL_FIELDS', {
                 'name':0, 'phone':1,
                 'district':3, 'role':2,
-                'facility':5, 'facility_type':6,
-                'village':4, 'village_type':7, #'pvht':8, 'village_name':9,
+                'facility':4, 'facility_type':5,
+                'village':6, 'village_type':7, #'pvht':8, 'village_name':9,
                 })
 
 
@@ -33,7 +33,7 @@ class Command(BaseCommand):
         l = []
         #lets stick to sheet one only
         #num_of_sheets = wb.nsheets
-        num_of_sheets = 4
+        num_of_sheets = 1
         for i in xrange(num_of_sheets):
             sh = wb.sheet_by_index(i)
             for rownum in range(sh.nrows):
@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 print "no name"
                 continue
             print d
-            _name = d[self.order['name']].strip()
+            _name = d[self.order['name']].strip().lower().capitalize()
             _phone = '%s' % d[self.order['phone']]
             print "=====================>", _phone
             _district = d[self.order['district']].strip()
@@ -91,11 +91,13 @@ class Command(BaseCommand):
             #    facility = xx[0] if xx else ''
             facility = ''
             if not facility:
-                xx = HealthFacility.objects.filter(name="%s" % _fac, type__name=_fac_type).\
+                xx = HealthFacility.objects.filter(name__iexact="%s" % _fac, type__name=_fac_type).\
                         filter(catchment_areas__in=district.get_descendants(include_self=True))
                 facility = xx[0] if xx else ''
+                print 'facility --1',xx.count()
                 if not facility:
-                    facility = HealthFacility.objects.filter(name=_fac).filter(catchment_areas__in=district.get_descendants(include_self=True))
+                    facility = HealthFacility.objects.filter(name__iexact=_fac).filter(catchment_areas__in=district.get_descendants(include_self=True))
+                    print 'facility --2',facility.count()
                     if facility.exists(): facility = facility[0]
                 if not facility:
                     transaction.commit()
