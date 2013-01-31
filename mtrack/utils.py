@@ -2,7 +2,7 @@ import datetime
 import xlwt
 from alerts.models import Notification
 from django.contrib.auth.models import Group
-from django.db.models import Count, Max, Min
+from django.db.models import Count, Max, Min, Q
 from healthmodels.models import HealthFacility, HealthProvider
 from rapidsms.contrib.locations.models import Location
 from rapidsms_xforms.models import XFormSubmission
@@ -55,7 +55,7 @@ def total_facilities(location, count=True):
         location = Location.tree.root_nodes()[0]
     locations = location.get_descendants(include_self=True).all()
     # facilities = HealthFacility.objects.filter(catchment_areas__in=locations).select_related().distinct()
-    facilities = HealthFacility.objects.filter(catchment_areas__in=locations)
+    facilities = HealthFacility.objects.filter(Q(catchment_areas__in=locations) | Q(location__in=locations))
     if count:
         return facilities.count()
 
