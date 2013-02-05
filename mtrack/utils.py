@@ -55,7 +55,7 @@ def total_facilities(location, count=True):
         location = Location.tree.root_nodes()[0]
     locations = location.get_descendants(include_self=True).all()
     # facilities = HealthFacility.objects.filter(catchment_areas__in=locations).select_related().distinct()
-    facilities = HealthFacility.objects.filter(Q(catchment_areas__in=locations) | Q(location__in=locations))
+    facilities = HealthFacility.objects.filter(catchment_areas__in=locations)
     if count:
         return facilities.count()
 
