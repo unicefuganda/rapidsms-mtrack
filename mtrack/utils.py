@@ -11,6 +11,9 @@ from django.db import connection
 from ussd.models import Session
 from mtrack.models import AnonymousReport, Facilities, ApproveSummary, XFormSubmissionExtras
 from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
 XFORMS = [
     'anonymous'  # anonymous report collecting
 ]
