@@ -126,9 +126,7 @@ def get_last_reporting_date(facility):
 
 def get_facility_reports(location, count=False, date_range=last_reporting_period(period=1, todate=True), approved=None):
     facilities = total_facilities(location, count=False)
-    toret = XFormSubmission.objects.filter(pk__in=XFormSubmissionExtras.objects.filter(
-            facility__in=facilities, reporter__groups__name='HC').
-            values_list('submission', flat=True), has_errors=False,
+    toret = XFormSubmission.objects.filter(connection__contact__healthproviderbase__facility__in=facilities, has_errors=False,
         xform__keyword__in=['act', 'cases', 'death', 'opd', 'test', 'treat', 'rdt', 'qun']).order_by('-created')
 
     if date_range:
