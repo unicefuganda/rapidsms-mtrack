@@ -131,8 +131,8 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
     facilities = total_facilities(location, count=False)
     k = HealthFacility.objects.filter(name__icontains='Budongo')[0]
     logger.info("%s: %s"%(k, k in facilities))
-    s = k.xformsubmissionextras_set.all()[0].submission
-    logger.info("%s - has_errors = %s, created = %s, Xform in = %s: "%(k,s.has_errors, s.created, s.xform in ['act', 'cases', 'death', 'opd', 'test', 'treat', 'rdt', 'qun']))
+    s = k.xformsubmissionextras_set.latest('cdate').submission
+    logger.info("%s - has_errors = %s, created = %s, Xform in = %s: "%(k,s.has_errors, s.created, s.xform.keyword in ['act', 'cases', 'death', 'opd', 'test', 'treat', 'rdt', 'qun']))
     toret = XFormSubmission.objects.filter(connection__contact__healthproviderbase__facility__in=facilities, has_errors=False,
         xform__keyword__in=['act', 'cases', 'death', 'opd', 'test', 'treat', 'rdt', 'qun']).order_by('-created')
 
