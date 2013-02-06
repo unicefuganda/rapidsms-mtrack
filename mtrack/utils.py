@@ -135,7 +135,7 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
     logger.info("%s - has_errors = %s, created = %s, Xform in = %s:,approved = %s "%(k,s.has_errors, s.created, s.xform.keyword in ['act', 'cases', 'death', 'opd', 'test', 'treat', 'rdt', 'qun'],s.approved))
     toret = XFormSubmission.objects.filter(connection__contact__healthproviderbase__facility__in=facilities, has_errors=False,
         xform__keyword__in=['act', 'cases', 'death', 'opd', 'test', 'treat', 'rdt', 'qun']).order_by('-created')
-    logger.info('%s: %s'%k, s in toret)
+    logger.info('%s: %s'%(k, s in toret))
     if date_range:
         toret = toret.filter(created__range=date_range)
     if approved is not None:
