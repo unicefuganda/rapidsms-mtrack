@@ -1,5 +1,4 @@
 import sys
-from django.db.transaction import TransactionManagementError
 import xlrd
 from django.core.management.base import BaseCommand
 from rapidsms.contrib.locations.models import Location
@@ -14,14 +13,14 @@ from django.db import transaction
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        if len(args) < 1:
+        if (len(args) < 1):
             print "Please specify file with reporters"
             return
         self.order = getattr(settings, 'REPORTER_EXCEL_FIELDS', {
                 'name':0, 'phone':1,
                 'district':3, 'role':2,
-                'facility':5, 'facility_type':6,
-                'village':4, 'village_type':7, #'pvht':8, 'village_name':9,
+                'facility':4, 'facility_type':5,
+                'village':6, 'village_type':7, #'pvht':8, 'village_name':9,
                 })
 
 
@@ -43,119 +42,82 @@ class Command(BaseCommand):
         print l
         return l
 
-    def _clean_name(self,name):
-        _name = name.strip().lower().split()
-        return " ".join([n.capitalize() for n in _name])
-
-    def _clean_phones(self,phone):
-        return phone.strip().replace('.','').split('e')[0].replace('-', '').replace(" ","").split("/")
-
-    def _clean_role(self,role):
-        _role = role.strip().upper().split(',')
-        print _role, role
-        return Group.objects.filter(name__in =_role)
-
-    def _clean_district(self,district):
-        _district = district.strip()
-        return find_closest_match(_district, Location.objects.filter(type='district'))
-
-    def _clean_facility(self,facility,facility_type,district):
-        _facility = HealthFacility.objects.filter(name__iexact="%s" % facility,
-                        type__name=facility_type).filter(catchment_areas__in=district.get_descendants(include_self=True))
-        if not _facility:
-            _facility = HealthFacility.objects.filter(name__iexact=facility).filter(catchment_areas__in=district.get_descendants())
-        return _facility[0] if _facility else None
-
-    def _clean_village(self,village,village_type):
-        return find_closest_match(village, Location.objects.filter(type__in=[village_type]))
-
-    @transaction.commit_manually
-    def _already_exists(self,phone):
-        try:
-            transaction.commit()
-            Connection.objects.get(identity=phone)
-            transaction.commit()
-            return True
-        except Connection.DoesNotExist: return False
-
     @transaction.commit_manually
     def load_reporters(self, data):
         n = 0
         transaction.commit()
-        self.already_in = []
         for d in data:
-            print 'Start'
+            n+=1
+            print 'n = ',n
+            print 'back up'
             if not d[self.order['name']] or not d[self.order['phone']]:
                 print "no name"
                 continue
             print d
-            _name = d[self.order['name']]
-            name = self._clean_name(_name)
+            _name = d[self.order['name']].strip().lower().capitalize()
             _phone = '%s' % d[self.order['phone']]
-            phones = self._clean_phones(_phone)
-            print "=====================>", phones
-            _district = d[self.order['district']]
-            district = self._clean_district(_district)
-            _role = d[self.order['role']]
-            role = self._clean_role(_role)
-            _fac = d[self.order['facility']]
+            print "=====================>", _phone
+            _district = d[self.order['district']].strip()
+            _role = d[self.order['role']].strip()
+            _fac = d[self.order['facility']].strip()
             _fac_type = d[self.order['facility_type']].replace(' ','').lower()
-            facility = self._clean_facility(_fac,_fac_type,district)
-            transaction.commit()
-            print facility
+            print _fac_type
             _village = d[self.order['village']].strip()
             _village_type = d[self.order['village_type']].strip()
-            village = self._clean_village(_village,_village_type)
-            print name, phones, role
+#            _pvht = d[self.order['pvht']]
+            _phone = _phone.strip().replace('.','').split('e')[0].split('.')[0].replace('-', '')
+            nums = _phone.split('/')
+            _phone2 = ''
+#            _village_name = d[self.order['village_name']].capitalize()
+            already_exists = False
+            print nums
+            if len(nums) > 1:
+                _phone = nums[0]
+                _phone2 = nums[1]
 
-            transaction.commit()
-            p = len(phones)-1
-            while p >= 0:
-                transaction.commit()
-                exist = False
-                try:
-                    exist,d_ = self._has_different_facility(phones[p],facility)
-                except TransactionManagementError:
-                    pass
-                transaction.commit()
-                if exist:
-                    print "User already attached to different facility ==> %s" %phones.pop(p)
-                    self.already_in.append(d_)
-                    #TODO Create excel with all these numbers
-                p -= 1
-#            transaction.commit()
-#            continue
-
-            if not phones:
-                print "==>Phones list seems empty"
-                transaction.commit()
-                continue
-
-
+            print _name, _phone, _role
+            district = find_closest_match(_district, Location.objects.filter(type='district'))
+            #roles = list(Group.objects.filter(name__in=_role.split(',')))
+            print district
             if not district:
-                print "==>District not found (%s)"%_district
                 transaction.commit()
                 continue
-
-            if not village:
-                print "Village not found (%s - %s)"%(_village,_village_type)
-                transaction.commit()
-
+            #try:
+            #    facility = find_closest_match(_fac, HealthFacility.objects.filter(type__name__in=[_fac_type]).\
+            #            filter(catchment_areas__in=district.get_descendants(include_self=True)))
+            #except HealthFacility.MultipleObjectsReturned:
+            #    xx = HealthFacility.objects.filter(name=_fac,type__name=_fac_type).\
+            #            filter(catchment_areas__in=district.get_descendants(include_self=True))
+            #    facility = xx[0] if xx else ''
+            facility = ''
             if not facility:
-                print "==============>Facility not found (%s - %s)"%(_fac,_fac_type)
-                transaction.commit()
-                continue
-
-            phone,phone2 = phones[0],None
-            if len(phones) > 1:
-                phone2 = phones[1]
-
-            msisdn, backend = assign_backend(phone)
+                xx = HealthFacility.objects.filter(name__iexact="%s" % _fac, type__name=_fac_type).\
+                        filter(catchment_areas__in=district.get_descendants(include_self=True))
+                facility = xx[0] if xx else ''
+                print 'facility --1',xx.count()
+                if not facility:
+                    facility = HealthFacility.objects.filter(name__iexact=_fac).filter(catchment_areas__in=district.get_descendants(include_self=True))
+                    print 'facility --2',facility.count()
+                    if facility.exists(): facility = facility[0]
+                if not facility:
+                    transaction.commit()
+                    print "WARNING: Facility Not Found (%s %s)" % (_fac, _fac_type)
+                    continue
+            village = None
+            if _village:
+                if district:
+                    village = find_closest_match(_village, Location.objects.filter(type__in=[_village_type]))
+                    print 'at village'
+                    transaction.commit()
+#            if _name:
+#                _name = ' '.join([n.capitalize() for n in _name.lower().split()])
+            msisdn, backend = assign_backend(_phone)
             print msisdn, village
 
-            if phone2:
-                msisdn2, backend2 = assign_backend(phone2)
+            if _phone2:
+                msisdn2, backend2 = assign_backend(_phone2)
 
+            connection2 = None
             try:
                 connection = Connection.objects.get(identity=msisdn, backend=backend)
             except Connection.DoesNotExist:
@@ -164,8 +126,7 @@ class Command(BaseCommand):
             except Connection.MultipleObjectsReturned:
                 connection = Connection.objects.filter(identity=msisdn, backend=backend)[0]
             # a second phone number
-            connection2 = None
-            if phone2:
+            if _phone2:
                 try:
                     connection2 = Connection.objects.get(identity=msisdn2, backend=backend2)
                 except Connection.DoesNotExist:
@@ -178,17 +139,19 @@ class Command(BaseCommand):
                                       reporting_location=(village or  district), \
                                       village=village, \
                                       village_name=_village)
+                already_exists = True
             except Contact.DoesNotExist, Contact.MultipleObjectsReturned:
                 contact = HealthProvider.objects.create()
                 transaction.commit()
 
-
-
             connection.contact = contact
             connection.save()
-            contact.name = name
-            contact.facility = facility
-            transaction.commit()
+            if _name:
+                contact.name = _name
+
+            if facility:
+                contact.facility = facility
+                transaction.commit()
             if village:
                 contact.reporting_location = village
                 contact.village = village
@@ -201,29 +164,16 @@ class Command(BaseCommand):
                 contact.village_name = _village
                 contact.village = None
             transaction.commit()
+            current_groups = list(contact.groups.all().values_list('name', flat=True))
+            new_roles = list(set(_role.split(',') + current_groups))
+            roles = list(Group.objects.filter(name__in=new_roles))
 
             contact.groups.clear()
-            for r in role:
-                contact.groups.add(r)
+            for role in roles:
+                contact.groups.add(role)
 
             if connection2:
                 contact.connection_set.add(connection2)
             contact.save()
             transaction.commit()
             print contact.id
-        print self.already_in
-        transaction.commit()
-
-    @transaction.commit_manually
-    def _has_different_facility(self, phone,facility):
-        transaction.commit()
-        if self._already_exists(phone):
-            transaction.commit()
-            connection = Connection.objects.get(identity=phone)
-            old_facility = connection.contact.healthproviderbase.facility if connection.contact else None
-            transaction.commit()
-            if connection.contact and connection.contact.is_active and old_facility and facility and old_facility != facility:
-                d = {'phone':phone,'facility':old_facility,'new_facility':facility}
-                transaction.commit()
-                return True,d
-        return False,None
