@@ -1,6 +1,6 @@
 from .forms import ReplyTextForm, ApproveForm, RejectForm
 from django.conf.urls.defaults import patterns, url, include
-from django.contrib.auth.decorators import login_required
+from mtrack.decorators import login_required
 from django.views.generic.simple import direct_to_template
 from generic.sorters import SimpleSorter
 from generic.views import generic, generic_row
