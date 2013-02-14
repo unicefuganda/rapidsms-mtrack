@@ -104,7 +104,7 @@ def add_supply_points_to_facilities(log_to_console=False):
             except ValueError:
                 print "  ERROR: facility %s %s has no location" % (f.name, f.pk)
                 continue
-            f.save()
+            f.save(cascade_update = False)
             if log_to_console:
                 print "  %s supply point created" % f.name
     # verify that this all worked
