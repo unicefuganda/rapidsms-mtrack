@@ -4,12 +4,14 @@ from alerts.models import Notification
 from django.contrib.auth.models import Group
 from django.db.models import Count, Max, Min, Q
 from healthmodels.models import HealthFacility, HealthProvider
+from poll.models import Response
 from rapidsms.contrib.locations.models import Location
+from rapidsms_httprouter.models import Message
 from rapidsms_xforms.models import XFormSubmission
 from uganda_common.utils import get_location_for_user
 from django.db import connection
 from ussd.models import Session
-from mtrack.models import AnonymousReport, Facilities, ApproveSummary, XFormSubmissionExtras
+from mtrack.models import AnonymousReport, ApproveSummary
 from django.conf import settings
 import logging
 
@@ -85,6 +87,27 @@ def total_vhts(location, count=True):
         return vhts.count()
 
     return vhts
+
+def get_messages(request):
+    #First we get all incoming messages
+    messages = Message.objects.filter(direction='I')
+
+    #Get only messages handled by rapidsms_xforms and the polls app (this exludes opt in and opt out messages)
+    messages = messages.filter(Q(application=None) | Q(application__in=['rapidsms_xforms', 'poll']))
+
+    sql = 'SELECT DISTINCT ON ("rapidsms_xforms_xformsubmission"."message_id", "healthmodels_healthproviderbase"."facility_id") "rapidsms_xforms_xformsubmission"."id","rapidsms_xforms_xformsubmission"."message_id", "rapidsms_xforms_xformsubmission"."created" FROM "rapidsms_xforms_xformsubmission" LEFT OUTER JOIN "rapidsms_connection" ON ("rapidsms_xforms_xformsubmission"."connection_id" = "rapidsms_connection"."id") LEFT OUTER JOIN "rapidsms_contact" ON ("rapidsms_connection"."contact_id" = "rapidsms_contact"."id") LEFT OUTER JOIN "healthmodels_healthproviderbase" ON ("rapidsms_contact"."id" = "healthmodels_healthproviderbase"."contact_ptr_id") WHERE (NOT ("rapidsms_xforms_xformsubmission"."message_id" IS NULL) AND "rapidsms_xforms_xformsubmission"."has_errors" = False )'
+
+    x = XFormSubmission.objects.raw(sql)
+
+
+    #Exclude XForm submissions
+    messages = messages.exclude(pk__in=[s.message_id for s in x])
+
+    # Exclude Poll responses
+    messages = messages.exclude(
+        pk__in=Response.objects.exclude(message=None).filter(has_errors=False).values_list('message__pk', flat=True))
+
+    return messages
 
 def get_staff_for_facility(facilities):
     hc_role = Group.objects.get(name='HC')
