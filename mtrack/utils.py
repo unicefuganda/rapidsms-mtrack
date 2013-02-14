@@ -94,20 +94,17 @@ def get_messages(request):
 
     #Get only messages handled by rapidsms_xforms and the polls app (this exludes opt in and opt out messages)
     messages = messages.filter(Q(application=None) | Q(application__in=['rapidsms_xforms', 'poll']))
+    s = XFormSubmission.objects.filter(has_errors=True,connection__contact__active=True)
+    x = XFormSubmission.objects.filter(has_errors=False,connection__contact__active=True).values_list('raw',flat=True)
+    y = XFormSubmission.objects.filter(has_errors=False,connection__contact__active=True).values_list('connection__identity')
 
-    sql = 'SELECT DISTINCT ON ("rapidsms_xforms_xformsubmission"."message_id", "healthmodels_healthproviderbase"."facility_id") "rapidsms_xforms_xformsubmission"."id","rapidsms_xforms_xformsubmission"."message_id", "rapidsms_xforms_xformsubmission"."created" FROM "rapidsms_xforms_xformsubmission" LEFT OUTER JOIN "rapidsms_connection" ON ("rapidsms_xforms_xformsubmission"."connection_id" = "rapidsms_connection"."id") LEFT OUTER JOIN "rapidsms_contact" ON ("rapidsms_connection"."contact_id" = "rapidsms_contact"."id") LEFT OUTER JOIN "healthmodels_healthproviderbase" ON ("rapidsms_contact"."id" = "healthmodels_healthproviderbase"."contact_ptr_id") WHERE (NOT ("rapidsms_xforms_xformsubmission"."message_id" IS NULL) AND "rapidsms_xforms_xformsubmission"."has_errors" = False )'
-
-    x = XFormSubmission.objects.raw(sql)
-
-    sub = messages.filter(submissions__in=x)
-
+    s = s.exclude(raw__in=x,connection__identity__in=y)
     #Exclude XForm submissions
-    messages = messages.exclude(submissions__in=x)
+    messages = messages.filter(Q(submissions__in=s)|Q(submissions=None))
 
     # Exclude Poll responses
-    mgs = messages.exclude(
-        pk__in=Response.objects.exclude(message=None).filter(has_errors=False).values_list('message__pk', flat=True)).filter(submissions=None)
-    messages = sub | mgs
+    messages = messages.exclude(
+        pk__in=Response.objects.exclude(message=None).filter(has_errors=False).values_list('message__pk', flat=True))
     return messages
 
 def get_staff_for_facility(facilities):

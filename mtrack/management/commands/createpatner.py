@@ -14,7 +14,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
-        urls = ['^cvs/facility/$','^cvs/reporter/$','^cvs/messagelog/$']
+        urls = ['^cvs/facility/$','^cvs/reporter/$','^cvs/messagelog/$','^cvs/massmessages/$']
         name = options.get('name','')
         password = options.get('password',"")
 
