@@ -99,13 +99,15 @@ def get_messages(request):
 
     x = XFormSubmission.objects.raw(sql)
 
+    sub = messages.filter(submissions__in=x)
+
     #Exclude XForm submissions
     messages = messages.exclude(submissions__in=x)
 
     # Exclude Poll responses
-    messages = messages.exclude(
-        pk__in=Response.objects.exclude(message=None).filter(has_errors=False).values_list('message__pk', flat=True))
-
+    mgs = messages.exclude(
+        pk__in=Response.objects.exclude(message=None).filter(has_errors=False).values_list('message__pk', flat=True)).filter(submissions=None)
+    messages = sub | mgs
     return messages
 
 def get_staff_for_facility(facilities):
