@@ -99,9 +99,8 @@ def get_messages(request):
 
     x = XFormSubmission.objects.raw(sql)
 
-
     #Exclude XForm submissions
-    messages = messages.exclude(pk__in=[s.message_id for s in x])
+    messages = messages.exclude(submissions__in=x)
 
     # Exclude Poll responses
     messages = messages.exclude(
