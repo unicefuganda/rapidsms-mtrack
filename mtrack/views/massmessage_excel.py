@@ -60,7 +60,7 @@ def create_report(request):
              _all_mass_messages_by_sender(request, user, date_range=[last_six_months, d])] for user in
             _all_mass_messages_sender(request)]
 
-    kinds = 'text    text          date         text         text    text'.split()
+    kinds = 'text    int          int         int'.split()
 
     kind_to_xf_map = {
         'date': ezxf(num_format_str='yyyy-mm-dd'),
@@ -75,5 +75,5 @@ def create_report(request):
 
     write_xls(write_path, 'Report', hdngs, data, heading_xf, data_xfs)
     response = HttpResponse(FileWrapper(open(write_path)), content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=alerts.xls'
+    response['Content-Disposition'] = 'attachment; filename=%s_mass_messages.xls'% request.user.username
     return response
