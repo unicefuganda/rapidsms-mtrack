@@ -14,7 +14,8 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         unicef = User.objects.get(username='UNICEF')
-        urls = ['^cvs/facility/$', '^cvs/reporter/$', '^cvs/messagelog/$', '^cvs/massmessages/$']
+        urls = ['^cvs/facility/$', '^cvs/reporter/$', '^cvs/messagelog/$', '^cvs/massmessages/$',
+                '^mtrack/massmessages_excel/$']
         name = options.get('name', '')
         password = options.get('password', "")
 
