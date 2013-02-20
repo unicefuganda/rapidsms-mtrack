@@ -53,7 +53,7 @@ def create_report(request):
     current_month = d - datetime.timedelta(days=30)
     last_six_months = d - datetime.timedelta(days=30 * 6)
     heading_xf = ezxf('font: bold on; align: wrap on, vert centre, horiz center')
-    hdngs = ['User Login Name', 'Number of Messages sent', 'Number of Messages Sent In Current Month',
+    hdngs = ['User Login Name', 'Number of Messages sent', 'Number of Messages Sent In Last 30 Days',
              'Number of Messages Sent in Last Six Months']
     data = [[user, _all_mass_messages_by_sender(request, user),
              _all_mass_messages_by_sender(request, user, date_range=[current_month, d]),
