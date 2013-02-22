@@ -188,5 +188,6 @@ urlpatterns = patterns('',
                        url(r'^mtrack/schedule/edit/(\d+)/$', 'mtrack.views.schedules.edit_schedule',
                            name='edit_schedule'),
                        url(r'^mtrack/massmessages_excel/$', 'mtrack.views.massmessage_excel.create_report',
-                           name='massmessage_excel')
+                           name='massmessage_excel'),
+
 )

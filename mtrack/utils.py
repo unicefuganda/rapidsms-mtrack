@@ -5,6 +5,7 @@ from django.contrib.auth.models import Group
 from django.db.models import Count, Max, Min, Q
 from healthmodels.models import HealthFacility, HealthProvider
 from contact.models import MassText
+from rapidsms.models import Contact
 from poll.models import Response
 from rapidsms.contrib.locations.models import Location
 from rapidsms_httprouter.models import Message
@@ -384,3 +385,15 @@ def get_location_mass_messages(**kwargs):
         count=Count('contacts')).values_list('text', 'date', 'user__username', 'count')
     return messages
 
+
+def get_contacts_for_partner(request):
+    partners = {'mtracpartner': ['Mpigi', 'Gomba', 'Buikwe']}
+    partner = request.user.username.lower()
+    if not partner in partners:
+        return Contact.objects.all()
+    districts = list(Location.objects.filter(name__in=partners[partner], type__name__iexact='district'))
+    locations = districts[0].get_descendants(include_self=True)
+    if len(districts) > 1:
+        for district in districts[1:]:
+            locations = locations | district.get_descendants(include_self=True)
+    return Contact.objects.filter(reporting_location__in=locations)

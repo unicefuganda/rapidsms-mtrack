@@ -22,7 +22,7 @@ def _all_mass_messages(request):
 
 def _all_mass_messages_sender(request):
     messages = _all_mass_messages(request)
-    return messages.values_list('user__username', flat=True).distinct()
+    return list(messages.values_list('user__username', flat=True).distinct())
 
 
 def _all_mass_messages_by_sender(request, user, date_range=None):

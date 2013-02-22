@@ -1,19 +1,19 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group
-from django.contrib.sites.models import Site
-from django.db import transaction, connection
 from django.db.models import Q
-from django.forms.widgets import SelectMultiple, CheckboxSelectMultiple
+from django.forms.widgets import CheckboxSelectMultiple, RadioSelect
 from healthmodels.models.HealthFacility import HealthFacility, HealthFacilityType
+from rapidsms.models import Contact
 from rapidsms.contrib.locations.models import Location
 from rapidsms_httprouter.models import Message
-from poll.models import Poll, gettext_db
+from poll.models import Poll
 from .models import AnonymousReport, Schedules, ScheduleExtras
 from generic.forms import ActionForm, FilterForm
 from contact.forms import SMSInput
 from rapidsms_xforms.models import XForm
-from .utils import get_district_for_facility
+from .utils import get_district_for_facility, get_contacts_for_partner
+
 
 class FacilityResponseForm(forms.Form):
     def __init__(self, data=None, **kwargs):
@@ -23,6 +23,7 @@ class FacilityResponseForm(forms.Form):
             forms.Form.__init__(self, **kwargs)
 
     value = forms.ModelChoiceField(queryset=HealthFacility.objects.select_related('type').order_by('name'))
+
 
 class DistrictResponseForm(forms.Form):
     def __init__(self, data=None, **kwargs):
@@ -42,29 +43,34 @@ class FacilityForm(forms.Form):
     code = forms.CharField(max_length=50, required=False)
     type = forms.ModelChoiceField(queryset=HealthFacilityType.objects.all(), required=True)
     catchment_areas = forms.ModelMultipleChoiceField(queryset=Location.objects.all(), required=False)
+
     def __init__(self, *args, **kwargs):
         self.username = kwargs.pop('username', '')
         self.facility = kwargs.pop('instance')
         if not 'data' in kwargs:
             initial = { \
-                'name':self.facility.name, \
-                'code':self.facility.code, \
-                'type':self.facility.type, \
-                'catchment_areas':self.facility.catchment_areas.all(), \
-            }
+                'name': self.facility.name, \
+                'code': self.facility.code, \
+                'type': self.facility.type, \
+                'catchment_areas': self.facility.catchment_areas.all(), \
+                }
             district = get_district_for_facility(self.facility)
             if district:
-                initial.update({'facility_district':district})
-            kwargs.update({'initial':initial})
+                initial.update({'facility_district': district})
+            kwargs.update({'initial': initial})
         forms.Form.__init__(self, *args, **kwargs)
-        self.fields['facility_district'] = forms.ModelChoiceField(queryset=self.get_districts_for_form(self.username), empty_label='----', required=False, \
-                                      widget=forms.Select({'onchange':'update_facility_district(this)'}))
+        self.fields['facility_district'] = forms.ModelChoiceField(queryset=self.get_districts_for_form(self.username),
+                                                                  empty_label='----', required=False, \
+                                                                  widget=forms.Select(
+                                                                      {'onchange': 'update_facility_district(this)'}))
+
     def get_districts_for_form(self, user):
         loc = Location.objects.filter(name=str(user).capitalize(), type__name='district')
         if loc:
             return loc
         else:
             return Location.objects.filter(type__name='district').order_by('name')
+
     def save(self):
         cleaned_data = self.cleaned_data
         self.facility.name = cleaned_data.get('name')
@@ -77,25 +83,29 @@ class FacilityForm(forms.Form):
             self.facility.catchment_areas.add(c)
         return
 
+
 class EditAnonymousReportForm(forms.ModelForm):
     """
 	We can now edit any reports that come in anonymously
 	"""
+
     class Meta:
         model = AnonymousReport
         exclude = ('connection', 'messages', 'date')
         widgets = {
-                   'comments': forms.Textarea(attrs={'cols':25, 'rows':3}),
-                   'action_taken': forms.Textarea(attrs={'cols':25, 'rows':3}),
-                   }
+            'comments': forms.Textarea(attrs={'cols': 25, 'rows': 3}),
+            'action_taken': forms.Textarea(attrs={'cols': 25, 'rows': 3}),
+        }
 
     def __init__(self, *args, **kwargs):
         super(EditAnonymousReportForm, self).__init__(*args, **kwargs)
         self.fields['district'].queryset = Location.objects.filter(type__name="district").order_by("name")
-        self.fields['health_facility'].queryset = HealthFacility.objects.all().select_related('type__name').order_by('name')
+        self.fields['health_facility'].queryset = HealthFacility.objects.all().select_related('type__name').order_by(
+            'name')
         # make this non-required
         for key, field in self.fields.iteritems():
             self.fields[key].required = False
+
 
 class ReplyTextForm(ActionForm):
     text = forms.CharField(required=True, widget=SMSInput())
@@ -111,17 +121,18 @@ class ReplyTextForm(ActionForm):
                     # responses are still made to the most recent message
                     # unless better way for handling this is found.
                     Message.objects.create(direction="O",
-                                       text=text,
-                                       connection=anonymous_report.connection,
-                                       status="Q",
-                                       in_response_to=anonymous_report.messages.all().order_by('-date')[0]
-                                       )
+                                           text=text,
+                                           connection=anonymous_report.connection,
+                                           status="Q",
+                                           in_response_to=anonymous_report.messages.all().order_by('-date')[0]
+                    )
                 except IndexError:
                     print "no messages got into the anonymous report"
                     pass
             return "%d messages sent successfully" % results.count(), 'success'
         else:
             return "You don't have permission to send messages!", "error"
+
 
 class MassTextForm(ActionForm):
     pass
@@ -162,13 +173,15 @@ class MassTextForm(ActionForm):
 class AskAQuestionForm(ActionForm):
     text = forms.CharField(required=True, widget=SMSInput())
     action_label = "Poll reporters"
+
     def perform(self, request, results):
         if results is None or len(results):
             return 'A question to reporters must have one or more recipients', 'error'
         if request.user and request.user.has_perm('contact.can_message'):
             text = self.cleaned_data['text']
             for anonymous_reporter in results:
-                Message.objects.create(direction="O", text=text, connection=anonymous_reporter.connection, status="Q", in_response_to=anonymous_reporter.message)
+                Message.objects.create(direction="O", text=text, connection=anonymous_reporter.connection, status="Q",
+                                       in_response_to=anonymous_reporter.message)
                 # create a poll to specific user, any response will be shown to mtrac user
                 Poll.objects.create()
             return "%d messages sent successfully" % results.count(), 'success'
@@ -178,6 +191,7 @@ class AskAQuestionForm(ActionForm):
 
 class ApproveForm(ActionForm):
     action_label = 'Approve Selected'
+
     def perform(self, request, results):
         if results is None or len(results) == 0:
             return 'You must approve one or more reports', 'error'
@@ -188,8 +202,10 @@ class ApproveForm(ActionForm):
         else:
             return "You don't have permission to approve reports!", "error"
 
+
 class RejectForm(ActionForm):
     action_label = 'Reject Selected'
+
     def perform(self, request, results):
         if results is None or len(results) == 0:
             return 'You must reject one or more reports', 'error'
@@ -198,6 +214,8 @@ class RejectForm(ActionForm):
             return "%d reports rejected successfully" % results.count(), 'success'
         else:
             return "You don't have permission to reject reports", "error"
+
+
 class StatusFilterForm(FilterForm):
     action = forms.ChoiceField(choices=(('Open', 'Open'),), required=False)
     # def __init__(self, data=None, **kwargs):
@@ -205,6 +223,7 @@ class StatusFilterForm(FilterForm):
     def filter(self, request, queryset):
         action = self.cleaned_data['action']
         return queryset
+
 # Lets Add some data Entry Forms here
 
 # class DataEntryForm(forms.Form):
@@ -218,24 +237,31 @@ class ScheduleForm(forms.Form):
     MODE_CHOICES = (('live', 'Live Mode'), ('training', 'Training Mode'), ('all', 'All Users'))
     HOUR_CHOICES = tuple([(h, h) for h in range(24)])
     MINUTES_CHOICES = tuple([(m, m) for m in range(60)])
-    XFORM_CHOICES = tuple([(x['keyword'], '%s(%s)' % (x['name'], x['keyword'])) for x in XForm.objects.all().values('id', 'name', 'keyword').order_by('name')])
+    XFORM_CHOICES = tuple([(x['keyword'], '%s(%s)' % (x['name'], x['keyword'])) for x in
+                           XForm.objects.all().values('id', 'name', 'keyword').order_by('name')])
     MONTH_INTERVAL_CHOICES = (('none', 'No Repeat'), ('day', 'Daily'), ('week', 'Weekly'), ('month', 'Monthly'))
-    WEEK_INTERVAL_CHOICES = (('1', 'First Days'), ('2', 'Second Days'), ('3', 'Third Days'), ('4', 'Fourth Days'), ('last', 'Last Days'))
+    WEEK_INTERVAL_CHOICES = (
+        ('1', 'First Days'), ('2', 'Second Days'), ('3', 'Third Days'), ('4', 'Fourth Days'), ('last', 'Last Days'))
     SETUP_CHOICES = (('basic', 'Basic'), ('temp', 'Has Argument'))
-    DAY_INTERVAL_CHOICES = (('mon', 'Monday'), ('tue', 'tue'), ('wed', 'Wednesday'), ('thur', 'Thursday'), ('fri', 'Friday'), ('sat', 'Saturday'), ('sun', 'Sunday'))
-    setup = forms.CharField(widget=forms.Select(choices=SETUP_CHOICES, attrs={'class':'required'}))
+    DAY_INTERVAL_CHOICES = (
+        ('mon', 'Monday'), ('tue', 'tue'), ('wed', 'Wednesday'), ('thur', 'Thursday'), ('fri', 'Friday'),
+        ('sat', 'Saturday'), ('sun', 'Sunday'))
+    setup = forms.CharField(widget=forms.Select(choices=SETUP_CHOICES, attrs={'class': 'required'}))
     locations = forms.MultipleChoiceField(choices=DISTRICT_CHOICES)
     group = forms.MultipleChoiceField(choices=GROUP_CHOICES)
     reporter = forms.MultipleChoiceField(choices=GROUP_CHOICES)
     xforms = forms.MultipleChoiceField(choices=XFORM_CHOICES)
-    start_date = forms.DateField(widget=forms.TextInput(attrs={'id':'sdate', 'readonly':'readonly', 'required':'required'}))
-    end_date = forms.DateField(widget=forms.TextInput(attrs={'id':'edate', 'readonly':'readonly'}), required=False)
-    interval = forms.CharField(widget=forms.Select(choices=MONTH_INTERVAL_CHOICES, attrs={'class':'ftext', 'id':'interval'}))
-    week_number = forms.CharField(widget=forms.Select(choices=WEEK_INTERVAL_CHOICES, attrs={'class':'textbox'}))
+    start_date = forms.DateField(
+        widget=forms.TextInput(attrs={'id': 'sdate', 'readonly': 'readonly', 'required': 'required'}))
+    end_date = forms.DateField(widget=forms.TextInput(attrs={'id': 'edate', 'readonly': 'readonly'}), required=False)
+    interval = forms.CharField(
+        widget=forms.Select(choices=MONTH_INTERVAL_CHOICES, attrs={'class': 'ftext', 'id': 'interval'}))
+    week_number = forms.CharField(widget=forms.Select(choices=WEEK_INTERVAL_CHOICES, attrs={'class': 'textbox'}))
     repeat_day = forms.MultipleChoiceField(widget=CheckboxSelectMultiple, choices=DAY_INTERVAL_CHOICES, required=False)
-    hour = forms.CharField(widget=forms.Select(choices=HOUR_CHOICES, attrs={'id':'hrs', 'style':'min-width:18px'}))
-    minutes = forms.CharField(widget=forms.Select(choices=MINUTES_CHOICES, attrs={'id':'mins', 'style':'min-width:18px'}))
-    message = forms.CharField(widget=forms.Textarea(attrs={'id':'msg', 'class':'required'}))
+    hour = forms.CharField(widget=forms.Select(choices=HOUR_CHOICES, attrs={'id': 'hrs', 'style': 'min-width:18px'}))
+    minutes = forms.CharField(
+        widget=forms.Select(choices=MINUTES_CHOICES, attrs={'id': 'mins', 'style': 'min-width:18px'}))
+    message = forms.CharField(widget=forms.Textarea(attrs={'id': 'msg', 'class': 'required'}))
     user_type = forms.CharField(widget=forms.Select(choices=MODE_CHOICES))
 
     def clean(self):
@@ -251,39 +277,57 @@ class ScheduleForm(forms.Form):
 
 
     def save(self):
-        schedule = Schedules.objects.create(created_by='sam', start_date=self.cleaned_data['start_date'], end_date=self.cleaned_data['end_date'],
-            start_time=self.cleaned_data['start_time'], message_type=self.cleaned_data['setup'], message=self.cleaned_data['message'], recur_interval=self.cleaned_data['interval'],
-            recur_frequency=0, recur_day=self.cleaned_data['repeat_day'], recur_weeknumber=self.cleaned_data['week_number'])
+        schedule = Schedules.objects.create(created_by='sam', start_date=self.cleaned_data['start_date'],
+                                            end_date=self.cleaned_data['end_date'],
+                                            start_time=self.cleaned_data['start_time'],
+                                            message_type=self.cleaned_data['setup'],
+                                            message=self.cleaned_data['message'],
+                                            recur_interval=self.cleaned_data['interval'],
+                                            recur_frequency=0, recur_day=self.cleaned_data['repeat_day'],
+                                            recur_weeknumber=self.cleaned_data['week_number'])
 
         extras = ScheduleExtras.objects.create(schedule=schedule, recipient_location_type='',
-            recipient_location=self.cleaned_data['locations'], allowed_recipients='', recipient_group_type='',
-            missing_reports=self.cleaned_data['xforms'], expected_reporter=self.cleaned_data['reporter'], group_ref=self.cleaned_data['group'],
-            is_message_temp=self.cleaned_data['msg_is_temp'], message_args="", return_code="")
+                                               recipient_location=self.cleaned_data['locations'], allowed_recipients='',
+                                               recipient_group_type='',
+                                               missing_reports=self.cleaned_data['xforms'],
+                                               expected_reporter=self.cleaned_data['reporter'],
+                                               group_ref=self.cleaned_data['group'],
+                                               is_message_temp=self.cleaned_data['msg_is_temp'], message_args="",
+                                               return_code="")
 
         return schedule, extras
 
     def update(self, id):
-        schedule = Schedules.objects.filter(id=id).update(created_by='sam', start_date=self.cleaned_data['start_date'], end_date=self.cleaned_data['end_date'],
-            start_time=self.cleaned_data['start_time'], message_type=self.cleaned_data['setup'], message=self.cleaned_data['message'], recur_interval=self.cleaned_data['interval'],
-            recur_frequency=0, recur_day=self.cleaned_data['repeat_day'], recur_weeknumber=self.cleaned_data['week_number'])
+        schedule = Schedules.objects.filter(id=id).update(created_by='sam', start_date=self.cleaned_data['start_date'],
+                                                          end_date=self.cleaned_data['end_date'],
+                                                          start_time=self.cleaned_data['start_time'],
+                                                          message_type=self.cleaned_data['setup'],
+                                                          message=self.cleaned_data['message'],
+                                                          recur_interval=self.cleaned_data['interval'],
+                                                          recur_frequency=0, recur_day=self.cleaned_data['repeat_day'],
+                                                          recur_weeknumber=self.cleaned_data['week_number'])
 
         extras = ScheduleExtras.objects.filter(schedule=id).update(recipient_location_type='',
-            recipient_location=self.cleaned_data['locations'], allowed_recipients='', recipient_group_type='',
-            missing_reports=self.cleaned_data['xforms'], expected_reporter=self.cleaned_data['reporter'], group_ref=self.cleaned_data['group'],
-            is_message_temp=self.cleaned_data['msg_is_temp'], message_args="", return_code="")
-
+                                                                   recipient_location=self.cleaned_data['locations'],
+                                                                   allowed_recipients='', recipient_group_type='',
+                                                                   missing_reports=self.cleaned_data['xforms'],
+                                                                   expected_reporter=self.cleaned_data['reporter'],
+                                                                   group_ref=self.cleaned_data['group'],
+                                                                   is_message_temp=self.cleaned_data['msg_is_temp'],
+                                                                   message_args="", return_code="")
 
 
 class DistrictFilterForm(FilterForm):
-
     """ filter cvs districs on their districts """
 
     district2 = forms.MultipleChoiceField(label="District", choices=(('', '-----'), (-1,
-                                                                             'No District')) + tuple([(int(d.pk),
-                                                                                                       d.name) for d in
-                                                                                                      Location.objects.filter(type__slug='district'
-                                                                                                      ).order_by('name')]), required=False,
-        widget=forms.SelectMultiple({'onchange':'update_district2(this)'}), help_text="Hold CTRL to select multiple")
+                                                                                     'No District')) + tuple(
+        [(int(d.pk),
+          d.name) for d in
+         Location.objects.filter(type__slug='district'
+         ).order_by('name')]), required=False,
+                                          widget=forms.SelectMultiple({'onchange': 'update_district2(this)'}),
+                                          help_text="Hold CTRL to select multiple")
 
 
     def filter(self, request, queryset):
@@ -291,10 +335,11 @@ class DistrictFilterForm(FilterForm):
         district_pk = self.cleaned_data['district2']
         if '' in district_pk and len(district_pk) < 2:
             return queryset
-        elif "-1" in district_pk :
+        elif "-1" in district_pk:
             district_pk.remove("-1")
-            return queryset.filter(Q(district__in=Location.objects.filter(pk__in=district_pk).values_list('name', flat=True).distinct())
-                                   | Q(reporting_location__in=Location.objects.filter(type__in=['country', 'region'])))
+            return queryset.filter(
+                Q(district__in=Location.objects.filter(pk__in=district_pk).values_list('name', flat=True).distinct())
+                | Q(reporting_location__in=Location.objects.filter(type__in=['country', 'region'])))
         else:
             district = Location.objects.filter(pk__in=district_pk)
             if district:
@@ -303,14 +348,17 @@ class DistrictFilterForm(FilterForm):
             else:
                 return queryset
 
+
 class RolesFilter(FilterForm):
-    role = forms.MultipleChoiceField(choices=(('', '----'),) + tuple(Group.objects.values_list('id', 'name').order_by('name')), required=False)
+    role = forms.MultipleChoiceField(
+        choices=(('', '----'),) + tuple(Group.objects.values_list('id', 'name').order_by('name')), required=False)
+
     def filter(self, request, queryset):
         group_pks = self.cleaned_data['role']
         if '' in group_pks and len(group_pks) < 2:
             return queryset
         else:
-            if '' in group_pks:group_pks.remove('')
+            if '' in group_pks: group_pks.remove('')
             groups = Group.objects.filter(id__in=group_pks).values_list('name', flat=True)
             args = Q()
             for group in groups:
@@ -320,9 +368,10 @@ class RolesFilter(FilterForm):
                 exclusions = []
                 for id, grp in queryset.values_list('id', 'groups'):
                     grp_list = grp.split(',')
-                    if u'PVHT' in grp_list and not u'VHT' in grp_list:exclusions.append(id)
+                    if u'PVHT' in grp_list and not u'VHT' in grp_list: exclusions.append(id)
                 queryset = queryset.exclude(id__in=exclusions)
             return queryset
+
 
 class PhaseFilter(FilterForm):
     PHASEI = [u'Kampala', u'Mukono', u'Buvuma', u'Buikwe', u'Kayunga', u'Mpigi', u'Wakiso',
@@ -333,30 +382,34 @@ class PhaseFilter(FilterForm):
     PHASEII = [u'Kyegegwa', u'Kyenjojo', u'Kibaale',
                u'Kasese', u'Kamwenge', u'Ibanda', u'Hoima', u'Buliisa', u'Masindi', u'Kiryandongo',
                u'Kabarole', u'Bundibugyo', u'Ntoroko', u'Ssembabule', u'Lyantonde', u'Lwengo', u'Rakai', u'Kiruhura',
-               u'Isingiro', u'Mbarara', u'Ntungamo', u'Bushenyi', u'Mitooma', u'Rubirizi', u'Sheema', u'Buhweju', u'Kanungu',
+               u'Isingiro', u'Mbarara', u'Ntungamo', u'Bushenyi', u'Mitooma', u'Rubirizi', u'Sheema', u'Buhweju',
+               u'Kanungu',
                u'Rukungiri', u'Kabale', u'Kisoro']
 
     PHASEIII = [u'Abim', u'Adjumani', u'Agago', u'Alebtong', u'Amolatar', u'Amuru', u'Apac',
                 u'Arua', u'Dokolo', u'Gulu', u'Kaabong', u'Kitgum', u'Koboko', u'Kole', u'Kotido',
-                u'Lamwo', u'Lira', u'Maracha', u'Moyo', u'Nebbi', u'Nwoya', u'Otuke', u'Oyam', u'Pader', u'Yumbe', u'Zombo']
+                u'Lamwo', u'Lira', u'Maracha', u'Moyo', u'Nebbi', u'Nwoya', u'Otuke', u'Oyam', u'Pader', u'Yumbe',
+                u'Zombo']
 
-    phases = [PHASEI,PHASEII,PHASEIII]
-    phase = forms.ChoiceField(choices=(("","-----"),('1','Phase I'),('2','Phase II'),('3','Phase III')),required=False)
+    phases = [PHASEI, PHASEII, PHASEIII]
+    phase = forms.ChoiceField(choices=(("", "-----"), ('1', 'Phase I'), ('2', 'Phase II'), ('3', 'Phase III')),
+                              required=False)
 
     def filter(self, request, queryset):
-        if self.cleaned_data['phase'] == "":return queryset
-        return queryset.filter(district__in= self.phases[int(self.cleaned_data['phase'])-1])
+        if self.cleaned_data['phase'] == "": return queryset
+        return queryset.filter(district__in=self.phases[int(self.cleaned_data['phase']) - 1])
 
 
 class FacilityFilterForm(FilterForm):
     """ filter form for cvs facilities """
-    facility = forms.ChoiceField(label="Facility", choices=(('', '-----'),),widget=forms.Select(attrs={'class':'ffacility'}))
-                                                           #(-1, 'Has No Facility'),) + tuple([(pk, '%s %s' % (name, type)) for pk, name, type in HealthFacility.objects.values_list('pk', 'name', 'type__name').order_by('type', 'name')]),
+    facility = forms.ChoiceField(label="Facility", choices=(('', '-----'),),
+                                 widget=forms.Select(attrs={'class': 'ffacility'}))
+    #(-1, 'Has No Facility'),) + tuple([(pk, '%s %s' % (name, type)) for pk, name, type in HealthFacility.objects.values_list('pk', 'name', 'type__name').order_by('type', 'name')]),
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        facilities = list(HealthFacility.objects.values_list('pk',flat=True))
-        others = ["","-1"]
+        facilities = list(HealthFacility.objects.values_list('pk', flat=True))
+        others = ["", "-1"]
         pk = self.data['facility']
         if pk in others or int(pk) in facilities:
             cleaned_data['facility'] = pk
@@ -372,3 +425,64 @@ class FacilityFilterForm(FilterForm):
             return queryset.filter(facility=None)
         else:
             return queryset.filter(facility_id=facility_pk)
+
+
+class NewPollForm(forms.Form): # pragma: no cover
+
+    TYPE_YES_NO = 'yn'
+
+    type = forms.ChoiceField(
+        required=True,
+        choices=(
+            (TYPE_YES_NO, 'Yes/No Question'),
+        ))
+    response_type = forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES, widget=RadioSelect,
+                                      initial=Poll.RESPONSE_TYPE_ALL)
+
+    def updateTypes(self):
+        self.fields['type'].widget.choices += [(choice['type'], choice['label']) for choice in
+                                               Poll.TYPE_CHOICES.values()]
+
+    name = forms.CharField(max_length=32, required=True)
+    question = forms.CharField(max_length=160, required=True, widget=forms.Textarea())
+    default_response = forms.CharField(max_length=160, required=False, widget=forms.Textarea())
+    start_immediately = forms.BooleanField(required=False)
+
+    # This may seem like a hack, but this allows time for the Contact model
+    # to optionally have groups (i.e., poll doesn't explicitly depend on the rapidsms-auth
+    # app.
+    def __init__(self, data=None, **kwargs):
+        request = kwargs.pop('request')
+        if data:
+            forms.Form.__init__(self, data, **kwargs)
+        else:
+            forms.Form.__init__(self, **kwargs)
+
+        self.fields['contacts'] = forms.ModelMultipleChoiceField(queryset=get_contacts_for_partner(request),
+                                                                 required=False)
+
+        if hasattr(Contact, 'groups'):
+            self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
+
+            #add translation fields for other languages
+        if getattr(settings, "LANGUAGES", None):
+            for language in dict(settings.LANGUAGES).values():
+                if not language.lower() == "english":
+                    self.fields['default_response_' + language] = forms.CharField(max_length=160, required=False,
+                                                                                  widget=forms.Textarea())
+                    self.fields['question_' + language] = forms.CharField(max_length=160, required=False,
+                                                                          widget=forms.Textarea())
+
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        contacts = cleaned_data.get('contacts')
+        groups = cleaned_data.get('groups')
+        cleaned_data['question'] = cleaned_data.get('question').replace('%', u'\u0025')
+        if 'default_response' in cleaned_data:
+            cleaned_data['default_response'] = cleaned_data['default_response'].replace('%', u'\u0025')
+
+        if not contacts and not groups:
+            raise forms.ValidationError("You must provide a set of recipients (either a group or a contact)")
+
+        return cleaned_data
