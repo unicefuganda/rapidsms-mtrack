@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.shortcuts import redirect, render_to_response
 from django.template import RequestContext
 from mtrack.forms import NewPollForm
-from mtrack_project.rapidsms_mtrack.mtrack.utils import get_contacts_for_partner
+from mtrack.utils import get_contacts_for_partner
 from poll.models import Translation, Poll
 from rapidsms.models import Contact
 from django.conf import settings
