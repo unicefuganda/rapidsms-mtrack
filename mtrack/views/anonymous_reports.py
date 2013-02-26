@@ -32,7 +32,9 @@ def edit_anonymous_report(request, anonymous_report_pk):
                 'action_center':anonymous_report.action_center,
                 'action_taken':anonymous_report.action_taken
             }
-        ), 'facilities':get_facilities(), 'pk':getattr(anonymous_report.health_facility, 'pk', '')}, context_instance=RequestContext(request))
+        ),
+        'facilities':[{'id':"-1", 'name':'----'}],  # get_facilities(),
+        'pk':getattr(anonymous_report.health_facility, 'pk', '')}, context_instance=RequestContext(request))
 
     if request.method == 'POST':
         if edit_report_form.is_valid:

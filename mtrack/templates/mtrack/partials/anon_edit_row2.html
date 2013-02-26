@@ -18,10 +18,20 @@
 </style>
 <table>
 <tr>
-<td>Facility:</td>
+<tr>
+<td>District:</td>
 <td>
+    {{ report_form.district }}
+    {% if report_form.district.errors %}
+        <br clear="left"/>
+        {{ report_form.district.errors }}
+    {% endif %}
+</td>
+</tr>
+<td>Facility:</td>
+<td id="reporter_facilityx">
 	{% if facilities %}
-	<select name='health_facility'>
+	<select name='health_facility' id="id_facility">
 		<option value=''>-----</option>
 		
 		{% for f in facilities %}
@@ -33,16 +43,6 @@
     {% if report_form.health_facility.errors %}
         <br clear="left"/>
         {{ report_form.health_facility.errors }}
-    {% endif %}
-</td>
-</tr>
-<tr>
-<td>District:</td>
-<td>
-    {{ report_form.district }}
-    {% if report_form.district.errors %}
-        <br clear="left"/>
-        {{ report_form.district.errors }}
     {% endif %}
 </td>
 </tr>
@@ -114,6 +114,16 @@
 <tr>
 <td>&nbsp;</td>
 <td class="button_col">
+<script>
+		$('#id_district').change(function(){
+			var district = $(this).val();
+			$('#reporter_facilityx').load('../cvs/reporter/facilities/edit/' + district + '/',
+			function(){
+				$('#id_facility').attr("name", "health_facility");
+			});
+			
+		});
+</script>
     <div class="buttons">
         <a href="javascript:void(0)" style="text-decoration:none"
            onclick="disablePopup()">
@@ -123,7 +133,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
         <a href="javascript:void(0)" style="text-decoration:none"
            onclick="submitForm(this, '../anonymousreports/{{ anonymous_report.pk }}/edit/', $('#id_{{ anonymous_report.pk }}').parents('tr'))">
-            <input type="button" class="button" value="Edit"/>
+            <input type="button" class="button" value="Save"/>
         </a>
     </div>
 </td>

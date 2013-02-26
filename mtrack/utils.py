@@ -27,7 +27,7 @@ def last_reporting_period(period=1, weekday=getattr(settings, 'FIRSTDAY_OF_REPOR
     """
     Find a date range that spans from the most recent Wednesday (exactly a week ago if
     today is Wednesday) to the beginning of Thursday, one week prior
-    
+
     if period is specified, this wednesday can be exactly <period> weeks prior
     """
     d = datetime.datetime.now()
@@ -61,7 +61,7 @@ def total_facilities(location, count=True):
     """
     Find all health facilities whose catchment areas are somewhere inside
     the passed in location.
-    
+
     Return their count if count is True, otherwise return the queryset
     """
     if not location:
@@ -84,7 +84,7 @@ def total_vhts(location, count=True):
     """
     Find all vhts whose reporting_location's are somewhere inside
     the passed in location.
-    
+
     Return their count if count is True, otherwise return the queryset
     """
     locations = location.get_descendants(include_self=True).all()
@@ -343,7 +343,6 @@ def write_xls(sheet_name=None, headings=None, data=None, book=None, cell_red_if_
 
     write_data_values_to_excel(data, rowx, sheet, cell_red_if_value)
 
-
 def query_to_dicts(query_string, *query_args):
     """Run a simple query and produce a generator
     that returns the results as a bunch of dictionaries
@@ -362,6 +361,7 @@ def query_to_dicts(query_string, *query_args):
 
 
 def get_facilities():
+    return [{'id':"-1", 'name':'----'}]
     return query_to_dicts("SELECT a.id, a.name||' '|| b.name  as name FROM"
                           " healthmodels_healthfacilitybase a, healthmodels_healthfacilitytypebase b "
                           " WHERE a.type_id = b.id ORDER BY a.name;")

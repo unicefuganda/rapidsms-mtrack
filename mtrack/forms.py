@@ -7,7 +7,7 @@ from healthmodels.models.HealthFacility import HealthFacility, HealthFacilityTyp
 from rapidsms.models import Contact
 from rapidsms.contrib.locations.models import Location
 from rapidsms_httprouter.models import Message
-from poll.models import Poll
+from poll.models import Poll, gettext_db
 from .models import AnonymousReport, Schedules, ScheduleExtras
 from generic.forms import ActionForm, FilterForm
 from contact.forms import SMSInput
@@ -397,6 +397,10 @@ class PhaseFilter(FilterForm):
 
     def filter(self, request, queryset):
         if self.cleaned_data['phase'] == "": return queryset
+    phase = forms.ChoiceField(choices=(("", "-----"), ('1', 'Phase I'), ('2', 'Phase II'), ('3', 'Phase III')), required=False)
+
+    def filter(self, request, queryset):
+        if self.cleaned_data['phase'] == "":return queryset
         return queryset.filter(district__in=self.phases[int(self.cleaned_data['phase']) - 1])
 
 
@@ -405,6 +409,8 @@ class FacilityFilterForm(FilterForm):
     facility = forms.ChoiceField(label="Facility", choices=(('', '-----'),),
                                  widget=forms.Select(attrs={'class': 'ffacility'}))
     #(-1, 'Has No Facility'),) + tuple([(pk, '%s %s' % (name, type)) for pk, name, type in HealthFacility.objects.values_list('pk', 'name', 'type__name').order_by('type', 'name')]),
+    facility = forms.ChoiceField(label="Facility", choices=(('', '-----'),), widget=forms.Select(attrs={'class':'ffacility'}))
+                                                           # (-1, 'Has No Facility'),) + tuple([(pk, '%s %s' % (name, type)) for pk, name, type in HealthFacility.objects.values_list('pk', 'name', 'type__name').order_by('type', 'name')]),
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -417,7 +423,7 @@ class FacilityFilterForm(FilterForm):
         return cleaned_data
 
     def filter(self, request, queryset):
-        #import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         facility_pk = self.cleaned_data['facility']
         if facility_pk == '':
             return queryset

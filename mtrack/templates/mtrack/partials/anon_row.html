@@ -3,14 +3,14 @@
     {% block remaining_row_content %}
     <td>
         {% if object.health_facility %}
-            <span style="font-size: 0.8em;">{{ object.health_facility }}</span>
+            <span style="font-size: 0.8em;">{{ object.health_facility.name }}</span>
         {% else %}
             <span style="font-size:0.8em;">missing</span>
         {% endif %}
     </td>
     <td>
         {% if object.district %}
-            <span style="font-size: 0.8em;">{{ object.district }}</span>
+            <span style="font-size: 0.8em;">{{ object.district.name }}</span>
         {% else %}
         <span style="font-size:0.8em;">missing</span>
         {% endif %}
