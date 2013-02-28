@@ -158,7 +158,8 @@ urlpatterns = patterns('',
                        url(r"^ajax_portal2/$", ajax_portal2),
                        url(r"^schedules/$", login_required(broadcasts), name='schedule_creator'),
 
-                       (r'^mtrack/mgt/stats/', include(ManagementReport().as_urlpatterns(name='mtrack-mgt-stats'))),
+                       (r'^mtrack/mgt/stats/', include(
+                           ManagementReport().as_urlpatterns(name='mtrack-mgt-stats', login_wrapper=login_required))),
                        url(r'^mtrack/logistics/?$',
                            'logistics.views.aggregate',
                            {'location_code': 'western'},
