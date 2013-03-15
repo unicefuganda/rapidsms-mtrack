@@ -67,8 +67,8 @@ def total_facilities(location, count=True):
     if not location:
         location = Location.tree.root_nodes()[0]
     locations = location.get_descendants(include_self=True).all()
-    # facilities = HealthFacility.objects.filter(catchment_areas__in=locations).select_related().distinct()
-    facilities = HealthFacility.objects.filter(catchment_areas__in=locations)
+    facilities = HealthFacility.objects.filter(catchment_areas__in=locations).select_related().distinct()
+    # facilities = HealthFacility.objects.filter(catchment_areas__in=locations)
     if count:
         return facilities.count()
 
@@ -89,7 +89,7 @@ def total_vhts(location, count=True):
     """
     locations = location.get_descendants(include_self=True).all()
     roles = Group.objects.filter(name__in=['VHT', 'PVHT'])
-    vhts = HealthProvider.objects.filter( \
+    vhts = HealthProvider.objects.filter(\
         reporting_location__in=locations, \
         active=True, \
         groups__in=roles).distinct()
@@ -100,10 +100,10 @@ def total_vhts(location, count=True):
 
 
 def get_messages(request):
-    #First we get all incoming messages
+    # First we get all incoming messages
     messages = Message.objects.filter(direction='I')
 
-    #Get only messages handled by rapidsms_xforms and the polls app (this exludes opt in and opt out messages)
+    # Get only messages handled by rapidsms_xforms and the polls app (this exludes opt in and opt out messages)
     messages = messages.filter(Q(application=None) | Q(application__in=['rapidsms_xforms', 'poll']))
     s = XFormSubmission.objects.filter(has_errors=True, connection__contact__active=True)
     x = XFormSubmission.objects.filter(has_errors=False, connection__contact__active=True).values_list('raw', flat=True)
@@ -111,7 +111,7 @@ def get_messages(request):
         'connection__identity')
 
     s = s.exclude(raw__in=x, connection__identity__in=y)
-    #Exclude XForm submissions
+    # Exclude XForm submissions
     messages = messages.filter(Q(submissions__in=s) | Q(submissions=None))
 
     # Exclude Poll responses
@@ -191,7 +191,7 @@ def get_facility_reports2(location, date_range=last_reporting_period(period=0), 
 def get_ussd_facility_reports(location, count=False, date_range=last_reporting_period(todate=True), approved=None):
     toret = XFormSubmission.objects.exclude(connection__contact=None) \
         .exclude(connection__contact__healthproviderbase__healthprovider__facility=None) \
-        .filter( \
+        .filter(\
         # connection__contact__in=staff, \
         pk__in=Session.objects.exclude(submissions=None).values_list('submissions', flat=True), \
         has_errors=False).order_by('-created')
@@ -302,7 +302,7 @@ def alerts_report(location, date_range, type=ALERTS_TOTAL):
 
     values = ['location_name', 'location_id', 'rght', 'lft']
     if location.get_children().count() > 1:
-        location_children_where = 'T%d.id in %s' % (tnum, (str(tuple(location.get_children().values_list( \
+        location_children_where = 'T%d.id in %s' % (tnum, (str(tuple(location.get_children().values_list(\
             'pk', flat=True)))))
     else:
         location_children_where = 'T%d.id = %d' % (tnum, location.get_children()[0].pk)
