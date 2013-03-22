@@ -1,11 +1,11 @@
 import datetime
 import os
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
 from django.http import HttpResponse
 import xlwt
 from contact.models import MassText
-from mtrack.decorators import login_required
 from uganda_common.utils import get_location_for_user
 
 ezxf = xlwt.easyxf

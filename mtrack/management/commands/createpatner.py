@@ -1,7 +1,7 @@
 from optparse import make_option
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
-from mtrack.models import Access
+from uganda_common.models import Access
 
 __author__ = 'kenneth'
 
@@ -30,8 +30,7 @@ class Command(BaseCommand):
             user.user_permissions.add(p)
             print '=====> Giving user permission', p
         for url in urls:
-            access = Access.objects.create(user=user, url_allowed=url)
             print '=====> Giving user access to resource', url
-            access.save()
+            Access.objects.add_url(user, url)
         print '======> user', user.username, 'created'
 

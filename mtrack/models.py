@@ -22,28 +22,30 @@ ACTIONS = (
     # ('Ot', 'Other critical')
 )
 TOPICS = (
-          ('Absenteeism', 'Absenteeism'),
-          ('Drug Theft', 'Drug Theft'),
-          ('Extortion', 'Extortion'),
-          ('Fraud', 'Fraud'),
-          ('General Complaint', 'General Complaint'),
-          ('General Inquiry', 'General Inquiry'),
-          ('Good Service', 'Good Service'),
-          ('Ignore/Delete', 'Ignore/Delete'),
-          ('Illegal schools', 'Illegal Schools'),
-          ('Impersonation', 'Impersonation'),
-          ('Malpractice', 'Malpractice'),
-          ('Negligence', 'Negligence'),
-          ('Other Critical', 'Other Critical'),
-          ('Stock Out', 'Stock Out'),
-          ('Unknown', 'Unknown'),
-          ('Working hours of HCs', 'Working hours of HCs'),
-        )
+    ('Absenteeism', 'Absenteeism'),
+    ('Drug Theft', 'Drug Theft'),
+    ('Extortion', 'Extortion'),
+    ('Fraud', 'Fraud'),
+    ('General Complaint', 'General Complaint'),
+    ('General Inquiry', 'General Inquiry'),
+    ('Good Service', 'Good Service'),
+    ('Ignore/Delete', 'Ignore/Delete'),
+    ('Illegal schools', 'Illegal Schools'),
+    ('Impersonation', 'Impersonation'),
+    ('Malpractice', 'Malpractice'),
+    ('Negligence', 'Negligence'),
+    ('Other Critical', 'Other Critical'),
+    ('Stock Out', 'Stock Out'),
+    ('Unknown', 'Unknown'),
+    ('Working hours of HCs', 'Working hours of HCs'),
+)
 ACTION_CENTERS = (
-                  ('MOH', 'MOH'),
-                  ('MU', 'MU'),
-                  ('NMS', 'NMS'),
-                  )
+    ('MOH', 'MOH'),
+    ('MU', 'MU'),
+    ('NMS', 'NMS'),
+)
+
+
 class AnonymousReport(models.Model):
     connection = models.ForeignKey(Connection)
     messages = models.ManyToManyField(Message, null=True, default=None)
@@ -55,6 +57,7 @@ class AnonymousReport(models.Model):
     topic = models.CharField(max_length=32, default='Unknown', choices=TOPICS, null=True)
     action_center = models.CharField(max_length=32, default='', choices=ACTION_CENTERS, null=True)
     action_taken = models.TextField(null=True)
+
     def __unicode__(self):
         return self.connection.identity
 
@@ -65,6 +68,7 @@ class AnonymousReport(models.Model):
 #    connection = models.ForeignKey(Connection)
 #    anonymous_reports = models.ManyToManyField(AnonymousReport, null=True, default=None)
 #    date = models.DateTimeField(auto_now_add=True)
+
 
 # Use this model to store extra info on submission esp those created from dashboard
 class XFormSubmissionExtras(models.Model):
@@ -79,6 +83,7 @@ class XFormSubmissionExtras(models.Model):
     class Meta:
         db_table = 'rapidsms_xforms_xformsubmissionextras'
 
+
 class Schedules(models.Model):
     created_by = models.TextField(default='')
     start_date = models.DateField()
@@ -91,14 +96,17 @@ class Schedules(models.Model):
     recur_day = models.TextField(default='')
     recur_weeknumber = models.IntegerField(blank=True, null=True)
     enabled = models.BooleanField(default=True)
+
     class Meta:
         db_table = u'schedules'
+
     @property
     def extras(self):
         return self.scheduleextras
 
     def __unicode__(self):
         return self.message
+
 
 class ScheduleExtras(models.Model):
     schedule = models.OneToOneField(Schedules)
@@ -113,19 +121,23 @@ class ScheduleExtras(models.Model):
     message_args = models.TextField(default='')
     return_code = models.TextField(default='')
     cdate = models.DateTimeField(default=datetime.now())
+
     class Meta:
         db_table = u'schedule_extras'
 
     def __unicode__(self):
         return self.schedule.message
 
+
 class HealthFacilityExtras(models.Model):
     health_facility = models.ForeignKey(HealthFacility, unique=True)
     total_reports = models.IntegerField(default=0)
     total_reporters = models.IntegerField(default=0)
     catchment_areas_list = models.TextField(default='')
+
     class Meta:
         db_table = 'healthmodels_healthfacilityextras'
+
 
 # The Health Facilities view used to speed up the facility page
 class Facilities(models.Model):
@@ -139,6 +151,7 @@ class Facilities(models.Model):
     total_reports = models.IntegerField()
     total_reporters = models.IntegerField()
     catchment_areas = models.TextField()
+
     class Meta:
         managed = False
         db_table = 'facilities'
@@ -146,12 +159,15 @@ class Facilities(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class HealthProviderExtras(models.Model):
     health_provider = models.ForeignKey(HealthProvider, unique=True)
     total_reports = models.IntegerField(default=0)
     district = models.TextField()
+
     class Meta:
         db_table = 'healthmodels_healthproviderextras'
+
 
 # HealthProviders view that helps to load user's page faster
 class Reporters(models.Model):
@@ -169,6 +185,7 @@ class Reporters(models.Model):
     facility = models.TextField(default='')
     last_reporting_date = models.DateField(null=True)
     loc_name = models.CharField(max_length=100, default='')  # reporting_location name
+
     class Meta:
         managed = False
         db_table = 'reporters'
@@ -176,34 +193,37 @@ class Reporters(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class ApproveSummary(models.Model):
     location = models.IntegerField(null=True)
     reports_crp = models.IntegerField(default=0)
     reports_lrp_uptodate = models.IntegerField(default=0)
     start_of_crp = models.DateField(null=True)
     end_of_crp = models.DateField(null=True)
+
     class Meta:
         db_table = 'approve_summaries'
+
 
 class Access(models.Model):
     """"
     This models stores a bunch of users and the urls that they can't access
     Users that aren't in this models follow the normal django auth and permission stuff
     """
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name='accessible')
     url_allowed = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return "%s %s"%(self.user.username, self.url_allowed)
+        return "%s %s" % (self.user.username, self.url_allowed)
 
     @classmethod
-    def denied(cls,request):
+    def denied(cls, request):
         path = request.build_absolute_uri()
         path = urlparse.urlparse(path)[2]
         if path.startswith('/'): path = path[1:]
         user = request.user if request.user.is_authenticated() else None
-        if not Access.objects.filter(user=user).exists():return False
-        paths = list(Access.objects.filter(user=user).values_list('url_allowed',flat=True))
+        if not Access.objects.filter(user=user).exists(): return False
+        paths = list(Access.objects.filter(user=user).values_list('url_allowed', flat=True))
         for p in paths:
-            if re.match(r''+p,path):return False
+            if re.match(r'' + p, path): return False
         return True
