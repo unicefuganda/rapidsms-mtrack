@@ -17,6 +17,7 @@ from mtrack.views.visuals import stock_level_viz, stock_level_piechart
 from mtrack.views.dataentry import data_entry, ajax_portal
 from mtrack.views.facility_locations import facility_cas, ajax_portal2
 from mtrack.views.schedules import broadcasts
+from cvs.paginator import mtrac_paginate
 
 urlpatterns = patterns('',
                        #    url(r'^facility/(?P<code>\w+)/config/?$',
@@ -33,22 +34,24 @@ urlpatterns = patterns('',
                            'results_title': '',
                        }, name='dashboard-messagelog'),
 
-                       #FIXTHIS anonymous messages
+                       # FIXTHIS anonymous messages
                        # login required added
                        url(r'^anonymousreports/excelreport/$', create_excel),
                        url(r'^anonymousreports/$', login_required(generic), {
                            'model': AnonymousReport,
                            # primitive filtering by actions
-                           #TODO subclass SimpleSorter to sort actions
-                           'queryset': get_anonymous_reports, #action --> analogous to status of report
+                           # TODO subclass SimpleSorter to sort actions
+                           'queryset': get_anonymous_reports,  # action --> analogous to status of report
                            'objects_per_page': 25,
                            'base_template': 'mtrack/partials/anonymous_base.html',
                            'partial_row': 'mtrack/partials/anon_row.html',
                            'partial_header': 'mtrack/partials/partial_header.html',
+                           'paginator_template': 'mtrack/partials/new_pagination.html',
                            'selectable': True,
+                           'paginator_func': mtrac_paginate,
                            'results_title': 'Anonymous Reports',
-                           #'filter_forms':[StatusFilterForm],
-                           'action_forms': [ReplyTextForm], #, AskAQuestionForm],
+                           # 'filter_forms':[StatusFilterForm],
+                           'action_forms': [ReplyTextForm],  # , AskAQuestionForm],
                            'columns': [('Facility', True, 'health_facility', SimpleSorter(),),
                                        ('District', True, 'district', SimpleSorter(),),
                                        ('Date', True, 'date', SimpleSorter(),),
@@ -59,7 +62,7 @@ urlpatterns = patterns('',
                                        ('A Taken', True, 'action_taken', SimpleSorter(),),
                                        ('Comments', True, 'comments', None,),
                                        ('', False, '', None,)],
-                           #'sort_column':'date',
+                           # 'sort_column':'date',
                        }, name='dashboard-anonymous-messagelog'),
 
                        url(r'^anonymousreports/(\d+)/edit/', edit_anonymous_report, name='edit-report'),
@@ -101,7 +104,9 @@ urlpatterns = patterns('',
                            'base_template': 'mtrack/approve_base.html', \
                            'partial_row': 'mtrack/partials/report_row.html', \
                            'results_title': 'Last Reporting Period Results', \
+                           'paginator_template': 'mtrack/partials/new_pagination.html', \
                            'action_forms': [ApproveForm, RejectForm], \
+                           'paginator_func': mtrac_paginate,
                            'columns': [('Facility', True,
                                         'connection__contact__healthproviderbase__healthprovider__facility__name',
                                         SimpleSorter()), \
@@ -120,8 +125,10 @@ urlpatterns = patterns('',
                            'objects_per_page': 25, \
                            'base_template': 'mtrack/mtrack_generic_base.html', \
                            'partial_row': 'mtrack/partials/report_row.html', \
+                           'paginator_template': 'mtrack/partials/new_pagination.html', \
                            'results_title': 'Reports', \
                            'action_forms': [ApproveForm, RejectForm], \
+                           'paginator_func': mtrac_paginate,
                            'columns': [('Facility', True,
                                         'message__connection__contact__healthproviderbase__healthprovider__facility__name',
                                         SimpleSorter()),
@@ -139,7 +146,9 @@ urlpatterns = patterns('',
                            'objects_per_page': 25, \
                            'base_template': 'mtrack/mtrack_generic_base.html', \
                            'partial_row': 'mtrack/partials/report_ussd_row.html', \
+                           'paginator_template': 'mtrack/partials/new_pagination.html', \
                            'results_title': 'Reports', \
+                           'paginator_func': mtrac_paginate,
                            'columns': [('Facility', True,
                                         'connection__contact__healthproviderbase__healthprovider__facility__name',
                                         SimpleSorter()),
@@ -171,9 +180,11 @@ urlpatterns = patterns('',
                            'objects_per_page': 25,
                            'partial_row': 'mtrack/schedule/schedule_row.html',
                            'base_template': 'mtrack/schedule/schedule_base.html',
+                           'paginator_template': 'mtrack/partials/new_pagination.html',
                            'results_title': 'Reminder Schedules',
                            'sort_column': 'start_date',
                            'sort_ascending': False,
+                           'paginator_func': mtrac_paginate,
                            'columns': [('Message', True, 'message', SimpleSorter()),
                                        ('Start Date', True, 'start_date', SimpleSorter(),),
                                        ('End Date', True, 'end_date', SimpleSorter(),),
