@@ -203,27 +203,3 @@ class ApproveSummary(models.Model):
 
     class Meta:
         db_table = 'approve_summaries'
-
-
-class Access(models.Model):
-    """"
-    This models stores a bunch of users and the urls that they can't access
-    Users that aren't in this models follow the normal django auth and permission stuff
-    """
-    user = models.ForeignKey(User, related_name='accessible')
-    url_allowed = models.CharField(max_length=200)
-
-    def __unicode__(self):
-        return "%s %s" % (self.user.username, self.url_allowed)
-
-    @classmethod
-    def denied(cls, request):
-        path = request.build_absolute_uri()
-        path = urlparse.urlparse(path)[2]
-        if path.startswith('/'): path = path[1:]
-        user = request.user if request.user.is_authenticated() else None
-        if not Access.objects.filter(user=user).exists(): return False
-        paths = list(Access.objects.filter(user=user).values_list('url_allowed', flat=True))
-        for p in paths:
-            if re.match(r'' + p, path): return False
-        return True
