@@ -387,12 +387,12 @@ def get_location_mass_messages(**kwargs):
     return messages
 
 
-def get_contacts_for_partner(request):
+def get_allowed_poll_contacts(request):
     partner = request.user
     try:
         access = Access.objects.get(user=partner)
         districts = access.allowed_locations.all()
-        locations = None
+        locations = []
         if districts:
             locations = districts[0].get_descendants(include_self=True)
             if len(districts) > 1:
@@ -400,4 +400,8 @@ def get_contacts_for_partner(request):
                     locations = locations | district.get_descendants(include_self=True)
         return Contact.objects.filter(reporting_location__in=locations)
     except Access.DoesNotExist:
-        return Contact.objects.all()
+        district = Location.objects.filter(type='district', name=request.user.username.capitalize())
+        if district:
+            return Contact.objects.filter(reporting_location__in=\
+                                          district[0].get_descendants(include_self=True))
+    return Contact.objects.all()

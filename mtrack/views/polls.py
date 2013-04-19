@@ -4,30 +4,27 @@ from django.db.models import Q
 from django.shortcuts import redirect, render_to_response
 from django.template import RequestContext
 from mtrack.forms import NewPollForm
-from mtrack.utils import get_contacts_for_partner
+from mtrack.utils import get_allowed_poll_contacts
 from poll.models import Translation, Poll
 from rapidsms.models import Contact
 from django.conf import settings
 
 __author__ = 'kenneth'
 
-
 def new_poll(req):
     if req.method == 'POST':
         form = NewPollForm(req.POST, request=req)
         form.updateTypes()
         if form.is_valid():
-
             # create our XForm
-
             question = form.cleaned_data['question']
             default_response = form.cleaned_data['default_response']
-            contacts = form.cleaned_data['contacts']
+            # contacts = form.cleaned_data['contacts']
             if hasattr(Contact, 'groups'):
                 groups = form.cleaned_data['groups']
-                contacts = get_contacts_for_partner(req).filter(Q(pk__in=contacts) | Q(groups__in=groups)).distinct()
+                contacts = get_allowed_poll_contacts(req).filter(groups__in=groups).distinct()
             else:
-                contacts = Contact.objects.filter(pk__in=contacts)
+                contacts = get_allowed_poll_contacts(req)
 
             name = form.cleaned_data['name']
             p_type = form.cleaned_data['type']

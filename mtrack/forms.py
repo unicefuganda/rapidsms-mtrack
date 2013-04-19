@@ -12,7 +12,7 @@ from .models import AnonymousReport, Schedules, ScheduleExtras
 from generic.forms import ActionForm, FilterForm
 from contact.forms import SMSInput
 from rapidsms_xforms.models import XForm
-from .utils import get_district_for_facility, get_contacts_for_partner
+from .utils import get_district_for_facility  # , get_allowed_poll_contacts
 
 
 class FacilityResponseForm(forms.Form):
@@ -396,10 +396,6 @@ class PhaseFilter(FilterForm):
                               required=False)
 
     def filter(self, request, queryset):
-        if self.cleaned_data['phase'] == "": return queryset
-    phase = forms.ChoiceField(choices=(("", "-----"), ('1', 'Phase I'), ('2', 'Phase II'), ('3', 'Phase III')), required=False)
-
-    def filter(self, request, queryset):
         if self.cleaned_data['phase'] == "":return queryset
         return queryset.filter(district__in=self.phases[int(self.cleaned_data['phase']) - 1])
 
@@ -408,9 +404,6 @@ class FacilityFilterForm(FilterForm):
     """ filter form for cvs facilities """
     facility = forms.ChoiceField(label="Facility", choices=(('', '-----'),),
                                  widget=forms.Select(attrs={'class': 'ffacility'}))
-    #(-1, 'Has No Facility'),) + tuple([(pk, '%s %s' % (name, type)) for pk, name, type in HealthFacility.objects.values_list('pk', 'name', 'type__name').order_by('type', 'name')]),
-    facility = forms.ChoiceField(label="Facility", choices=(('', '-----'),), widget=forms.Select(attrs={'class':'ffacility'}))
-                                                           # (-1, 'Has No Facility'),) + tuple([(pk, '%s %s' % (name, type)) for pk, name, type in HealthFacility.objects.values_list('pk', 'name', 'type__name').order_by('type', 'name')]),
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -423,7 +416,6 @@ class FacilityFilterForm(FilterForm):
         return cleaned_data
 
     def filter(self, request, queryset):
-        # import pdb;pdb.set_trace()
         facility_pk = self.cleaned_data['facility']
         if facility_pk == '':
             return queryset
@@ -433,8 +425,7 @@ class FacilityFilterForm(FilterForm):
             return queryset.filter(facility_id=facility_pk)
 
 
-class NewPollForm(forms.Form): # pragma: no cover
-
+class NewPollForm(forms.Form):  # pragma: no cover
     TYPE_YES_NO = 'yn'
 
     type = forms.ChoiceField(
@@ -464,13 +455,13 @@ class NewPollForm(forms.Form): # pragma: no cover
         else:
             forms.Form.__init__(self, **kwargs)
 
-        self.fields['contacts'] = forms.ModelMultipleChoiceField(queryset=get_contacts_for_partner(request),
-                                                                 required=False)
+        # self.fields['contacts'] = forms.ModelMultipleChoiceField(queryset=get_contacts_for_partner(request),
+        #                                                         required=False)
 
         if hasattr(Contact, 'groups'):
             self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
 
-            #add translation fields for other languages
+        # add translation fields for other languages
         if getattr(settings, "LANGUAGES", None):
             for language in dict(settings.LANGUAGES).values():
                 if not language.lower() == "english":
@@ -478,7 +469,6 @@ class NewPollForm(forms.Form): # pragma: no cover
                                                                                   widget=forms.Textarea())
                     self.fields['question_' + language] = forms.CharField(max_length=160, required=False,
                                                                           widget=forms.Textarea())
-
 
     def clean(self):
         cleaned_data = self.cleaned_data
