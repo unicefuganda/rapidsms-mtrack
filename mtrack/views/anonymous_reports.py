@@ -7,12 +7,19 @@ from django.template import RequestContext
 import xlwt
 from mtrack.utils import *
 from time import strftime
+
 import datetime
 
 @login_required
 def delete_report(request, report_pk):
     report = get_object_or_404(AnonymousReport, pk=report_pk)
     if request.method == 'POST':
+        if getattr(settings, 'ENABLE_AUDITLOG', False):
+            from auditlog.utils import  audit_log
+            log_dict = {'request': request, 'logtype': 'anonymous', 'action':'delete',
+                        'detail':'deleted anonymous report id:%s' % report_pk,
+                        'old_value':'\n'.join(['%s' % m.text for m in report.messages.filter(direction='I')]) }
+            audit_log(log_dict)
         report.delete()
     return HttpResponse(status=200)
 
@@ -42,6 +49,12 @@ def edit_anonymous_report(request, anonymous_report_pk):
         else:
             return render_to_response('mtrack/partials/anon_edit_row.html',
                     { 'report_form':edit_report_form, 'anonymous_report':anonymous_report }, context_instance=RequestContext(request))
+        # Call Audit log here
+        if getattr(settings, 'ENABLE_AUDITLOG', False):
+            from auditlog.utils import audit_log
+            log_dict = {'request': request, 'logtype': 'anonymous', 'action':'edit',
+                        'detail':'Edited anonymous report id:%s' % anonymous_report_pk }
+            audit_log(log_dict)
         return render_to_response('mtrack/partials/anon_row.html',
                 { 'object':AnonymousReport.objects.select_related('health_facility__type', 'district__name', 'messages').get(pk=anonymous_report_pk), 'selectable':True }, context_instance=RequestContext(request))
     else:
