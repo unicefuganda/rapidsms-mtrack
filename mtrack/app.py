@@ -11,7 +11,8 @@ class App(AppBase):
     def handle(self, message):
         if handle_dongle_sms(message):
                     return True
-        if message.text.lower().startswith('mcd') or message.text.lower().strip().startswith('pmtct'):
+        DHIS2_MESSAGE_PREFIXES = getattr(settings, 'DHIS2_MESSAGE_PREFIXES', ['mcd', 'pmtct'])
+        if filter(message.text.strip().lower().startswith, DHIS2_MESSAGE_PREFIXES + [''])[0]:
             url = getattr(settings, 'DHIS2_SMSINPUT_URL', 'http://localhost:9090/dhis2_smsinput?')
             if url.find('?') < 0:
                 c = '?'
