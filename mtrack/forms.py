@@ -478,8 +478,8 @@ class NewPollForm(forms.Form):  # pragma: no cover
         if loc:
             return loc
         else:
-            access = Access.objects.get(user=user)
-            user_locations = access.allowed_locations.all()
+            access = Access.objects.filter(user=user)
+            user_locations = access[0].allowed_locations.all() if access else []
             if user_locations:
                 return user_locations.filter(type__name='district',).order_by('name')
             return Location.objects.filter(type__name='district').order_by('name')
