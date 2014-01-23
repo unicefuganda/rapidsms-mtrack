@@ -19,12 +19,15 @@ def new_poll(req):
             # create our XForm
             question = form.cleaned_data['question']
             default_response = form.cleaned_data['default_response']
+            districts = form.cleaned_data['district']
             # contacts = form.cleaned_data['contacts']
             if hasattr(Contact, 'groups'):
                 groups = form.cleaned_data['groups']
                 contacts = get_allowed_poll_contacts(req).filter(groups__in=groups).distinct()
             else:
                 contacts = get_allowed_poll_contacts(req)
+            # further filter based on district
+            contacts = contacts.filter(reporting_location__in=districts)
 
             name = form.cleaned_data['name']
             p_type = form.cleaned_data['type']

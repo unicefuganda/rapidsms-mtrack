@@ -1,0 +1,45 @@
+{% extends 'mtrack/mtrack_generic_base.html' %}
+{% block stylesheets %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}mtrack/stylesheets/dataentry.css"/>
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}mtrack/stylesheets/ui/ui.all.css"/>
+{% endblock %}
+{% block javascripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/ui.datepicker.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/poll_download.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}mtrack/javascripts/jquery.validate.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="module">
+	<form name="pollForm" id="pollForm" action="" method="post">
+		<table>
+		<tr>
+			<td>Polls (For Current User): &nbsp; &nbsp;</td>
+            <td>
+                <select name="poll" id="poll" class="ftext">
+                    <option value="0">Select Poll To Download</option>
+                    {% for p in polls %}
+                        <option value="{{ p.id }}">{{p.name}}</option>
+                    {% endfor %}
+                </select>
+            <td>
+        </tr>
+        </table>
+		<br clear="both"/>
+		<div id="ffields">
+			<table id="xff_table" class="list2">
+			</table>
+			<br/>
+			<div id="fsubmit">
+				<div class="buttons">
+					<a style="float:left" onclick="$('#pollForm').submit();" href="javascript:void(0);">
+    				<img src="{{ MEDIA_URL }}rapidsms_xforms/icons/silk/disk.png" alt=""/>
+    				Download Poll Responses
+  					</a>
+  				</div>
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock %}

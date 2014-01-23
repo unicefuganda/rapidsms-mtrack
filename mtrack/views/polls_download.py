@@ -1,10 +1,15 @@
 import xlwt
 import datetime
 from time import strftime
+from django.db.models import Q, Count
 from django.http import HttpResponse
+from django.template import RequestContext
+from django.shortcuts import render_to_response, redirect
+from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from mtrack.utils import write_xls
 from poll.models import Poll
+from django.utils import simplejson
 
 
 @login_required
@@ -46,3 +51,32 @@ def export_poll(request, poll_id=0):
     response["Content-Disposition"] = 'attachment; filename=%s_%s.xls' % (fname_prefix, poll.name)
     book.save(response)
     return response
+
+@login_required
+def get_poll_responses(request):
+    if request.user.is_superuser:
+        polls = Poll.objects.all()
+    else:
+        polls = Poll.objects.filter(user=request.user)
+    if request.method == 'POST':
+        poll_id = request.POST['poll']
+        return redirect('export_poll', poll_id=poll_id)
+    return render_to_response('mtrack/poll_download.html', {'polls': polls},
+                              context_instance=RequestContext(request))
+
+def get_poll_data(request):
+    xtype = request.GET.get('xtype', '')
+    xid = request.GET.get('xid', '')
+    if xtype == 'poll':
+        response = list(Poll.objects.filter(pk=xid).annotate(Count('responses')).\
+        values('id', 'name', 'start_date', 'end_date', 'question', 'default_response', 'responses__count'))
+        print response
+        response[0]['start_date'] = response[0]['start_date'].\
+            strftime('%y-%m-%d') if response[0]['start_date'] else ''
+        response[0]['end_date'] = response[0]['end_date'].\
+            strftime('%y-%m-%d') if response[0]['end_date'] else ''
+    else:
+        response = []
+    json = simplejson.dumps(response)
+    return HttpResponse(json, mimetype='application/json')
+

@@ -13,6 +13,7 @@ from generic.forms import ActionForm, FilterForm
 from contact.forms import SMSInput
 from rapidsms_xforms.models import XForm
 from .utils import get_district_for_facility  # , get_allowed_poll_contacts
+from uganda_common.models import Access
 
 
 class FacilityResponseForm(forms.Form):
@@ -244,7 +245,7 @@ class ScheduleForm(forms.Form):
         ('1', 'First Days'), ('2', 'Second Days'), ('3', 'Third Days'), ('4', 'Fourth Days'), ('last', 'Last Days'))
     SETUP_CHOICES = (('basic', 'Basic'), ('temp', 'Has Argument'))
     DAY_INTERVAL_CHOICES = (
-        ('mon', 'Monday'), ('tue', 'tue'), ('wed', 'Wednesday'), ('thur', 'Thursday'), ('fri', 'Friday'),
+        ('mon', 'Monday'), ('tue', 'Tuesday'), ('wed', 'Wednesday'), ('thur', 'Thursday'), ('fri', 'Friday'),
         ('sat', 'Saturday'), ('sun', 'Sunday'))
     setup = forms.CharField(widget=forms.Select(choices=SETUP_CHOICES, attrs={'class': 'required'}))
     locations = forms.MultipleChoiceField(choices=DISTRICT_CHOICES)
@@ -469,6 +470,19 @@ class NewPollForm(forms.Form):  # pragma: no cover
                                                                                   widget=forms.Textarea())
                     self.fields['question_' + language] = forms.CharField(max_length=160, required=False,
                                                                           widget=forms.Textarea())
+        self.fields['district'] = forms.ModelMultipleChoiceField(
+                                    queryset=self.get_districts_for_form(request.user),
+                                    required=False)
+    def get_districts_for_form(self, user):
+        loc = Location.objects.filter(name=str(user.username).capitalize(), type__name='district')
+        if loc:
+            return loc
+        else:
+            access = Access.objects.get(user=user)
+            user_locations = access.allowed_locations.all()
+            if user_locations:
+                return user_locations.filter(type__name='district',).order_by('name')
+            return Location.objects.filter(type__name='district').order_by('name')
 
     def clean(self):
         cleaned_data = self.cleaned_data
