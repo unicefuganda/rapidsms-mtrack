@@ -104,12 +104,12 @@ def ajax_portal(request):
     if xtype == 'district':
         district_locs = Location.objects.get(pk=xid).get_descendants(include_self=True)
 
-        facilities = list(HealthFacility.objects.filter(catchment_areas__in=district_locs).\
+        facilities = list(HealthFacility.objects.filter(catchment_areas__in=district_locs).exclude(type=None).\
                           values('id', 'name', 'type__slug').order_by('name').distinct())
         response = facilities
     elif xtype == 'facility':
         response = list(HealthProvider.objects.exclude(connection=None).filter(facility=xid)\
-                        .exclude(groups__name__in=['FHD'])\
+                        .exclude(groups__name__in=['FHD'], connection=None)\
                         .values('id', 'name', 'connection__identity').order_by('name'))
     elif xtype == 'xform':
         xform = XForm.on_site.get(pk=xid)
