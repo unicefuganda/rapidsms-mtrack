@@ -149,3 +149,22 @@ WHERE
             'death','doc','med','sum', 'summary', 'vita', 'vacm', 'worm', 'anc', 'eid', 'dpt', 'redm', 'breg', 'tet')
     AND (a.connection_id = c.id AND c.contact_id = d.id)
     ORDER BY a.created DESC;
+
+CREATE OR REPLACE FUNCTION rapidsms_xforms_xformsubmission_after_update() RETURNS TRIGGER AS
+$delim$
+    DECLARE
+    last_confirmation_id INTEGER;
+    BEGIN
+        -- last_confirmation_id := 0;
+        SELECT confirmation_id INTO last_confirmation_id FROM
+        rapidsms_xforms_xformsubmission WHERE xform_id = NEW.xform_id ORDER BY confirmation_id DESC LIMIT 1;
+        IF last_confirmation_id IS NOT NULL AND NEW.confirmation_id = 0 THEN
+            UPDATE rapidsms_xforms_xformsubmission SET confirmation_id = last_confirmation_id + 1
+            WHERE id = NEW.id;
+        END IF;
+        RETURN NEW;
+    END;
+$delim$ LANGUAGE plpgsql;
+
+CREATE TRIGGER rapidsms_xforms_xformsubmission_after_update AFTER UPDATE ON rapidsms_xforms_xformsubmission
+    FOR EACH ROW EXECUTE PROCEDURE rapidsms_xforms_xformsubmission_after_update();
