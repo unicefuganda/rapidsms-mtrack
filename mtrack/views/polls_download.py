@@ -48,7 +48,7 @@ def export_poll(request, poll_id=0):
     write_xls(sheet_name="Poll Responses", headings=headings, data=data_set, book=book)
     response = HttpResponse(mimetype="application/vnd.ms-excel")
     fname_prefix = datetime.date.today().strftime('%Y%m%d') + "-" + strftime('%H%M%S')
-    response["Content-Disposition"] = 'attachment; filename=%s_%s.xls' % (fname_prefix, poll.name)
+    response["Content-Disposition"] = 'attachment; filename=%s_%s.xls' % (fname_prefix, poll.name.replace(' ', '_'))
     book.save(response)
     return response
 
