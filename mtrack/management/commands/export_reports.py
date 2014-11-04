@@ -3,27 +3,27 @@
 import psycopg2
 import psycopg2.extras
 import sys
-import os
-import datetime
 import getopt
 
-from tempfile import TemporaryFile
-from time import strftime
 from xlwt import Workbook
 
 dbname = "mtrack"
 dbuser = "postgres"
 dbpasswd = "postgres"
-dbhost = "dbserver"
+dbhost = "mtrack2"
 
 cmd = sys.argv[1:]
-opts, args = getopt.getopt(cmd, 's:e:o:t:d:l:ha', ['star-date', 'end-date', 'output-file',
-            'report-type', 'district', 'district-list', 'all'])
+opts, args = getopt.getopt(
+    cmd, 's:e:o:t:d:l:ha', [
+        'star-date', 'end-date', 'output-file',
+        'report-type', 'district', 'district-list', 'all'])
 
 conn = psycopg2.connect("dbname=" + dbname + " host= " + dbhost + " user=" + dbuser + " password=" + dbpasswd)
 
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 #cur = conn.cursor()
+
+
 def usage():
     return """
 usage: python excel_reports.py [-s <start-date>] [-e <end-date>] [-d <district-name>] [-l <district-list>] [-a]
@@ -47,8 +47,9 @@ usage: python excel_reports.py [-s <start-date>] [-e <end-date>] [-d <district-n
     """
 
 rtype = '033b'
-report_keywords_where_clause = {'033b':"keyword IN('cases','death','opd','test','treat','act','mal','rdt','rutf','epi','qun') AND ",
-                        'vht': "keyword IN ('med','doc', 'com') AND "}
+report_keywords_where_clause = {
+    '033b': "keyword IN('cases','death','opd','test','treat','act','mal','rdt','rutf','epi','qun') AND ",
+    'vht': "keyword IN ('med','doc', 'com') AND "}
 default_kw_clause = "keyword IN('cases','deaths','opd','test','treat','act','mal','rdt','rutf','epi','qun') AND "
 
 #report_names_where clause = {'033b':"name IN('ACT Report','Disease Report','Death Report','ITP/OTP Treatment Report', 'Epi Report', 'OPD report', 'QUN report', 'RDT report', 'OTC/ITC Stock Report', 'TEST report', 'TREAT report') ",
@@ -85,23 +86,24 @@ print rtype, sql_2
 #sys.exit(1)
 
 #headings = {'slug':['prefered_name', order]}
-headings = {'report_id':{'header':'report_id', 'order':0},
-            'report': {'header':'report', 'order':1},
-            'date': {'header':'date', 'order':2},
-            'reporter':{'header':'reporter', 'order':3},
-            'reporter_id': {'header':'reporter_id', 'order':4},
-            'phone':{'header':'phone', 'order':5},
-            'district':{'header':'district', 'order':6},
-            'facility':{'header':'facility', 'order':7},
-            #'village':{'header':'village', 'order':8},
-            'valid':{'header':'valid', 'order':8},
-            'approved':{'header':'approved', 'order':9},
-        }
+headings = {
+    'report_id': {'header': 'report_id', 'order': 0},
+    'report': {'header': 'report', 'order': 1},
+    'date': {'header': 'date', 'order': 2},
+    'reporter': {'header': 'reporter', 'order': 3},
+    'reporter_id': {'header': 'reporter_id', 'order': 4},
+    'phone': {'header': 'phone', 'order': 5},
+    'district': {'header': 'district', 'order': 6},
+    'facility': {'header': 'facility', 'order': 7},
+    #'village':{'header':'village', 'order':8},
+    'valid': {'header': 'valid', 'order': 8},
+    'approved': {'header': 'approved', 'order': 9},
+}
 
 INITIAL_KEYS = ['report_id', 'report', 'date', 'reporter', 'reporter_id', 'phone',
-                'district', 'facility', 'valid', 'approved'] #removed village
+                'district', 'facility', 'valid', 'approved']  # removed village
 
-offset = 9 #excel column offset
+offset = 9  # excel column offset
 if rtype == 'vht':
     headings.pop('approved')
     INITIAL_KEYS.pop(INITIAL_KEYS.index('approved'))
@@ -109,8 +111,9 @@ if rtype == 'vht':
     offset = 8
 KEYS_FOR_VALUES = [] + INITIAL_KEYS
 #get all the other headings
-cur.execute("SELECT name, description, slug FROM xformfields_view WHERE %s TRUE"%report_keywords_where_clause.get(rtype,
-    default_kw_clause))
+cur.execute(
+    "SELECT name, description, slug FROM xformfields_view WHERE %s TRUE" %
+    report_keywords_where_clause.get(rtype, default_kw_clause))
 res = cur.fetchall()
 for r in res:
     offset += 1
@@ -124,7 +127,7 @@ for r in res:
 
 #preload the data
 print "Generating preliminary data....."
-cur.execute("SELECT report_id, report, to_char(date, 'yyyy-mm-dd HH24:MI:SS') as date, reporter, reporter_id, phone, district, facility, valid, approved FROM xform_submissions_view_reviewed WHERE %s" % sql_2) # removed village
+cur.execute("SELECT report_id, report, to_char(date, 'yyyy-mm-dd HH24:MI:SS') as date, reporter, reporter_id, phone, district, facility, valid, approved FROM xform_submissions_view_reviewed WHERE %s" % sql_2)  # removed village
 data = cur.fetchall()[:65530]
 row_len = len(data)
 
@@ -145,11 +148,11 @@ cur.execute("SELECT name from locations_location WHERE type_id = 'district' ORDE
 res = cur.fetchall()
 if district:
     #with this you can pass comma separated districts
-    res = [{'name':d} for d in district.split(',')]
+    res = [{'name': d} for d in district.split(',')]
     #res = [{'name':district}]
 if GEN_ALL:
     district = "all"
-    res = [{'name':'all'}]
+    res = [{'name': 'all'}]
 
 for r in res:
     district = r['name']
@@ -171,7 +174,7 @@ for r in res:
         if GEN_ALL:
             pass
         else:
-            if data[i]['district'] <> district:
+            if data[i]['district'] != district:
                 continue
         s += 1
         row = sheet1.row(s)
@@ -192,7 +195,7 @@ for r in res:
     if district == 'all':
         fname = "reports%s.xls" % default_pre_surfix
     else:
-        fname = "reports%s_%s.xls" % (default_pre_surfix,district)
+        fname = "reports%s_%s.xls" % (default_pre_surfix, district)
     fpath = "/var/www/prod/mtrack/mtrack_project/rapidsms_mtrack/mtrack/static/spreadsheets/" + fname
     #fpath = "/tmp/"+fname
     book.save(fpath)
