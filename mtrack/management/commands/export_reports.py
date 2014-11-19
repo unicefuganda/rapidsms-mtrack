@@ -10,7 +10,7 @@ from xlwt import Workbook
 dbname = "mtrack"
 dbuser = "postgres"
 dbpasswd = "postgres"
-dbhost = "mtrack2"
+dbhost = "localhost"
 
 cmd = sys.argv[1:]
 opts, args = getopt.getopt(
@@ -48,7 +48,7 @@ usage: python excel_reports.py [-s <start-date>] [-e <end-date>] [-d <district-n
 
 rtype = '033b'
 report_keywords_where_clause = {
-    '033b': "keyword IN('cases','death','opd','test','treat','act','mal','rdt','rutf','epi','qun') AND ",
+    '033b': "keyword IN('cases','death','opd','test','treat','act','mal','rdt','rutf','epi','qun', 'mat', 'epc', 'epd', 'tra', 'arv', 'apt') AND ",
     'vht': "keyword IN ('med','doc', 'com') AND "}
 default_kw_clause = "keyword IN('cases','deaths','opd','test','treat','act','mal','rdt','rutf','epi','qun') AND "
 
@@ -197,7 +197,6 @@ for r in res:
     else:
         fname = "reports%s_%s.xls" % (default_pre_surfix, district)
     fpath = "/var/www/prod/mtrack/mtrack_project/rapidsms_mtrack/mtrack/static/spreadsheets/" + fname
-    #fpath = "/tmp/"+fname
     book.save(fpath)
 #now close connection
 conn.close()

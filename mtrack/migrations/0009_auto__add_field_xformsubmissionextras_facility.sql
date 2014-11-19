@@ -146,7 +146,7 @@ WHERE
     AND e.submission_id = a.id
     AND b.keyword
         IN ('com', 'mal', 'rutf', 'epi', 'home', 'birth', 'muac', 'opd', 'test', 'treat', 'rdt', 'act', 'qun', 'cases',
-            'death','doc','med','sum', 'summary', 'vita', 'vacm', 'worm', 'anc', 'eid', 'dpt', 'redm', 'breg', 'tet')
+            'death','doc','med', 'mat', 'epc', 'epd', 'arv', 'tra', 'apt')
     AND (a.connection_id = c.id AND c.contact_id = d.id)
     ORDER BY a.created DESC;
 
