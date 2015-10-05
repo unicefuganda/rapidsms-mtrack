@@ -168,8 +168,10 @@ def get_facility_reports(location, count=False, date_range=last_reporting_period
     facilities = total_facilities(location, count=False)
     toret = XFormSubmission.objects.filter(connection__contact__healthproviderbase__facility__in=facilities,
                                            has_errors=False,
-                                           xform__keyword__in=['act', 'cases', 'death', 'opd', 'test', 'treat', 'rdt',
-                                                               'qun']).order_by('-created')
+                                           xform__keyword__in=getattr(
+                                               settings, 'MTRACK_XFORMS_KEYWORDS',
+                                               ['cases', 'death', 'tra', 'arv',
+                                                'epd', 'epc', 'mat', 'apt', 'qun'])).order_by('-created')
     if date_range:
         toret = toret.filter(created__range=date_range)
     if approved is not None:
