@@ -26,45 +26,47 @@ def mk_notifiable_disease_alert(disease, alert_type, reporting_period, loc, dist
     notif.originating_location = loc
     return notif
 
+CASES_THRESHOLD = getattr(settings, 'CASES_THRESHOLD', 5)
 CASES_METRICS = {
-          'malaria': {'threshold':3, 'slug':'epi_ma', 'gen': mk_notifiable_disease_alert},
-          'accute flacid paralysis': {'threshold':1, 'slug':'cases_af', 'gen': mk_notifiable_disease_alert},
-          'animal bites': {'threshold':1, 'slug':'cases_ab', 'gen': mk_notifiable_disease_alert},
-          'rabies': {'threshold':1, 'slug':'cases_rb', 'gen': mk_notifiable_disease_alert},
-          'cholera':{'threshold':1, 'slug':'cases_ch', 'gen': mk_notifiable_disease_alert},
-          'dysentery': {'threshold':1, 'slug':'cases_dy', 'gen': mk_notifiable_disease_alert},
-          'guinea worm': {'threshold':1, 'slug':'cases_gw', 'gen': mk_notifiable_disease_alert},
-          'measles': {'threshold':1, 'slug':'cases_me', 'gen': mk_notifiable_disease_alert},
-          'bacterial meningitis': {'threshold':1, 'slug':'', 'gen': mk_notifiable_disease_alert},
-          'neonatal tetanus': {'threshold':1, 'slug':'cases_nt', 'gen':mk_notifiable_disease_alert},
-          'plague': {'threshold':1, 'slug':'cases_pl', 'gen': mk_notifiable_disease_alert},
-          'yellow fever': {'threshold':1, 'slug':'cases_yf', 'gen': mk_notifiable_disease_alert},
-          'other viral naemorrhagic fevers': {'threshold':1, 'slug':'cases_vf', 'gen': mk_notifiable_disease_alert},
-          'severe acute respiratory infections':{'threshold':1, 'slug':'cases_sa', 'gen': mk_notifiable_disease_alert},
-          'adverse events following immunization':{'threshold':1, 'slug':'cases_ai', 'gen': mk_notifiable_disease_alert},
-          'typhoid fever':{'threshold':1, 'slug':'cases_tf', 'gen': mk_notifiable_disease_alert},
-          'other emerging infectious diseases':{'threshold':1, 'slug':'cases_id', 'gen': mk_notifiable_disease_alert},
-          }
+    'malaria': {'threshold': 3, 'slug':'epi_ma', 'gen': mk_notifiable_disease_alert},
+    'acute flaccid paralysis': {'threshold': CASES_THRESHOLD, 'slug':'cases_af', 'gen': mk_notifiable_disease_alert},
+    'animal bites': {'threshold': CASES_THRESHOLD, 'slug': 'cases_ab', 'gen': mk_notifiable_disease_alert},
+    'rabies': {'threshold': CASES_THRESHOLD, 'slug': 'cases_rb', 'gen': mk_notifiable_disease_alert},
+    'cholera':{'threshold': CASES_THRESHOLD, 'slug': 'cases_ch', 'gen': mk_notifiable_disease_alert},
+    'dysentery': {'threshold': CASES_THRESHOLD, 'slug': 'cases_dy', 'gen': mk_notifiable_disease_alert},
+    'guinea worm': {'threshold': CASES_THRESHOLD, 'slug':'cases_gw', 'gen': mk_notifiable_disease_alert},
+    'measles': {'threshold': CASES_THRESHOLD, 'slug':'cases_me', 'gen': mk_notifiable_disease_alert},
+    'bacterial meningitis': {'threshold': CASES_THRESHOLD, 'slug': '', 'gen': mk_notifiable_disease_alert},
+    'neonatal tetanus': {'threshold': CASES_THRESHOLD, 'slug': 'cases_nt', 'gen':mk_notifiable_disease_alert},
+    'plague': {'threshold':CASES_THRESHOLD, 'slug': 'cases_pl', 'gen': mk_notifiable_disease_alert},
+    'yellow fever': {'threshold':CASES_THRESHOLD, 'slug': 'cases_yf', 'gen': mk_notifiable_disease_alert},
+    'other viral hemorrhagic fevers': {'threshold': CASES_THRESHOLD, 'slug':'cases_vf', 'gen': mk_notifiable_disease_alert},
+    'severe acute respiratory infections':{'threshold': CASES_THRESHOLD, 'slug':'cases_sa', 'gen': mk_notifiable_disease_alert},
+    'adverse events following immunization':{'threshold': CASES_THRESHOLD, 'slug':'cases_ai', 'gen': mk_notifiable_disease_alert},
+    'typhoid fever': {'threshold': CASES_THRESHOLD, 'slug':'cases_tf', 'gen': mk_notifiable_disease_alert},
+}
 
+DEATH_THRESHOLD = getattr(settings, 'DEATH_THRESHOLD', 1)
 DEATH_METRICS = {
-          'malaria': {'threshold':3, 'slug':'epi_ma', 'gen': mk_notifiable_disease_alert},
-          'accute flacid paralysis': {'threshold':1, 'slug':'death_af', 'gen': mk_notifiable_disease_alert},
-          'animal bites': {'threshold':1, 'slug':'death_ab', 'gen': mk_notifiable_disease_alert},
-          'rabies': {'threshold':1, 'slug':'death_rb', 'gen': mk_notifiable_disease_alert},
-          'cholera':{'threshold':1, 'slug':'death_ch', 'gen': mk_notifiable_disease_alert},
-          'dysentery': {'threshold':1, 'slug':'death_dy', 'gen': mk_notifiable_disease_alert},
-          'guinea worm': {'threshold':1, 'slug':'death_gw', 'gen': mk_notifiable_disease_alert},
-          'measles': {'threshold':1, 'slug':'death_me', 'gen': mk_notifiable_disease_alert},
-          'bacterial meningitis': {'threshold':1, 'slug':'', 'gen': mk_notifiable_disease_alert},
-          'neonatal tetanus': {'threshold':1, 'slug':'death_nt', 'gen':mk_notifiable_disease_alert},
-          'plague': {'threshold':1, 'slug':'death_pl', 'gen': mk_notifiable_disease_alert},
-          'yellow fever': {'threshold':1, 'slug':'death_yf', 'gen': mk_notifiable_disease_alert},
-          'other viral naemorrhagic fevers': {'threshold':1, 'slug':'death_vf', 'gen': mk_notifiable_disease_alert},
-          'severe acute respiratory infections':{'threshold':1, 'slug':'death_sa', 'gen': mk_notifiable_disease_alert},
-          'adverse events following immunization':{'threshold':1, 'slug':'death_ai', 'gen': mk_notifiable_disease_alert},
-          'typhoid fever':{'threshold':1, 'slug':'death_tf', 'gen': mk_notifiable_disease_alert},
-          'other emerging infectious diseases':{'threshold':1, 'slug':'death_id', 'gen': mk_notifiable_disease_alert},
-                }
+    'malaria': {'threshold': 3, 'slug': 'epi_ma', 'gen': mk_notifiable_disease_alert},
+    'acute flaccid paralysis': {'threshold': DEATH_THRESHOLD, 'slug':'death_af', 'gen': mk_notifiable_disease_alert},
+    'animal bites': {'threshold': DEATH_THRESHOLD, 'slug': 'death_ab', 'gen': mk_notifiable_disease_alert},
+    'rabies': {'threshold': DEATH_THRESHOLD, 'slug': 'death_rb', 'gen': mk_notifiable_disease_alert},
+    'cholera': {'threshold': DEATH_THRESHOLD, 'slug': 'death_ch', 'gen': mk_notifiable_disease_alert},
+    'dysentery': {'threshold': DEATH_THRESHOLD, 'slug': 'death_dy', 'gen': mk_notifiable_disease_alert},
+    'guinea worm': {'threshold': DEATH_THRESHOLD, 'slug': 'death_gw', 'gen': mk_notifiable_disease_alert},
+    'measles': {'threshold': DEATH_THRESHOLD, 'slug':'death_me', 'gen': mk_notifiable_disease_alert},
+    'bacterial meningitis': {'threshold': DEATH_THRESHOLD, 'slug': '', 'gen': mk_notifiable_disease_alert},
+    'neonatal tetanus': {'threshold': DEATH_THRESHOLD, 'slug': 'death_nt', 'gen':mk_notifiable_disease_alert},
+    'plague': {'threshold': DEATH_THRESHOLD, 'slug': 'death_pl', 'gen': mk_notifiable_disease_alert},
+    'yellow fever': {'threshold': DEATH_THRESHOLD, 'slug': 'death_yf', 'gen': mk_notifiable_disease_alert},
+    'other viral hemorrhagic fevers': {'threshold': DEATH_THRESHOLD, 'slug':'death_vf', 'gen': mk_notifiable_disease_alert},
+    'severe acute respiratory infections': {'threshold': DEATH_THRESHOLD, 'slug':'death_sa', 'gen': mk_notifiable_disease_alert},
+    'adverse events following immunization': {'threshold': DEATH_THRESHOLD, 'slug':'death_ai', 'gen': mk_notifiable_disease_alert},
+    'typhoid fever': {'threshold':DEATH_THRESHOLD, 'slug': 'death_tf', 'gen': mk_notifiable_disease_alert},
+    'maternal': {'threshold': DEATH_THRESHOLD, 'slug': 'death_md', 'gen': mk_notifiable_disease_alert},
+    'perinatal': {'threshold': DEATH_THRESHOLD, 'slug': 'death_pd', 'gen': mk_notifiable_disease_alert},
+}
 
 class NotifiableDiseaseThresholdAlert(NotificationType):
     escalation_levels = ['district', 'moh']
