@@ -64,8 +64,8 @@ DEATH_METRICS = {
     'severe acute respiratory infections': {'threshold': DEATH_THRESHOLD, 'slug':'death_sa', 'gen': mk_notifiable_disease_alert},
     'adverse events following immunization': {'threshold': DEATH_THRESHOLD, 'slug':'death_ai', 'gen': mk_notifiable_disease_alert},
     'typhoid fever': {'threshold':DEATH_THRESHOLD, 'slug': 'death_tf', 'gen': mk_notifiable_disease_alert},
-    'maternal': {'threshold': DEATH_THRESHOLD, 'slug': 'death_md', 'gen': mk_notifiable_disease_alert},
-    'perinatal': {'threshold': DEATH_THRESHOLD, 'slug': 'death_pd', 'gen': mk_notifiable_disease_alert},
+    'maternal deaths': {'threshold': DEATH_THRESHOLD, 'slug': 'death_md', 'gen': mk_notifiable_disease_alert},
+    'perinatal deaths': {'threshold': DEATH_THRESHOLD, 'slug': 'death_pd', 'gen': mk_notifiable_disease_alert},
 }
 
 class NotifiableDiseaseThresholdAlert(NotificationType):
