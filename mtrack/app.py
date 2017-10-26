@@ -5,7 +5,8 @@ from rapidsms.models import Connection
 from rapidsms.apps.base import AppBase
 from rapidsms_httprouter.models import Message
 from uganda_common.utils import handle_dongle_sms
-from urllib import urlopen, urlencode
+from urllib import urlopen
+
 
 class App(AppBase):
     def handle(self, message):
@@ -36,7 +37,8 @@ class App(AppBase):
                     anonymous_report = AnonymousReport.objects.filter(date__gte=epoch, connection__in=Connection.objects.filter(id=message.connection.id))[0]
                     anonymous_report.messages.add(message.db_message)
                     anonymous_report.save()
-                    Message.objects.create(direction="O",
+                    Message.objects.create(
+                        direction="O",
                         text="Thank you for your consistent feedback about this health facility.",
                         status='Q',
                         connection=message.connection,
@@ -48,8 +50,13 @@ class App(AppBase):
                 anonymous_report = AnonymousReport.objects.create(connection=message.connection)
                 anonymous_report.messages.add(message.db_message)
                 anonymous_report.save()
-                Message.objects.create(direction="O",
-                    text="Thank you for your report, this report will be sent to relevant authorities. If this is an emergency, contact your nearest facility",
+                Message.objects.create(
+                    direction="O",
+                    text=getattr(
+                        settings, 'HOTLINE_DEFAULT_RESPONSE',
+                        ("Your report has been sent to relevant authorities. You can also call Ministry "
+                            "of Health on 0800100066 (toll free) for further help and inquires. "
+                            "If this is an emergency contact your nearest facility")),
                     status='Q',
                     connection=message.connection,
                     in_response_to=message.db_message)
