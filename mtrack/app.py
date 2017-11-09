@@ -19,7 +19,7 @@ class App(AppBase):
                 c = '?'
             else:
                 c = ''
-            url = url + c + 'message=%s&sender=%s' % (message.text, message.connection.identity)
+            url = url + c + 'message=%s&originator=%s' % (message.text, message.connection.identity)
             try:
                 urlopen(url)
             except:
