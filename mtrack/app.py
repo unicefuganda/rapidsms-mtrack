@@ -6,7 +6,7 @@ from rapidsms.models import Connection
 from rapidsms.apps.base import AppBase
 from rapidsms_httprouter.models import Message
 from uganda_common.utils import handle_dongle_sms
-# from urllib import urlopen
+from urllib import urlopen
 import requests
 
 
@@ -18,6 +18,20 @@ class App(AppBase):
         if filter(message.text.strip().lower().startswith, DHIS2_MESSAGE_PREFIXES + [''])[0]:
             keyword = re.split('\W+', message.text.strip().lower())[0]
             keywordServerMappings = getattr(settings, 'KEYWORD_SERVER_MAPPINGS', {})
+
+            if getattr(settings, 'USE_DISPATCHER', False):
+                if keyword in getattr(settings, 'DISPATCHER_KEYWORDS', []):
+                    url = getattr(settings, 'DHIS2_SMSINPUT_URL', 'http://localhost:9090/dhis2_smsinput?')
+                    if url.find('?') < 0:
+                        c = '?'
+                    else:
+                        c = ''
+                    url = url + c + 'message=%s&originator=%s' % (message.text, message.connection.identity)
+                    try:
+                        urlopen(url)
+                    except:
+                        pass
+                    return True
 
             # XXX please note that source and destination must be configured in dispatcher2
             destinationSever = keywordServerMappings.get(keyword, '')
