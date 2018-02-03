@@ -6,7 +6,7 @@ from rapidsms.models import Connection
 from rapidsms.apps.base import AppBase
 from rapidsms_httprouter.models import Message
 from uganda_common.utils import handle_dongle_sms
-from urllib import urlopen
+from urllib import urlopen, quote_plus
 import requests
 
 
@@ -26,7 +26,7 @@ class App(AppBase):
                         c = '?'
                     else:
                         c = ''
-                    url = url + c + 'message=%s&originator=%s' % (message.text, message.connection.identity)
+                    url = url + c + 'message=%s&originator=%s' % (quote_plus(message.text), message.connection.identity)
                     try:
                         urlopen(url)
                     except:
@@ -42,7 +42,7 @@ class App(AppBase):
                 year, week = self.get_reporting_week(msg_date)
                 queueEndpoint = getattr(
                     settings, 'DISPATCHER2_QUEUE_ENDPOINT', 'http://localhost:9191/queue?')
-                payload = 'message=%s&originator=%s' % (message.text, message.connection.identity)
+                payload = 'message=%s&originator=%s' % (quote_plus(message.text), message.connection.identity)
                 params = {
                     'source': 'mtrack', 'destination': destinationSever,
                     'raw_msg': message.text, 'msisdn': message.connection.identity,
