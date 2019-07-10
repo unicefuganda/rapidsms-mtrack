@@ -63,7 +63,7 @@ $delim$
     END;
 $delim$ LANGUAGE plpgsql;
 
-
+-- the reporters view
 CREATE VIEW reporters AS
     SELECT r.id, r.name as name, r.active, r.village_name, r.reporting_location_id as reporting_location,
         get_default_connection(r.id, TRUE) AS default_connection,
@@ -79,6 +79,7 @@ CREATE VIEW reporters AS
         AND r.id = p.contact_ptr_id
         AND r.reporting_location_id = s.id;
 
+-- trigger function to update total reports from a facility - after insert or deleting
 CREATE OR REPLACE FUNCTION update_facility_extras() RETURNS TRIGGER AS $update_facility_extras$
     DECLARE
     f INTEGER;
